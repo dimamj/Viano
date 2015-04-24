@@ -1,0 +1,12 @@
+#JSGF V1.0;
+
+grammar racing;
+
+
+<menu_command> = назад|газ|тормоз|влево|вправо|пауза ;
+
+<keyboard> = свернуть | закрыть| войти|выход|пробел|отменить ;
+<arrows> = вверх | вниз | вправо | влево ;
+
+public <command> = <menu_command>|<arrows>|<keyboard>;
+

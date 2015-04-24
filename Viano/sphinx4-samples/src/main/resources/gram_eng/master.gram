@@ -1,0 +1,11 @@
+#JSGF V1.0;
+
+grammar master;
+
+
+
+
+<menu_command> =  hello              ;
+
+
+public <command> = <menu_command>;

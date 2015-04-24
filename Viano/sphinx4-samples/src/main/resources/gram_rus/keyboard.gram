@@ -1,0 +1,12 @@
+#JSGF V1.0;
+
+grammar keyboard;
+
+
+
+
+<menu_command> = назад | свернуть | закрыть| войти|переключиться|пуск|диспетчер|таб|выход|пробел ;
+<file_command> = копирование|вставка|вырезать|отменить|удалить|выделить and все;
+<arrows> = вверх | вниз | вправо | влево ;
+
+public <command> = <menu_command>|<arrows>|<file_command>;

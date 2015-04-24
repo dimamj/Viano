@@ -1,0 +1,13 @@
+#JSGF V1.0;
+
+grammar computer;
+
+
+<applications> = компьютер|приложения|параметры|музыка|управление and музыкой|громче|тише|фотографии|видео;
+
+<menu_command> = назад ;
+
+<standard> = клавиатура | мышь;
+
+
+public <command> = <menu_command>|<standard>|<applications>;

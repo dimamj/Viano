@@ -1,0 +1,12 @@
+#JSGF V1.0;
+
+grammar apps;
+
+
+<menu_command> = назад|фоторедактор|гонки ;
+
+<standard> = клавиатура | мышь;
+
+
+public <command> = <menu_command>|<standard>;
+

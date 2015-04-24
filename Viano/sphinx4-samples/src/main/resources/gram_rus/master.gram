@@ -1,0 +1,11 @@
+#JSGF V1.0;
+
+grammar master;
+
+
+
+
+<menu_command> =  компьютер|интернет|приложения|завершить and работу|настройки|сменить and язык|английский|русский;
+<standard> = клавиатура | мышь;
+
+public <command> = <menu_command>|<standard>;

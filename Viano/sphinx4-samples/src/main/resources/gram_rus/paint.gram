@@ -1,0 +1,12 @@
+#JSGF V1.0;
+
+grammar paint;
+
+
+<menu_command> = назад|открыть|сохранить|обрезать|размер|фоторедактор|меню ;
+
+<standard> = клавиатура | мышь;
+
+
+public <command> = <menu_command>|<standard>;
+
