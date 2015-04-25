@@ -1,6 +1,6 @@
 package View;
 
-import Controllers.Master;
+import Models.Master;
 
 import javax.swing.*;
 import java.awt.*;

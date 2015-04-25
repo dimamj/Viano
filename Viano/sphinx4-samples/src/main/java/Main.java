@@ -1,5 +1,5 @@
-import Controllers.Master;
-import Controllers.VoiceControl;
+import Models.Master;
+import Models.VoiceControl;
 import View.CtrlGui;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.LiveSpeechRecognizer;

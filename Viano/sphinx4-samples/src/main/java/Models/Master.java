@@ -9,7 +9,7 @@
  * WARRANTIES.
  */
 
-package Controllers;
+package Models;
 
 
 import View.CtrlGui;

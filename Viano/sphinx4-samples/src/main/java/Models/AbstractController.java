@@ -1,4 +1,4 @@
-package Controllers;
+package Models;
 
 import View.CtrlGui;
 import edu.cmu.sphinx.api.Configuration;
