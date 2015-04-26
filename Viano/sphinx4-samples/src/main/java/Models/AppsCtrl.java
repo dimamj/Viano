@@ -6,23 +6,26 @@ import edu.cmu.sphinx.api.LiveSpeechRecognizer;
 
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by dimamj on 14.01.2015.
  */
-public class AppsCtrl extends AbstractController implements VoiceControl {
+public class AppsCtrl extends AbstractController  {
 
     private static final AppsCtrl instance = new AppsCtrl();
-    private List<String> paint;
-    private List<String> racing;
 
+    private List<String> racing = config.Racing_Words;
+    public  List<String> Applications_Words = config.Applications_Words;
     private AppsCtrl() {
     }
 
     public static AppsCtrl getInstance() {
         return instance;
     }
+
+
 
     {  /*
                     1 "назад"
@@ -33,63 +36,48 @@ public class AppsCtrl extends AbstractController implements VoiceControl {
      */
     }
 
-    public void startVoiceControl(LiveSpeechRecognizer jsgfRecognizer, Configuration config, CtrlGui ctrlGui, List list) {
-        ctrlGui.setImage("games active");
+
+
+    public String startVoiceControl(LiveSpeechRecognizer jsgfRecognizer, Configuration config,Boolean flag) {
+        listener.setImage("games active");
         setGrammar("apps", config, jsgfRecognizer);
-        while (true) {
+        List<String> list = Applications_Words;
+        run = flag;
+        while (run) {
 
             String utterance = jsgfRecognizer.getResult().getHypothesis();
-            ctrlGui.setWords(utterance);
-            if (utterance.equals(list.get(0)))
+            listener.wordRecognized(utterance);
+
+
+            if(find(utterance))
             {
-                break;
+                exitController();
+                return utterance;
+            }
+
+
+            else if (utterance.equals(list.get(0)))
+            {
+                super.runApplications("cmd /c start " + "C:" + "Viano/Applications/PaintNet.lnk");
+                return utterance;
             }
 
             else if (utterance.equals(list.get(1)))
             {
-                super.keyboardControl(jsgfRecognizer, config, ctrlGui, Master.getKeyBoardWords());
-                setGrammar("apps", config, jsgfRecognizer);
-                ctrlGui.setImage("keyboard");
-                ctrlGui.setImage("games active");
-            }
 
-            else if (utterance.equals(list.get(2)))
-            {
-                super.mouseControl(jsgfRecognizer, config, ctrlGui, Master.getMouseWords(), 15);
+                racingCtrl(jsgfRecognizer, config, racing);
                 setGrammar("apps", config, jsgfRecognizer);
-                ctrlGui.setImage("mouse");
-                ctrlGui.setImage("games active");
-            }
-
-            else if (utterance.equals(list.get(3)))
-            {
-                super.runApplications("cmd /c start " + "C:" + "Viano/Applications/PaintNet.lnk");
-                ctrlGui.setImage("paint");
-                commandOfPaint(jsgfRecognizer, config, ctrlGui, paint);
-                setGrammar("apps", config, jsgfRecognizer);
-                ctrlGui.setImage("games active");
-            }
-
-            else if (utterance.equals(list.get(4)))
-            {
-
-                racingCtrl(jsgfRecognizer, config, ctrlGui, racing);
-                setGrammar("apps", config, jsgfRecognizer);
-                ctrlGui.setImage("games active");
+                listener.setImage("games active");
             }
 
 
         }
 
-
+        return "";
     }
 
-    public void setList(List<String> list) {
-        this.paint = list;
-    }
-    public void setListR(List<String> list) {
-        this.racing = list;
-    }
+
+
 
 
     /*
@@ -107,14 +95,14 @@ public class AppsCtrl extends AbstractController implements VoiceControl {
                   11 ,"вверх"
                   12 ,"вниз"
      */
-    private void racingCtrl(LiveSpeechRecognizer jsgfRecognizer, Configuration config, CtrlGui ctrlGui, List list) {
+    private void racingCtrl(LiveSpeechRecognizer jsgfRecognizer, Configuration config, List list) {
         setGrammar("racing", config, jsgfRecognizer);
-        ctrlGui.setImage("racing");
+        listener.setImage("racing");
         super.runApplications("cmd /c start " + "C:" + "Viano/Applications/BurnoutLauncher.lnk");
         while (true) {
 
             String utterance = jsgfRecognizer.getResult().getHypothesis();
-            ctrlGui.setWords(utterance);
+            listener.wordRecognized(utterance);
 
             if (utterance.equals(list.get(0)))
             {
@@ -158,7 +146,7 @@ public class AppsCtrl extends AbstractController implements VoiceControl {
             }
             else if (search(utterance, list, 1, 3))
             {
-                Thread thread = new Thread(new Stop(jsgfRecognizer, config, ctrlGui, list));
+                Thread thread = new Thread(new Stop(jsgfRecognizer, config,listener, list));
                 thread.start();
                 Stop.utterance = utterance;
                 while (true) {
@@ -208,16 +196,16 @@ public class AppsCtrl extends AbstractController implements VoiceControl {
     {
             LiveSpeechRecognizer recognizer;
     Configuration configuration;
-    CtrlGui gui;
+        RecognitionListener listener;
     List list;
     static String utterance = "" ;
     static String str = "";
 
-    public   Stop(LiveSpeechRecognizer recognizer,Configuration configuration,CtrlGui gui,List list)
+    public   Stop(LiveSpeechRecognizer recognizer,Configuration configuration,RecognitionListener listener,List list)
     {
         this.recognizer = recognizer;
         this.configuration = configuration;
-        this.gui = gui;
+        this.listener = listener;
         this.list = list;
     }
 
@@ -228,7 +216,7 @@ public class AppsCtrl extends AbstractController implements VoiceControl {
         {
             str = utterance;
             utterance = recognizer.getResult().getHypothesis();
-            gui.setWords(utterance);
+            listener.wordRecognized(utterance);
             if(utterance.equals("<unk>"))
             {
                 utterance=str;
@@ -250,70 +238,10 @@ public class AppsCtrl extends AbstractController implements VoiceControl {
         robot.delay(delay);
         robot.keyRelease(key);
     }
-    private void commandOfPaint(LiveSpeechRecognizer jsgfRecognizer,Configuration config,CtrlGui ctrlGui,List list ) {
-        setGrammar("paint", config, jsgfRecognizer);
 
-        while (true) {
-
-            String utterance = jsgfRecognizer.getResult().getHypothesis();
-            ctrlGui.setWords(utterance);
-            if (utterance.equals(list.get(0)))
-            {
-                break;
-            }
-            else if (utterance.equals(list.get(1)))
-            {
-                super.keyboardControl(jsgfRecognizer, config, ctrlGui, Master.getKeyBoardWords());
-                setGrammar("paint", config, jsgfRecognizer);
-                ctrlGui.setImage("keyboard");
-                ctrlGui.setImage("paint");
-            }
-            else if (utterance.equals(list.get(2)))
-            {
-                super.mouseControl(jsgfRecognizer, config, ctrlGui, Master.getMouseWords(), 25);
-                setGrammar("paint", config, jsgfRecognizer);
-                ctrlGui.setImage("mouse");
-                ctrlGui.setImage("paint");
-            }
-            else if (utterance.equals(list.get(3))) //открыть
-            {
-                super.twoButtonPress(KeyEvent.VK_CONTROL, KeyEvent.VK_O);
-            }
-            else if (utterance.equals(list.get(4))) //сохранить
-            {
-                super.twoButtonPress(KeyEvent.VK_CONTROL, KeyEvent.VK_S);
-            }
-            else if (utterance.equals(list.get(5))) //обрезать
-            {
-                robot.keyPress(KeyEvent.VK_CONTROL);
-                robot.keyPress(KeyEvent.VK_SHIFT);
-                robot.keyPress(KeyEvent.VK_X);
-
-                robot.keyRelease(KeyEvent.VK_CONTROL);
-                robot.keyRelease(KeyEvent.VK_SHIFT);
-                robot.keyRelease(KeyEvent.VK_X);
-            }
-            else if (utterance.equals(list.get(6))) //размер
-            {
-                super.twoButtonPress(KeyEvent.VK_CONTROL, KeyEvent.VK_R);
-            }
-            else if (utterance.equals(list.get(7))) //фоторедактор
-            {
-                try {
-                    Runtime.getRuntime().exec("cmd /c start "+ "C:" + "Viano/Applications/PaintNet.lnk");;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            else if (utterance.equals(list.get(8))) //меню
-            {
-                super.oneButtonPress(KeyEvent.VK_ALT);
-            }
-
-
-
-        }
+    @Override
+    public void exitController() {
+        listener.setImage("games");
     }
-
 
 }

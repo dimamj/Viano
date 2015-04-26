@@ -1,6 +1,8 @@
 package View;
 
 import Models.Master;
+import Models.RecognitionListener;
+import Presenter.VPresenter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -90,9 +92,11 @@ public class CtrlGui extends JFrame {
 
     public void setImage(String key)
     {
+
         if (key=="computer active")
         {
-            TextArea.setText(textEdit(Master.Computer_Words));
+
+            TextArea.setText(textEdit(VPresenter.getConfig().Computer_Words));
             comp.setIcon(iconcompActive);
         }
         else if(key=="computer")
@@ -101,7 +105,7 @@ public class CtrlGui extends JFrame {
         }
         else if(key=="mouse active")
         {
-            TextArea.setText(textEdit(Master.Mouse_Words));
+            TextArea.setText(textEdit(VPresenter.getConfig().Mouse_Words));
             mouse.setIcon(mouseIconActive);
         }
         else if(key=="mouse")
@@ -110,7 +114,7 @@ public class CtrlGui extends JFrame {
         }
         else if(key=="keyboard active")
         {
-            TextArea.setText(textEdit(Master.KeyBoard_Words));
+            TextArea.setText(textEdit(VPresenter.getConfig().KeyBoard_Words));
             keyboard.setIcon(keyboardIconActive);
         }
         else if(key=="keyboard")
@@ -119,7 +123,7 @@ public class CtrlGui extends JFrame {
         }
         else if(key=="internet active")
         {
-            TextArea.setText(textEdit(Master.Internet_Words));
+            TextArea.setText(textEdit(VPresenter.getConfig().Internet_Words));
             internet.setIcon(internetIconActive);
         }
         else if(key=="internet")
@@ -128,7 +132,7 @@ public class CtrlGui extends JFrame {
         }
         else if(key=="games active")
         {
-            TextArea.setText(textEdit(Master.Applications_Words));
+            TextArea.setText(textEdit(VPresenter.getConfig().Applications_Words));
             games.setIcon(gamesIconActive);
         }
         else if(key=="games")
@@ -137,11 +141,11 @@ public class CtrlGui extends JFrame {
         }
         else if (key.equals("paint"))
         {
-            TextArea.setText(textEdit(Master.Paint_Words));
+            TextArea.setText(textEdit(VPresenter.getConfig().Paint_Words));
         }
         else if (key.equals("racing"))
         {
-            TextArea.setText(textEdit(Master.Racing_Words));
+            TextArea.setText(textEdit(VPresenter.getConfig().Racing_Words));
         }
         else
         {
@@ -196,14 +200,14 @@ public class CtrlGui extends JFrame {
                 TrayIcon.MessageType.INFO);
     }
 
-    public static  void setTreyMessage(String s)
+    public  void setTreyMessage(String s)
     {
         trayIcon.displayMessage("Viano", s,
                 TrayIcon.MessageType.INFO);
 
     }
 
-    public static void setErrorTreyMessage(String s)
+    public  void setErrorTreyMessage(String s)
     {
         trayIcon.displayMessage("Viano", s,
                 TrayIcon.MessageType.ERROR);
@@ -212,8 +216,10 @@ public class CtrlGui extends JFrame {
 
     private void setDefaultTextArea()
     {
-        TextArea.setText(textEdit(Master.Master_Words));
+       TextArea.setText(textEdit(VPresenter.getConfig().Master_Words));
     }
+
+
 
 
     private String textEdit(List<String> list)

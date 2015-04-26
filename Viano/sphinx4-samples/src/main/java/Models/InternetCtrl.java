@@ -15,10 +15,11 @@ import java.util.List;
 /**
  * Created by dimamj on 14.01.2015.
  */
-public class InternetCtrl extends AbstractController implements VoiceControl {
+public class InternetCtrl extends AbstractController {
 
     private static final InternetCtrl instance = new InternetCtrl();
     private List<String> conf = new ArrayList<String>();
+    public    List<String> Internet_Words = config.Internet_Words;
     private static final String LANGUAGE_MODEL =
             "resource:/gram_rus/lmbase.lm";
 
@@ -65,56 +66,58 @@ public class InternetCtrl extends AbstractController implements VoiceControl {
     }
 
 
-    public void startVoiceControl(LiveSpeechRecognizer jsgfRecognizer,Configuration config, CtrlGui ctrlGui,List list) {
-        ctrlGui.setImage("internet active");
+    @Override
+    public void exitController() {
+        listener.setImage("internet");
+    }
+
+    public String startVoiceControl(LiveSpeechRecognizer jsgfRecognizer,Configuration config,Boolean flag) {
+        listener.setImage("internet active");
         setGrammar("internet",config,jsgfRecognizer);
+        List<String> list = Internet_Words;
+
         while (true) {
 
             String utterance = jsgfRecognizer.getResult().getHypothesis();
-            ctrlGui.setWords(utterance);
-            if (utterance.equals(list.get(0)))
+            listener.wordRecognized(utterance);
+
+            if(find(utterance))
             {
-                break;
+                exitController();
+                return utterance;
+            }
+
+            else if (utterance.equals(list.get(0)))
+            {
+                exitController();
+                MouseController.getInstance().setSpeed(20);
+                return utterance;
             }
             else if (utterance.equals(list.get(1)))
             {
-                super.keyboardControl(jsgfRecognizer, config, ctrlGui, Master.getKeyBoardWords());
-                setGrammar("internet",config,jsgfRecognizer);
-                ctrlGui.setImage("keyboard");
-                ctrlGui.setImage("internet active");
+                openURL("google.com");
             }
             else if (utterance.equals(list.get(2)))
             {
-                super.mouseControl(jsgfRecognizer, config, ctrlGui, Master.getMouseWords(), 20);
-                setGrammar("internet",config,jsgfRecognizer);
-                ctrlGui.setImage("mouse");
-                ctrlGui.setImage("internet active");
+                openURL(conf.get(1));
             }
             else if (utterance.equals(list.get(3)))
             {
-                openURL("google.com");
-            }
-            else if (utterance.equals(list.get(4)))
-            {
-                openURL(conf.get(1));
-            }
-            else if (utterance.equals(list.get(5)))
-            {
                 openURL(conf.get(2));
             }
-            else if (utterance.equals(list.get(6))) //VK
+            else if (utterance.equals(list.get(4))) //VK
             {
                 openURL("vk.com");
             }
-            else if (utterance.equals(list.get(7))) //FaceBook
+            else if (utterance.equals(list.get(5))) //FaceBook
             {
                 openURL("facebook.com");
             }
-            else if (utterance.equals(list.get(8))) //Odn.
+            else if (utterance.equals(list.get(6))) //Odn.
             {
                 openURL("odnoklassniki.ru");
             }
-            else if (utterance.equals(list.get(9)))
+            else if (utterance.equals(list.get(7)))
             {
                /* setGrammar("full",config,jsgfRecognizer);
                 while(true)
@@ -131,17 +134,17 @@ public class InternetCtrl extends AbstractController implements VoiceControl {
               */
             }
 
-            else if (utterance.equals(list.get(10))) //keyboard
+            else if (utterance.equals(list.get(8))) //keyboard
             {
                 try {
                     Runtime.getRuntime().exec("cmd /c start " + "osk.exe");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                screenKeyBoard(jsgfRecognizer,config,ctrlGui,list);
+                screenKeyBoard(jsgfRecognizer, config, list);
             }
 
-            else if (utterance.equals(list.get(11))) //Okey Google
+            else if (utterance.equals(list.get(9))) //Okey Google
             {
                 robot.keyPress(KeyEvent.VK_CONTROL);
                 robot.keyPress(KeyEvent.VK_SHIFT);
@@ -150,33 +153,30 @@ public class InternetCtrl extends AbstractController implements VoiceControl {
                 robot.keyRelease(KeyEvent.VK_CONTROL);
                 robot.keyRelease(KeyEvent.VK_SHIFT);
                 robot.keyRelease(KeyEvent.VK_PERIOD);
-            }
-            else if (utterance.equals(list.get(12))) //обратно
+            } else if (utterance.equals(list.get(10))) //обратно
             {
                super.twoButtonPress(KeyEvent.VK_ALT, KeyEvent.VK_LEFT);
-            }
-            else if (utterance.equals(list.get(13))) //вперед
+            } else if (utterance.equals(list.get(11))) //вперед
             {
                 super.twoButtonPress(KeyEvent.VK_ALT, KeyEvent.VK_RIGHT);
-            }
-            else if (utterance.equals(list.get(14))) //обновить
+            } else if (utterance.equals(list.get(12))) //обновить
             {
                 super.oneButtonPress(KeyEvent.VK_F5);
-            }
-            else if (utterance.equals(list.get(15))) //закрыть вкладку
+            } else if (utterance.equals(list.get(13))) //закрыть вкладку
             {
                 super.twoButtonPress(KeyEvent.VK_CONTROL, KeyEvent.VK_W);
-            }
-            else if (utterance.equals(list.get(16))) //online films
+            } else if (utterance.equals(list.get(14))) //online films
             {
                 openURL(conf.get(3));
             }
-            else if (utterance.equals(list.get(17))) //torrent
+            else if (utterance.equals(list.get(15))) //torrent
             {
                 openURL(conf.get(4));
             }
 
         }
+
+
 
     }
     public void setConfig(List<String> list)
@@ -184,17 +184,17 @@ public class InternetCtrl extends AbstractController implements VoiceControl {
         conf = list;
     }
 
-    private void screenKeyBoard(LiveSpeechRecognizer jsgfRecognizer,Configuration config,CtrlGui ctrlGui,List list)
+    private void screenKeyBoard(LiveSpeechRecognizer jsgfRecognizer,Configuration config,List list)
     {
         while (true) {
             String utterance = jsgfRecognizer.getResult().getHypothesis();
-            ctrlGui.setWords(utterance);
+            listener.wordRecognized(utterance);
 
              if (utterance.equals(list.get(2)))
             {
-                super.mouseControl(jsgfRecognizer, config, ctrlGui, Master.getMouseWords(), 35);
-                setGrammar("internet",config,jsgfRecognizer);
-                ctrlGui.setImage("mouse");
+               // super.mouseControl(jsgfRecognizer, config, 35);
+               // setGrammar("internet",config,jsgfRecognizer);
+               // listener.setImage("internet active");
             }
             else    if (utterance.equals(list.get(0)))
              {

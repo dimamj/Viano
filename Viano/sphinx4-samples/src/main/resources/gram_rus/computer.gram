@@ -7,7 +7,7 @@ grammar computer;
 
 <menu_command> = назад ;
 
-<standard> = клавиатура | мышь;
+<standard> = клавиатура|мышь|мастер|компьютер|интернет|приложения  ;
 
 
 public <command> = <menu_command>|<standard>|<applications>;

@@ -7,5 +7,6 @@ grammar mouse;
 
 <menu_command> = правый and  клик|левый and клик|двойной and клик|назад|пауза|колесико|зажать|отмена;
 <arr> = двенадцать|один|три|четыре|шесть|семь|девять|десять ;
+<standard> = клавиатура|мышь|мастер|компьютер|интернет|приложения  ;
 
-public <command> = <menu_command>|<arr>;
+public <command> = <menu_command>|<arr>|<standard>;

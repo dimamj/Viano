@@ -45,7 +45,7 @@ public class Settings extends JFrame {
                 }
                 else
                 {
-                    CtrlGui.setErrorTreyMessage("Error:URL is empty!");
+                   // CtrlGui.setErrorTreyMessage("Error:URL is empty!");!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 }
 
             }
