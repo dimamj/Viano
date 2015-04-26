@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class MouseController extends AbstractController{
 
-    private int speed = 0;
+    private int speed = 15;
 
 
     private static final MouseController instance = new MouseController();

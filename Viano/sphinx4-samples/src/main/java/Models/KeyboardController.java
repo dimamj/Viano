@@ -72,7 +72,7 @@ public class KeyboardController extends AbstractController {
 
                 else if (utterance.equals(list.get(19)))
                 {
-                    MouseController.getInstance().setSpeed(15);
+                    listener.setSpeedCursor(15);
                     exitController();
                     return utterance;
                 }

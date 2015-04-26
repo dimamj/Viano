@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by dimamj on 16.01.2015.
  */
-public class CtrlGui extends JFrame {
+public class CtrlGui extends JFrame implements ViewInterface {
     private JPanel panel;
     private JTextArea TextArea;
     private JTextField textField1;
@@ -77,6 +77,7 @@ public class CtrlGui extends JFrame {
             setVisible(true);
         }
     }
+
 
     public  void setWords(String words)
     {
@@ -207,6 +208,7 @@ public class CtrlGui extends JFrame {
 
     }
 
+    @Override
     public  void setErrorTreyMessage(String s)
     {
         trayIcon.displayMessage("Viano", s,
@@ -214,6 +216,12 @@ public class CtrlGui extends JFrame {
 
     }
 
+    public static void setErrorTM(String s)
+    {
+        trayIcon.displayMessage("Viano", s,
+                TrayIcon.MessageType.ERROR);
+
+    }
     private void setDefaultTextArea()
     {
        TextArea.setText(textEdit(VPresenter.getConfig().Master_Words));
@@ -233,5 +241,30 @@ public class CtrlGui extends JFrame {
     }
     private void createUIComponents() {
         // TODO: place custom component creation code here
+    }
+
+    @Override
+    public void setText(List<String> list) {
+
+    }
+
+    @Override
+    public Boolean getEdit() {
+        return null;
+    }
+
+    @Override
+    public void setProgressVisible() {
+
+    }
+
+    @Override
+    public void disposeElements() {
+
+    }
+
+    @Override
+    public String getText() {
+        return null;
     }
 }

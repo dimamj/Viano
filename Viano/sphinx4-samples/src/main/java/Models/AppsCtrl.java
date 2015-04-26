@@ -28,10 +28,8 @@ public class AppsCtrl extends AbstractController  {
 
 
     {  /*
-                    1 "назад"
-                    2 ,"клавиатура"
-                    3 ,"мышь"
-                    4 ,"фоторедактор"
+                  фоторедактор
+                  гонки
 
      */
     }

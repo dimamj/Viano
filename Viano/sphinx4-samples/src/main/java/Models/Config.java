@@ -1,8 +1,8 @@
 package Models;
 
 import Presenter.VPresenter;
-import View.Gui;
-import View.Settings;
+
+
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.LiveSpeechRecognizer;
 
@@ -14,7 +14,6 @@ import java.util.List;
  * Created by dimamj on 25.04.2015.
  */
 public class Config {
-
 
     private static final String ACOUSTIC_MODEL_ENG =
             "resource:/edu/cmu/sphinx/models/en-us/en-us";
@@ -39,23 +38,24 @@ public class Config {
     public    List<String> Paint_Words = new ArrayList<String>();
     public    List<String> Racing_Words = new ArrayList<String>();
     public    List<String> Modules_Words = new ArrayList<String>();
-    static  List<String> conf  = new ArrayList<String>();
+    public  static   List<String> confList  = new ArrayList<String>();
 
     private     String WeatherURL = "google.com.ua/search?q=weather";
     private     String NewsURL = "ukr.net";
     private     String startupFlag = "false";
     private     String FilmsURL = "kinogo.net";
     private     String TorrentURL = "rutorg.org";
-    static Gui gui;
-    static VPresenter presenter;
-    static Settings settings;
     private  String filecontain = "";
     private  String path = "C:"+ File.separator+ "Viano" +File.separator+"language.txt";
     private static String pathconfig = "C:"+ File.separator+ "Viano" +File.separator+"config.txt";
 
     private  edu.cmu.sphinx.api.Configuration configuration;
 
+    public void setListener(RecognitionListener listener) {
+        this.listener = listener;
+    }
 
+    private  RecognitionListener listener;
   //  private  static  InternetCtrl internetCtrl = InternetCtrl.getInstance();!!!!!!!!!!!!!!!!!!!!
 
 
@@ -74,9 +74,9 @@ public class Config {
         String flag = "";
         System.out.println("Enter 1 or 2:");
         while(true) {
-            flag = gui.setText();
+            flag = listener.getText("start");
             if (flag.equals("1"))
-            {   gui.setProgressVisible();
+            {   listener.setProgressVisible();
                 createFolders();
                 loadLabels(mediaLink, mediaPath);
                 loadLabels(paintNetLink,paintNetPath);
@@ -86,7 +86,7 @@ public class Config {
                 break;
             }
             else if(flag.equals("2"))
-            {   gui.setProgressVisible();
+            {   listener.setProgressVisible();
                 createFolders();
                 loadLabels(mediaLink, mediaPath);
                 loadLabels(paintNetLink, paintNetPath);
@@ -120,9 +120,9 @@ public class Config {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if(gui!=null) {
-            gui.dispose();
-        }
+
+            listener.disposeGui("start");
+
         filecontain = read(path);
         if (filecontain.equals("english"))
         {
@@ -131,15 +131,20 @@ public class Config {
         else if(filecontain.equals("russian"))
         {
             loadWords(filecontain);
-            conf  = readMas(pathconfig);
+            confList  = readMas(pathconfig);
             //internetCtrl.setConfig(conf);!!!!!!!!!!!!!!!!!!!!!!!
         }
         return recognizer;
 
     }
 
+    public static List<String> getConfList() {
+        return confList;
+    }
+
     private  void createFolders()
     {
+
         File myPath = new File("C:/Viano/Applications/");
         myPath.mkdirs();
         myPath = new File("C:/Viano/Photo/");
@@ -290,7 +295,7 @@ public class Config {
         System.out.println(filecontain);
         return filecontain;
     }
-    public static List<String> readMas(String path)
+    public  List<String> readMas(String path)
     {
         BufferedReader reader;
 
@@ -300,7 +305,7 @@ public class Config {
                 String s;
                 int i = 0;
                 while ((s=reader.readLine()) != null) {
-                    conf.add(i,s);
+                    confList.add(i,s);
                     i++;
                 }
                 reader.close();
@@ -309,7 +314,7 @@ public class Config {
             catch (Exception e) {createFile(path);}
         }
 
-        return conf;
+        return confList;
     }
     public  void wtite(String path,String language)
     {
@@ -326,23 +331,22 @@ public class Config {
     public  LiveSpeechRecognizer beginSettings(LiveSpeechRecognizer recognizer)
     {
 
-
         filecontain = read(path);
 
         if (filecontain.isEmpty())
-        {    gui = new Gui();
+        {
             recognizer = loadFirstModel(recognizer);
         }
         else if (filecontain.equals("english"))
-        {   gui = new Gui();
-            gui.disposeElements();
-            gui.setProgressVisible();
+        {
+            listener.disposeElements("start");
+            listener.setProgressVisible();
             recognizer =  loadLanguageModel(recognizer, ACOUSTIC_MODEL_ENG, DICTIONARY_PATH_ENG, GRAMMAR_PATH_ENG);
         }
         else if(filecontain.equals("russian"))
-        {   gui = new Gui();
-            gui.disposeElements();
-            gui.setProgressVisible();
+        {
+            listener.disposeElements("start");
+            listener.setProgressVisible();
             recognizer = loadLanguageModel(recognizer,ACOUSTIC_MODEL_RUS,DICTIONARY_PATH_RUS,GRAMMAR_PATH_RUS);
         }
         return recognizer;

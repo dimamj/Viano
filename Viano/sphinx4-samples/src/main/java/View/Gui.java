@@ -4,11 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.*;
+import java.util.List;
 
 /**
  * Created by dimamj on 16.01.2015.
  */
-public class Gui extends JFrame{
+public class Gui extends JFrame implements ViewInterface{
 
     private JPanel panel;
     private JLabel label1;
@@ -61,6 +63,16 @@ public class Gui extends JFrame{
         setVisible(true);
     }
 
+    @Override
+    public void setText(List<String> list) {
+
+    }
+
+    @Override
+    public Boolean getEdit() {
+        return null;
+    }
+
     public void setProgressVisible()
     {
         progressBar1.setVisible(true);
@@ -73,13 +85,33 @@ public class Gui extends JFrame{
         TextArea.setVisible(false);
     }
 
-    public String setText()
+    public String getText()
     { text = "";
         while (text=="")
         {
 
         }
         return this.text;
+    }
+
+    @Override
+    public void setErrorTreyMessage(String message) {
+
+    }
+
+    @Override
+    public void setWords(String words) {
+
+    }
+
+    @Override
+    public void setImage(String key) {
+
+    }
+
+    @Override
+    public void setLanguageText(String key) {
+
     }
 
     private void createUIComponents() {

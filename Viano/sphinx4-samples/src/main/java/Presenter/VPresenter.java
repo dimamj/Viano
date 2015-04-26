@@ -2,6 +2,9 @@ package Presenter;
 
 import Models.*;
 import View.CtrlGui;
+import View.Gui;
+import View.Settings;
+import View.ViewInterface;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.LiveSpeechRecognizer;
 
@@ -13,22 +16,15 @@ import java.util.List;
  */
 public class VPresenter {
 
-    VoiceControl voiceControl;
-    CtrlGui gui;
+    ViewInterface gui;
+    ViewInterface startGui;
+    ViewInterface settingsGui;
     LiveSpeechRecognizer recognizer;
     Configuration configuration;
     List list;
     static Config config;
     AbstractController master;
     List<String> MWords;
-
-    public VPresenter(VoiceControl voiceControl, CtrlGui gui) {
-        this.voiceControl = voiceControl;
-        this.gui = gui;
-
-
-
-    }
 
     public VPresenter()
     {
@@ -37,15 +33,26 @@ public class VPresenter {
 
     private void init()
     {
-        config = new Config();
-        recognizer = config.beginSettings(recognizer);
-
-        master = Master.getInstance();
-        master.setListener(new RecognitionListener() {
+        RecognitionListener listener = new RecognitionListener() {
 
             @Override
             public void wordRecognized(String word) {
                 gui.setWords(word);
+            }
+
+            @Override
+            public void disposeGui(String view) {
+                getView(view).dispose();
+            }
+
+            @Override
+            public void createSettingsGui() {
+               settingsGui =  new Settings();
+            }
+
+            @Override
+            public Boolean getEdit(String view) {
+                return getView(view).getEdit();
             }
 
             @Override
@@ -56,11 +63,48 @@ public class VPresenter {
             @Override
             public String goModel(String nextModel) {
 
-             return  getModel(nextModel).startVoiceControl(recognizer,configuration,true);
+                return  getModel(nextModel).startVoiceControl(recognizer,configuration,true);
 
             }
 
-        });
+            @Override
+            public void setSpeedCursor(int speed) {
+                if(speed>0)
+                    MouseController.getInstance().setSpeed(speed);
+
+            }
+
+            @Override
+            public String getText(String view)
+            {
+                return getView(view).getText();
+            }
+
+            @Override
+            public void setText(String view, List<String> list) {
+                getView(view).setText(list);
+            }
+
+            @Override
+            public void setProgressVisible()
+            {
+                startGui.setProgressVisible();
+            }
+
+            @Override
+            public void disposeElements(String view)
+            {
+                getView(view).disposeElements();
+            }
+        };
+        config = new Config();
+        config.setListener(listener);
+        startGui = new Gui();
+        recognizer = config.beginSettings(recognizer);
+
+        master = Master.getInstance();
+        master.setListener(listener);
+
 
         configuration = config.getConfiguration();
         MWords = config.Modules_Words;
@@ -76,12 +120,16 @@ public class VPresenter {
 
         }
 
-
-
     }
 
     public static Config getConfig() {
         return config;
+    }
+
+
+    public List<String> getConfigList()
+    {
+       return config.getConfList();
     }
 
     private void error(String str)
@@ -108,30 +156,12 @@ public class VPresenter {
                 str.equals(MWords.get(6)) ? PaintCtrl.getInstance() : master;
     }
 
-
-    public void setWords(String text)
+    public ViewInterface getView(String str)
     {
-        gui.setWords(text);
+        return  str.equals("start") ? startGui:
+                str.equals("main") ? gui:
+                str.equals("setting") ? settingsGui:null;
     }
 
 
-    public void setLanguageText(String key)
-    {
-        gui.setLanguageText(key);
-    }
-
-    public void setTreyMessage(String s)
-    {
-        gui.setTreyMessage(s);
-    }
-
-    public void disposeGui()
-    {
-        gui.dispose();
-    }
-
-    public  void setErrorTreyMessage(String s)
-    {
-//        gui.
-    }
 }

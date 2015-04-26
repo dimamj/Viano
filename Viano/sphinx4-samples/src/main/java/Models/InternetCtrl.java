@@ -18,7 +18,6 @@ import java.util.List;
 public class InternetCtrl extends AbstractController {
 
     private static final InternetCtrl instance = new InternetCtrl();
-    private List<String> conf = new ArrayList<String>();
     public    List<String> Internet_Words = config.Internet_Words;
     private static final String LANGUAGE_MODEL =
             "resource:/gram_rus/lmbase.lm";
@@ -89,8 +88,8 @@ public class InternetCtrl extends AbstractController {
 
             else if (utterance.equals(list.get(0)))
             {
+                listener.setSpeedCursor(20);
                 exitController();
-                MouseController.getInstance().setSpeed(20);
                 return utterance;
             }
             else if (utterance.equals(list.get(1)))
@@ -179,10 +178,7 @@ public class InternetCtrl extends AbstractController {
 
 
     }
-    public void setConfig(List<String> list)
-    {
-        conf = list;
-    }
+
 
     private void screenKeyBoard(LiveSpeechRecognizer jsgfRecognizer,Configuration config,List list)
     {

@@ -62,7 +62,7 @@ public class PaintCtrl extends AbstractController{
 
                 else if (utterance.equals(list.get(0)))
                 {
-                    MouseController.getInstance().setSpeed(20);
+                    listener.setSpeedCursor(20);
                     exitController();
                     return utterance;
                 }

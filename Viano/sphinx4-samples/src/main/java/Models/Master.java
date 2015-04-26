@@ -31,9 +31,6 @@ import java.util.List;
 
 public class Master extends AbstractController {
 
-    {
-        setConfig(VPresenter.getConfig());
-    }
 
     private static final Master instance = new Master();
 
@@ -48,7 +45,6 @@ public class Master extends AbstractController {
     static Boolean flag = false;
 
     public    List<String> Master_Words = config.Master_Words;
-    static  List<String> conf  = new ArrayList<String>();
 
     private     String WeatherURL = "google.com.ua/search?q=weather";
     private     String NewsURL = "ukr.net";
@@ -56,8 +52,6 @@ public class Master extends AbstractController {
     private     String FilmsURL = "kinogo.net";
     private     String TorrentURL = "rutorg.org";
 
-
-    static Settings settings;
     private  String filecontain = "";
     private  String path = "C:"+ File.separator+ "Viano" +File.separator+"language.txt";
     private static String pathconfig = "C:"+ File.separator+ "Viano" +File.separator+"config.txt";
@@ -92,10 +86,10 @@ public class Master extends AbstractController {
             setGrammar("master", configuration, jsgfRecognizer);
             listener.setImage("");
 
-
         while (run) {
-            String utterance = jsgfRecognizer.getResult().getHypothesis();
-          //  ctrlGui.setWords(utterance);
+
+            String  utterance = jsgfRecognizer.getResult().getHypothesis();
+
             listener.wordRecognized(utterance);
 
             if(find(utterance))
@@ -105,7 +99,7 @@ public class Master extends AbstractController {
 
             else if (utterance.equals(Master_Words.get(4)))//Mouse
             {
-                MouseController.getInstance().setSpeed(15);
+                listener.setSpeedCursor(15);
                 exitController();
                 return utterance;
             }
@@ -126,16 +120,13 @@ public class Master extends AbstractController {
                     /*NOP*/
                 }
             }
-            else if (utterance.equals("закрыть"))
-            {
-                break;
-            }
+
             else if (utterance.equals(Master_Words.get(6))) //Settings
             {
-                settings = new Settings();
-                settings.setText(conf.get(1),conf.get(2),conf.get(0),conf.get(3),conf.get(4));
-             /*   Thread thread = new Thread(new Parameters());//////////////////////////////////////
-                thread.start();*/
+                listener.createSettingsGui();
+                listener.setText("setting",conf);
+                Thread thread = new Thread(new Parameters());//////////////////////////////////////
+                thread.start();
             }
             else if (utterance.equals(Master_Words.get(7)))
             {
@@ -194,21 +185,20 @@ public class Master extends AbstractController {
 
 
 
-    /*
+
     private static class Parameters implements Runnable
     {
         @Override
         public void run() {
             while (true)
             {
-                if (settings.getEdit())
+                if (listener.getEdit("setting"))
                 {
-                    conf  = readMas(pathconfig);
-                    internetCtrl.setConfig(conf);
+                    conf  = config.readMas(pathconfig);
                     break;
                 }
             }
         }
     }
-    */
+
 }

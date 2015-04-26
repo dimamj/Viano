@@ -24,7 +24,14 @@ public abstract class AbstractController {
     protected Robot robot;
     protected static RecognitionListener listener;
     protected static Config config;
+
     protected Boolean run = false;
+
+    {
+        setConfig(VPresenter.getConfig());
+    }
+
+    protected static List<String> conf = config.getConfList();////////
 
     public  RecognitionListener getListener() {
         return listener;

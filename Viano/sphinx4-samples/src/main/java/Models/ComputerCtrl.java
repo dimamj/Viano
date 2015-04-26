@@ -84,7 +84,7 @@ public class ComputerCtrl extends AbstractController {
             }
             else if (utterance.equals(list.get(0)))
             {
-                MouseController.getInstance().setSpeed(15);
+                listener.setSpeedCursor(15);
                 exitController();
                 return utterance;
             }
