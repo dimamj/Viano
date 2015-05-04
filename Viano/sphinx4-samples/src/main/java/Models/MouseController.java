@@ -1,5 +1,6 @@
 package Models;
 
+import Presenter.RecognitionListener;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.LiveSpeechRecognizer;
 
@@ -68,13 +69,14 @@ public class MouseController extends AbstractController{
                 String utterance = recognizer.getResult().getHypothesis();
                 listener.wordRecognized(utterance);
 
+
                 if(find(utterance))
                 {
                     exitController();
                     return utterance;
                 }
 
-                if (search(utterance, list, 5,13))
+                if (search(utterance, list, 4,12))
                 {
                     MouseListenerStop mouseListener = new MouseListenerStop(recognizer,configuration,listener,list);
                     Thread thread = new Thread(mouseListener);
@@ -152,7 +154,7 @@ public class MouseController extends AbstractController{
                 }
 
 
-                else if (utterance.equals(list.get(0)))//right click
+                 if (utterance.equals(list.get(0)))//right click
                 {
                     mouseClick(InputEvent.BUTTON3_MASK);
                 }
@@ -171,7 +173,7 @@ public class MouseController extends AbstractController{
                 else if (utterance.equals(list.get(12)))//колесико
                 {
                     mouseClick(InputEvent.BUTTON2_MASK);
-
+                    System.out.println("OKEY!");
                     location = MouseInfo.getPointerInfo().getLocation();
                     double x = location.getX();
                     double y = location.getY();
@@ -181,6 +183,7 @@ public class MouseController extends AbstractController{
 
                 else if (utterance.equals(list.get(13)))//зажать
                 {
+                    System.out.println("OKEY!ЗАЖАТЬ");
                     robot.mousePress(InputEvent.BUTTON1_MASK);
                 }
 

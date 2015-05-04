@@ -17,6 +17,7 @@ public interface ViewInterface {
     void setLanguageText(String key);
     void dispose();
     void setErrorTreyMessage(String message);
+    void setLabel(String text);
 
 
 }

@@ -1,0 +1,8 @@
+#JSGF V1.0;
+
+grammar test;
+
+
+<standard> = клавиатура|мышь|мастер|компьютер|интернет|приложения|фоторедактор;
+
+public <command> = <standard>;

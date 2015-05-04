@@ -112,6 +112,11 @@ public class Settings extends JFrame implements ViewInterface {
     }
 
     @Override
+    public void setLabel(String text) {
+
+    }
+
+    @Override
     public void setErrorTreyMessage(String message) {
 
     }

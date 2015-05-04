@@ -1,7 +1,7 @@
 package Models;
 
+import Presenter.RecognitionListener;
 import Presenter.VPresenter;
-import View.CtrlGui;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.LiveSpeechRecognizer;
 
@@ -9,11 +9,9 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import java.awt.*;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,6 +59,10 @@ public abstract class AbstractController {
     {
         List<String> MWords = config.Modules_Words;
 
+        if(str.equals("виано")||str.equals("viano")){
+            showViano();
+        }
+
         return  str.equals(MWords.get(0)) ? true: //Master
                 str.equals(MWords.get(1)) ? true: //Computer
                 str.equals(MWords.get(2)) ? true: //Internet
@@ -78,6 +80,16 @@ public abstract class AbstractController {
         jsgfRecognizer.startRecognition(true);
     }
 
+    public void showViano() {
+
+            runApplications(this.getClass().getResource("/cmdow.exe").getPath() +" Viano /ACT");
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        twoButtonPress(KeyEvent.VK_WINDOWS, KeyEvent.VK_UP);
+    }
 
     public abstract void exitController();
 

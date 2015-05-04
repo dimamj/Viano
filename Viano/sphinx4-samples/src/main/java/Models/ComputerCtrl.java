@@ -65,7 +65,7 @@ public class ComputerCtrl extends AbstractController {
     }
 
     public String startVoiceControl(LiveSpeechRecognizer jsgfRecognizer,Configuration config,Boolean flag) {
-        run = flag;
+            run = flag;
 
             listener.setImage("computer active");
             setGrammar("computer", config, jsgfRecognizer);

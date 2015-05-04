@@ -1,7 +1,5 @@
 package View;
 
-import Models.Master;
-import Models.RecognitionListener;
 import Presenter.VPresenter;
 
 import javax.swing.*;
@@ -78,6 +76,11 @@ public class CtrlGui extends JFrame implements ViewInterface {
         }
     }
 
+
+    @Override
+    public void setLabel(String text) {
+
+    }
 
     public  void setWords(String words)
     {

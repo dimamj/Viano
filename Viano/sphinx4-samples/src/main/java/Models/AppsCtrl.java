@@ -1,12 +1,10 @@
 package Models;
 
-import View.CtrlGui;
+import Presenter.RecognitionListener;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.LiveSpeechRecognizer;
 
 import java.awt.event.KeyEvent;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

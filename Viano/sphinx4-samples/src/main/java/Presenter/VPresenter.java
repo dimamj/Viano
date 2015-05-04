@@ -1,14 +1,11 @@
 package Presenter;
 
 import Models.*;
-import View.CtrlGui;
-import View.Gui;
-import View.Settings;
-import View.ViewInterface;
+import Models.Test;
+import View.*;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.LiveSpeechRecognizer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,6 +16,7 @@ public class VPresenter {
     ViewInterface gui;
     ViewInterface startGui;
     ViewInterface settingsGui;
+    ViewInterface test;
     LiveSpeechRecognizer recognizer;
     Configuration configuration;
     List list;
@@ -36,9 +34,20 @@ public class VPresenter {
         RecognitionListener listener = new RecognitionListener() {
 
             @Override
+            public void setLabel(String text,String view) {
+                getView(view).setLabel(text);
+            }
+
+            @Override
             public void wordRecognized(String word) {
                 gui.setWords(word);
             }
+
+            @Override
+            public void testWord(String word) {
+                test.setWords(word);
+            }
+
 
             @Override
             public void disposeGui(String view) {
@@ -99,7 +108,7 @@ public class VPresenter {
         };
         config = new Config();
         config.setListener(listener);
-        startGui = new Gui();
+        startGui = new StartGui();
         recognizer = config.beginSettings(recognizer);
 
         master = Master.getInstance();
@@ -107,9 +116,17 @@ public class VPresenter {
 
 
         configuration = config.getConfiguration();
+
         MWords = config.Modules_Words;
         try {recognizer.startRecognition(true);}
         catch (Exception e){error(e.getMessage());}
+
+        if(config.getTest())
+        {
+            test = new View.Test();
+            Test.getInstance().startVoiceControl(recognizer, configuration, true);
+        }
+
         master.audio("/song.wav");
         gui = new CtrlGui(true);
         String next =  master.startVoiceControl(recognizer, configuration, true);
@@ -160,7 +177,8 @@ public class VPresenter {
     {
         return  str.equals("start") ? startGui:
                 str.equals("main") ? gui:
-                str.equals("setting") ? settingsGui:null;
+                str.equals("setting") ? settingsGui:
+                str.equals("test") ? test :null;
     }
 
 

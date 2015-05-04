@@ -12,20 +12,12 @@
 package Models;
 
 
-import Presenter.VPresenter;
-import View.CtrlGui;
-import View.Gui;
-import View.Settings;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.LiveSpeechRecognizer;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.*;
-import java.util.*;
 import java.util.List;
 
 

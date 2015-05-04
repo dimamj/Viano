@@ -1,6 +1,6 @@
 package Models;
 
-import Presenter.VPresenter;
+import Presenter.RecognitionListener;
 
 
 import edu.cmu.sphinx.api.Configuration;
@@ -56,6 +56,7 @@ public class Config {
     }
 
     private  RecognitionListener listener;
+    private  Boolean test;
   //  private  static  InternetCtrl internetCtrl = InternetCtrl.getInstance();!!!!!!!!!!!!!!!!!!!!
 
 
@@ -328,6 +329,11 @@ public class Config {
         }
 
     }
+
+    public Boolean getTest() {
+        return test;
+    }
+
     public  LiveSpeechRecognizer beginSettings(LiveSpeechRecognizer recognizer)
     {
 
@@ -335,16 +341,20 @@ public class Config {
 
         if (filecontain.isEmpty())
         {
+
+            test = true;
             recognizer = loadFirstModel(recognizer);
         }
         else if (filecontain.equals("english"))
         {
+            test = false;
             listener.disposeElements("start");
             listener.setProgressVisible();
             recognizer =  loadLanguageModel(recognizer, ACOUSTIC_MODEL_ENG, DICTIONARY_PATH_ENG, GRAMMAR_PATH_ENG);
         }
         else if(filecontain.equals("russian"))
         {
+            test = false;
             listener.disposeElements("start");
             listener.setProgressVisible();
             recognizer = loadLanguageModel(recognizer,ACOUSTIC_MODEL_RUS,DICTIONARY_PATH_RUS,GRAMMAR_PATH_RUS);
