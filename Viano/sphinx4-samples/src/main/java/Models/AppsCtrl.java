@@ -50,13 +50,6 @@ public class AppsCtrl extends AbstractController  {
                 exitController();
                 return utterance;
             }
-
-            else if (utterance.equals(list.get(0)))//Mouse
-            {
-                listener.setSpeedCursor(15);
-                exitController();
-                return utterance;
-            }
             else if (utterance.equals(list.get(1)))
             {
                 super.runApplications("cmd /c start " + "C:" + "Viano/Applications/PaintNet.lnk");

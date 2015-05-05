@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class MouseController extends AbstractController{
 
-    private int speed = 15;
+    private  int speed = 15;
 
 
     private static final MouseController instance = new MouseController();
@@ -52,8 +52,19 @@ public class MouseController extends AbstractController{
     }
 
 
-    public void setSpeed(int speed) {
-        this.speed = speed;
+    public void setSpeed(int speed,Boolean flag) {
+        if(this.speed==5&&speed<0)
+        {
+            this.speed=1;
+        }
+        if(this.speed==1&&speed<0) {
+            return;
+        }
+        if(flag) {
+            this.speed += speed;
+        } else {
+            this.speed = speed;
+        }
     }
 
     @Override
@@ -141,6 +152,7 @@ public class MouseController extends AbstractController{
                             y = location.getY()-1;
                             robot.mouseMove((int)x,(int)y);
                         }
+
 
                         try {
                             Thread.sleep(speed);
@@ -242,14 +254,32 @@ public class MouseController extends AbstractController{
                 {
                     utterance=str;
                 }
-                else if (search(utterance, list, 0,3))
+                else if (search(utterance, list, 0,3)||search(utterance,list,12,15))
                 {
                     utterance=str;
                 }
-                listener.wordRecognized(utterance);
+                else if (utterance.equals(list.get(15)))//уменьшить скорость
+                {
+                    listener.wordRecognized(utterance);
+                    utterance=str;
+                    MouseController.getInstance().setSpeed(5,true);
+
+                }
+
+                else if (utterance.equals(list.get(16)))//увеличить скорость
+                {
+                    listener.wordRecognized(utterance);
+                    utterance=str;
+                    MouseController.getInstance().setSpeed(-5,true);
+
+                }
+                else {
+                    listener.wordRecognized(utterance);
+                }
 
                 if (utterance.equals(list.get(3)))
                 {
+                    listener.wordRecognized(utterance);
                     break;
                 }
             }

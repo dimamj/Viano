@@ -74,7 +74,7 @@ public class InternetCtrl extends AbstractController {
         listener.setImage("internet active");
         setGrammar("internet",config,jsgfRecognizer);
         List<String> list = Internet_Words;
-
+        listener.setSpeedCursor(20,false);
         while (true) {
 
             String utterance = jsgfRecognizer.getResult().getHypothesis();
@@ -82,13 +82,6 @@ public class InternetCtrl extends AbstractController {
 
             if(find(utterance))
             {
-                exitController();
-                return utterance;
-            }
-
-            else if (utterance.equals(list.get(0)))
-            {
-                listener.setSpeedCursor(20);
                 exitController();
                 return utterance;
             }

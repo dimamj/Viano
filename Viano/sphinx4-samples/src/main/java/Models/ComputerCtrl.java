@@ -82,13 +82,6 @@ public class ComputerCtrl extends AbstractController {
                 exitController();
                 return utterance;
             }
-            else if (utterance.equals(list.get(0)))
-            {
-                listener.setSpeedCursor(15);
-                exitController();
-                return utterance;
-            }
-
             else if (utterance.equals(list.get(1)))
             {
                    twoButtonPress(KeyEvent.VK_WINDOWS, KeyEvent.VK_E);

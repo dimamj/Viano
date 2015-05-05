@@ -90,12 +90,6 @@ public class Master extends AbstractController {
                 return utterance;
             }
 
-            else if (utterance.equals(Master_Words.get(4)))//Mouse
-            {
-                listener.setSpeedCursor(15);
-                exitController();
-                return utterance;
-            }
             else if (utterance.equals(Master_Words.get(5))) //Shutdown
             {
                 try {

@@ -13,7 +13,7 @@ public interface RecognitionListener {
 
     String goModel(String nextModel);
 
-    public void setSpeedCursor(int speed);
+    public void setSpeedCursor(int speed,Boolean flag);
 
     public String getText(String view);
 

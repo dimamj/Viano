@@ -68,6 +68,7 @@ public abstract class AbstractController {
                 str.equals(MWords.get(2)) ? true: //Internet
                 str.equals(MWords.get(3)) ? true: //Apps
                 str.equals(MWords.get(4)) ? true: //Keyboard
+                str.equals(MWords.get(5)) ? true: //Mouse
                  false;
 
     }

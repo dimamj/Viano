@@ -5,6 +5,7 @@ import Models.Test;
 import View.*;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.LiveSpeechRecognizer;
+import edu.cmu.sphinx.result.BoundedPriorityQueue;
 
 import java.util.List;
 
@@ -71,9 +72,8 @@ public class VPresenter {
             }
 
             @Override
-            public void setSpeedCursor(int speed) {
-                if(speed>0)
-                    MouseController.getInstance().setSpeed(speed);
+            public void setSpeedCursor(int speed,Boolean flag) {
+                    MouseController.getInstance().setSpeed(speed,flag);
 
             }
 

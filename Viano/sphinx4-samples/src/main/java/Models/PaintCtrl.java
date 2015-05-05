@@ -45,7 +45,7 @@ public class PaintCtrl extends AbstractController{
     @Override
     public String startVoiceControl(LiveSpeechRecognizer jsgfRecognizer, Configuration config, Boolean flag) {
             run = flag;
-
+            listener.setSpeedCursor(20,false);
             listener.setImage("paint");
             setGrammar("paint", config, jsgfRecognizer);
 
@@ -56,13 +56,6 @@ public class PaintCtrl extends AbstractController{
 
                 if(find(utterance))
                 {
-                    exitController();
-                    return utterance;
-                }
-
-                else if (utterance.equals(list.get(0)))
-                {
-                    listener.setSpeedCursor(20);
                     exitController();
                     return utterance;
                 }

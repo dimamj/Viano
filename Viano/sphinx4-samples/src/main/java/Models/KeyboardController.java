@@ -69,14 +69,6 @@ public class KeyboardController extends AbstractController {
                     exitController();
                     return utterance;
                 }
-
-                else if (utterance.equals(list.get(19)))
-                {
-                    listener.setSpeedCursor(15);
-                    exitController();
-                    return utterance;
-                }
-
                 if (utterance.equals(list.get(0)))
                 {
                     oneButtonPress(KeyEvent.VK_UP);
