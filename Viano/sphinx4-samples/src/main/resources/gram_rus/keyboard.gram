@@ -8,5 +8,6 @@ grammar keyboard;
 <menu_command> = назад | свернуть | закрыть| войти|переключиться|пуск|диспетчер|таб|выход|пробел ;
 <file_command> = копирование|вставка|вырезать|отменить|удалить|выделить and все;
 <arrows> = вверх | вниз | вправо | влево ;
+<standard> = клавиатура|мышь|мастер|компьютер|интернет|приложения|виано  ;
 
-public <command> = <menu_command>|<arrows>|<file_command>;
+public <command> = <menu_command>|<arrows>|<file_command>|<standard>;

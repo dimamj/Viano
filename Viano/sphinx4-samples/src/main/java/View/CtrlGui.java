@@ -1,6 +1,6 @@
 package View;
 
-import Controllers.Master;
+import Presenter.VPresenter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by dimamj on 16.01.2015.
  */
-public class CtrlGui extends JFrame {
+public class CtrlGui extends JFrame implements ViewInterface {
     private JPanel panel;
     private JTextArea TextArea;
     private JTextField textField1;
@@ -23,6 +23,7 @@ public class CtrlGui extends JFrame {
     private JLabel keyboard;
     private JLabel internet;
     private JLabel games;
+    private JLabel master;
 
     private Icon iconcompActive;
     private Icon iconcomp;
@@ -34,6 +35,8 @@ public class CtrlGui extends JFrame {
     private Icon internetIconActive;
     private Icon gamesIcon;
     private Icon gamesIconActive;
+    private Icon masterIcon;
+    private Icon masterIconActive;
 
     private static TrayIcon trayIcon;
     String s = "";
@@ -70,10 +73,19 @@ public class CtrlGui extends JFrame {
         keyboardIcon =  new ImageIcon(getClass().getResource("/images/keyboard-icon.png"));
         keyboardIconActive =  new ImageIcon(getClass().getResource("/images/keyboard-icon-active.png"));
 
+        masterIcon =  new ImageIcon(getClass().getResource("/images/master-icon.png"));
+        masterIconActive =  new ImageIcon(getClass().getResource("/images/master-icon-active.png"));
+
         setDefaultTextArea();
         if(flag) {
             setVisible(true);
         }
+    }
+
+
+    @Override
+    public void setLabel(String text) {
+
     }
 
     public  void setWords(String words)
@@ -90,9 +102,11 @@ public class CtrlGui extends JFrame {
 
     public void setImage(String key)
     {
+
         if (key=="computer active")
         {
-            TextArea.setText(textEdit(Master.Computer_Words));
+
+            TextArea.setText(textEdit(VPresenter.getConfig().Computer_Words));
             comp.setIcon(iconcompActive);
         }
         else if(key=="computer")
@@ -101,7 +115,7 @@ public class CtrlGui extends JFrame {
         }
         else if(key=="mouse active")
         {
-            TextArea.setText(textEdit(Master.Mouse_Words));
+            TextArea.setText(textEdit(VPresenter.getConfig().Mouse_Words));
             mouse.setIcon(mouseIconActive);
         }
         else if(key=="mouse")
@@ -110,7 +124,7 @@ public class CtrlGui extends JFrame {
         }
         else if(key=="keyboard active")
         {
-            TextArea.setText(textEdit(Master.KeyBoard_Words));
+            TextArea.setText(textEdit(VPresenter.getConfig().KeyBoard_Words));
             keyboard.setIcon(keyboardIconActive);
         }
         else if(key=="keyboard")
@@ -119,7 +133,7 @@ public class CtrlGui extends JFrame {
         }
         else if(key=="internet active")
         {
-            TextArea.setText(textEdit(Master.Internet_Words));
+            TextArea.setText(textEdit(VPresenter.getConfig().Internet_Words));
             internet.setIcon(internetIconActive);
         }
         else if(key=="internet")
@@ -128,7 +142,7 @@ public class CtrlGui extends JFrame {
         }
         else if(key=="games active")
         {
-            TextArea.setText(textEdit(Master.Applications_Words));
+            TextArea.setText(textEdit(VPresenter.getConfig().Applications_Words));
             games.setIcon(gamesIconActive);
         }
         else if(key=="games")
@@ -137,34 +151,36 @@ public class CtrlGui extends JFrame {
         }
         else if (key.equals("paint"))
         {
-            TextArea.setText(textEdit(Master.Paint_Words));
+            TextArea.setText(textEdit(VPresenter.getConfig().Paint_Words));
         }
         else if (key.equals("racing"))
         {
-            TextArea.setText(textEdit(Master.Racing_Words));
+            TextArea.setText(textEdit(VPresenter.getConfig().Racing_Words));
         }
-        else
+        else if (key.equals("masterActive"))
         {
-            setDefaultTextArea();
+            TextArea.setText(textEdit(VPresenter.getConfig().Master_Words));
+            master.setIcon(masterIconActive);
+        }
+        else if (key.equals("master"))
+        {
+            master.setIcon(masterIcon);
+        }
+        else if (key.equals("сменить язык"))
+        {
+            TextArea.setText("Назад\n"
+                    +"Английский\n"
+                    +"Русский\n");
+        }
+        else if(key.equals("change language"))
+        {
+            TextArea.setText("Back\n"
+                    +"English\n"
+                    +"Russian\n");
         }
     }
 
-    public void setLanguageText(String key)
-    {
 
-       if (key.equals("russian"))
-       {
-        TextArea.setText("Назад\n"
-                +"Английский\n"
-                +"Русский\n");
-       }
-        else if (key.equals("english"))
-       {
-           TextArea.setText("Back\n"
-                   +"English\n"
-                   +"Russian\n");
-       }
-    }
     private  void setTrayIcon() {
         if(! SystemTray.isSupported() ) {
             return;
@@ -196,24 +212,33 @@ public class CtrlGui extends JFrame {
                 TrayIcon.MessageType.INFO);
     }
 
-    public static  void setTreyMessage(String s)
+    public  void setTreyMessage(String s)
     {
         trayIcon.displayMessage("Viano", s,
                 TrayIcon.MessageType.INFO);
 
     }
 
-    public static void setErrorTreyMessage(String s)
+    @Override
+    public  void setErrorTreyMessage(String s)
     {
         trayIcon.displayMessage("Viano", s,
                 TrayIcon.MessageType.ERROR);
 
     }
 
+    public static void setErrorTM(String s)
+    {
+        trayIcon.displayMessage("Viano", s,
+                TrayIcon.MessageType.ERROR);
+
+    }
     private void setDefaultTextArea()
     {
-        TextArea.setText(textEdit(Master.Master_Words));
+       TextArea.setText(textEdit(VPresenter.getConfig().Master_Words));
     }
+
+
 
 
     private String textEdit(List<String> list)
@@ -227,5 +252,30 @@ public class CtrlGui extends JFrame {
     }
     private void createUIComponents() {
         // TODO: place custom component creation code here
+    }
+
+    @Override
+    public void setText(List<String> list) {
+
+    }
+
+    @Override
+    public Boolean getEdit() {
+        return null;
+    }
+
+    @Override
+    public void setProgressVisible() {
+
+    }
+
+    @Override
+    public void disposeElements() {
+
+    }
+
+    @Override
+    public String getText() {
+        return null;
     }
 }

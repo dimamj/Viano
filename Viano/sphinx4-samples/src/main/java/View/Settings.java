@@ -7,9 +7,10 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.*;
 
 
-public class Settings extends JFrame {
+public class Settings extends JFrame implements ViewInterface {
 
     private JPanel panel;
     private JCheckBox checkBox1;
@@ -45,21 +46,21 @@ public class Settings extends JFrame {
                 }
                 else
                 {
-                    CtrlGui.setErrorTreyMessage("Error:URL is empty!");
+                   CtrlGui.setErrorTM("Error:URL is empty!"); /////////////////!!!!!!!!!
                 }
 
             }
         });
     }
 
-    public void setText(String weather,String news,String flag,String films,String torrent)
+    public void setText(java.util.List<String> list)
     {
         edit=false;
-        checkBox1.setSelected(Boolean.parseBoolean(flag));
-        urlWeather.setText(weather);
-        urlNews.setText(news);
-        urlFilms.setText(films);
-        urlTorrent.setText(torrent);
+        checkBox1.setSelected(Boolean.parseBoolean(list.get(0)));
+        urlWeather.setText(list.get(1));
+        urlNews.setText(list.get(2));
+        urlFilms.setText(list.get(3));
+        urlTorrent.setText(list.get(4));
     }
 
     public static void wtite(String path,String language)
@@ -79,6 +80,43 @@ public class Settings extends JFrame {
     {
         return edit;
     }
+
+    @Override
+    public void setProgressVisible() {
+
+    }
+
+    @Override
+    public void disposeElements() {
+
+    }
+
+    @Override
+    public String getText() {
+        return null;
+    }
+
+    @Override
+    public void setWords(String words) {
+
+    }
+
+    @Override
+    public void setImage(String key) {
+
+    }
+
+    @Override
+    public void setLabel(String text) {
+
+    }
+
+    @Override
+    public void setErrorTreyMessage(String message) {
+
+    }
+
+
     private void createUIComponents() {
         // TODO: place custom component creation code here
     }

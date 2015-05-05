@@ -235,11 +235,14 @@
           <separatorSize width="10" height="160"/>
         </properties>
       </component>
-      <component id="b4816" class="javax.swing.JToolBar$Separator">
+      <component id="57cb2" class="javax.swing.JLabel" binding="master">
         <constraints>
-          <grid row="11" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="11" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="1" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties/>
+        <properties>
+          <icon value="images/master-icon.png"/>
+          <text value=""/>
+        </properties>
       </component>
     </children>
   </grid>
