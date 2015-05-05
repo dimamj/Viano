@@ -107,11 +107,6 @@ public class Settings extends JFrame implements ViewInterface {
     }
 
     @Override
-    public void setLanguageText(String key) {
-
-    }
-
-    @Override
     public void setLabel(String text) {
 
     }

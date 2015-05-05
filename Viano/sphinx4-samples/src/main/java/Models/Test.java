@@ -3,6 +3,7 @@ package Models;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.LiveSpeechRecognizer;
 
+import java.io.*;
 import java.util.List;
 
 /**
@@ -11,6 +12,7 @@ import java.util.List;
 public class Test extends AbstractController{
 
     public    List<String> Test_Words = config.Modules_Words;
+    private  String path = "C:"+ File.separator+ "Viano" +File.separator+"language.txt";
 
     private static final Test instance = new Test();
 
@@ -24,12 +26,12 @@ public class Test extends AbstractController{
 
 
     @Override
-    public String startVoiceControl(LiveSpeechRecognizer jsgfRecognizer, Configuration config, Boolean flag) {
+    public String startVoiceControl(LiveSpeechRecognizer jsgfRecognizer, Configuration configuration, Boolean flag) {
         run = flag;
 
-        setGrammar("test", config, jsgfRecognizer);
+        setGrammar("test", configuration, jsgfRecognizer);
 
-        for(int i=0;i<Test_Words.size();i++)
+        for(int i=6;i<Test_Words.size();i++)
         {
             listener.setLabel(Test_Words.get(i),"test");
 
@@ -37,7 +39,7 @@ public class Test extends AbstractController{
             {
                 String utterance = jsgfRecognizer.getResult().getHypothesis();
                 if(utterance.equals(Test_Words.get(i))){
-                    listener.testWord(utterance);
+                    listener.setProgressVisible("test");
                     break;
                 }
 
@@ -45,6 +47,7 @@ public class Test extends AbstractController{
             }
         }
 
+        wtite(path,"true");
         listener.disposeGui("test");
         return "";
     }
@@ -52,5 +55,19 @@ public class Test extends AbstractController{
     @Override
     public void exitController() {
         //NOP//
+    }
+
+    public  void wtite(String path,String test)
+    {
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new FileWriter(path,true));
+            writer.newLine();
+            writer.write(test);
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

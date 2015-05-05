@@ -11,7 +11,6 @@ import java.util.List;
 public class Test extends JFrame implements ViewInterface{
 
     private JPanel panel;
-    private JTextField textField1;
     private JProgressBar progressBar1;
     private JLabel word;
     private JTextArea пройдитеТестПроизнесяВышеTextArea;
@@ -43,7 +42,8 @@ public class Test extends JFrame implements ViewInterface{
 
     @Override
     public void setProgressVisible() {
-
+        n+=15;
+        progressBar1.setValue(n);
     }
 
     @Override
@@ -65,19 +65,10 @@ public class Test extends JFrame implements ViewInterface{
     @Override
     public void setWords(String word) {
 
-        this.textField1.setText("");
-        this.textField1.setText(word);
-        n+=15;
-        progressBar1.setValue(n);
     }
 
     @Override
     public void setImage(String key) {
-
-    }
-
-    @Override
-    public void setLanguageText(String key) {
 
     }
 

@@ -82,7 +82,7 @@ public abstract class AbstractController {
 
     public void showViano() {
 
-            runApplications(this.getClass().getResource("/cmdow.exe").getPath() +" Viano /ACT");
+            runApplications("C:/Viano/cmdow.exe" +" Viano /ACT");
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
@@ -100,7 +100,7 @@ public abstract class AbstractController {
         Clip c = null;
         try {
             c = AudioSystem.getClip();
-            AudioInputStream ais = AudioSystem.getAudioInputStream(new File(Master.class.getResource(str).getFile()));
+            AudioInputStream ais = AudioSystem.getAudioInputStream(new File(str));
             c.open(ais);
             c.loop(0);
             Thread.sleep(700);

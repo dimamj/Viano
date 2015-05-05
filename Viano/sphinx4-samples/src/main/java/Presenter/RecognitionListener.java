@@ -19,7 +19,7 @@ public interface RecognitionListener {
 
     public void setText(String view,List<String> list);
 
-    public void setProgressVisible();
+    public void setProgressVisible(String view);
 
     public void disposeElements(String view);
 
@@ -31,6 +31,5 @@ public interface RecognitionListener {
 
     public void setLabel(String text,String view);
 
-    public void testWord(String word);
 
 }

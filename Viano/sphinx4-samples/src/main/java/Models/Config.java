@@ -7,6 +7,10 @@ import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.LiveSpeechRecognizer;
 
 import java.io.*;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,22 +81,14 @@ public class Config {
         while(true) {
             flag = listener.getText("start");
             if (flag.equals("1"))
-            {   listener.setProgressVisible();
-                createFolders();
-                loadLabels(mediaLink, mediaPath);
-                loadLabels(paintNetLink,paintNetPath);
+            {   init();
                 wtite(path, "english");
-                wtite(pathconfig,startupFlag+"\n"+WeatherURL+"\n"+NewsURL+"\n"+FilmsURL+"\n"+TorrentURL);
                 recognizer =  loadLanguageModel(recognizer, ACOUSTIC_MODEL_ENG, DICTIONARY_PATH_ENG, GRAMMAR_PATH_ENG);
                 break;
             }
             else if(flag.equals("2"))
-            {   listener.setProgressVisible();
-                createFolders();
-                loadLabels(mediaLink, mediaPath);
-                loadLabels(paintNetLink, paintNetPath);
+            {   init();
                 wtite(path,"russian");
-                wtite(pathconfig,startupFlag+"\n"+WeatherURL+"\n"+NewsURL+"\n"+FilmsURL+"\n"+TorrentURL);
                 recognizer = loadLanguageModel(recognizer,ACOUSTIC_MODEL_RUS,DICTIONARY_PATH_RUS,GRAMMAR_PATH_RUS);
                 break;
 
@@ -103,6 +99,17 @@ public class Config {
             }
         }
         return recognizer;
+    }
+
+    private void init()
+    {
+        listener.setProgressVisible("start");
+        createFolders();
+        loadLabels(mediaLink, mediaPath);
+        loadLabels(paintNetLink,paintNetPath);
+        wtite(pathconfig,startupFlag+"\n"+WeatherURL+"\n"+NewsURL+"\n"+FilmsURL+"\n"+TorrentURL);
+        copyFiles("/song.wav","C:/Viano");
+        copyFiles("/cmdow.exe","C:/Viano");
     }
 
     private   LiveSpeechRecognizer loadLanguageModel(LiveSpeechRecognizer recognizer,String acoustic,String dict,
@@ -124,7 +131,7 @@ public class Config {
 
             listener.disposeGui("start");
 
-        filecontain = read(path);
+        filecontain = read(path,1);
         if (filecontain.equals("english"))
         {
 
@@ -143,8 +150,8 @@ public class Config {
         return confList;
     }
 
-    private  void createFolders()
-    {
+
+    private  void createFolders() {
 
         File myPath = new File("C:/Viano/Applications/");
         myPath.mkdirs();
@@ -152,9 +159,30 @@ public class Config {
         myPath.mkdirs();
         myPath = new File("C:/Viano/Video/");
         myPath.mkdirs();
+
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
-    private  void loadLabels(String fileName,String filePath)
-    {
+
+    private void copyFiles(String sourcePath,String targetPath){
+        Path source = null;
+        try {
+            source = Paths.get(this.getClass().getResource(sourcePath).toURI());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        Path target = Paths.get(targetPath);
+        try {
+            Files.copy(source,target.resolve(source.getFileName()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private  void loadLabels(String fileName,String filePath) {
 
         String script = "Set sh = CreateObject(\"WScript.Shell\")"
                 + "\nSet shortcut = sh.CreateShortcut(\"" +  fileName + "\")"
@@ -277,15 +305,19 @@ public class Config {
             e.printStackTrace();
         }
     }
-    public  String read(String path)
+    public  String read(String path,int line)
     {
+        String result = "";
         BufferedReader reader;
+        int countLine = 0;
         while (true) {
             try {
                 reader = new BufferedReader(new FileReader(path));
                 String s;
                 while ((s=reader.readLine()) != null) {
-                    filecontain = s;
+                    countLine++;
+                    if(line==countLine)
+                    result = s;
                 }
                 reader.close();
                 break;
@@ -293,8 +325,7 @@ public class Config {
             catch (Exception e) {createFile(path);}
         }
 
-        System.out.println(filecontain);
-        return filecontain;
+        return result;
     }
     public  List<String> readMas(String path)
     {
@@ -337,7 +368,7 @@ public class Config {
     public  LiveSpeechRecognizer beginSettings(LiveSpeechRecognizer recognizer)
     {
 
-        filecontain = read(path);
+        filecontain = read(path,1);
 
         if (filecontain.isEmpty())
         {
@@ -349,14 +380,14 @@ public class Config {
         {
             test = false;
             listener.disposeElements("start");
-            listener.setProgressVisible();
+            listener.setProgressVisible("start");
             recognizer =  loadLanguageModel(recognizer, ACOUSTIC_MODEL_ENG, DICTIONARY_PATH_ENG, GRAMMAR_PATH_ENG);
         }
         else if(filecontain.equals("russian"))
         {
             test = false;
             listener.disposeElements("start");
-            listener.setProgressVisible();
+            listener.setProgressVisible("start");
             recognizer = loadLanguageModel(recognizer,ACOUSTIC_MODEL_RUS,DICTIONARY_PATH_RUS,GRAMMAR_PATH_RUS);
         }
         return recognizer;

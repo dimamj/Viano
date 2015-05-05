@@ -44,12 +44,6 @@ public class VPresenter {
             }
 
             @Override
-            public void testWord(String word) {
-                test.setWords(word);
-            }
-
-
-            @Override
             public void disposeGui(String view) {
                 getView(view).dispose();
             }
@@ -95,9 +89,9 @@ public class VPresenter {
             }
 
             @Override
-            public void setProgressVisible()
+            public void setProgressVisible(String view)
             {
-                startGui.setProgressVisible();
+                getView(view).setProgressVisible();
             }
 
             @Override
@@ -121,13 +115,13 @@ public class VPresenter {
         try {recognizer.startRecognition(true);}
         catch (Exception e){error(e.getMessage());}
 
-        if(config.getTest())
+        if(!config.read("C:/Viano/language.txt",2).equals("true"))
         {
             test = new View.Test();
             Test.getInstance().startVoiceControl(recognizer, configuration, true);
         }
 
-        master.audio("/song.wav");
+        master.audio("C:/Viano/song.wav");
         gui = new CtrlGui(true);
         String next =  master.startVoiceControl(recognizer, configuration, true);
 

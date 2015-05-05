@@ -23,6 +23,7 @@ public class CtrlGui extends JFrame implements ViewInterface {
     private JLabel keyboard;
     private JLabel internet;
     private JLabel games;
+    private JLabel master;
 
     private Icon iconcompActive;
     private Icon iconcomp;
@@ -34,6 +35,8 @@ public class CtrlGui extends JFrame implements ViewInterface {
     private Icon internetIconActive;
     private Icon gamesIcon;
     private Icon gamesIconActive;
+    private Icon masterIcon;
+    private Icon masterIconActive;
 
     private static TrayIcon trayIcon;
     String s = "";
@@ -69,6 +72,9 @@ public class CtrlGui extends JFrame implements ViewInterface {
 
         keyboardIcon =  new ImageIcon(getClass().getResource("/images/keyboard-icon.png"));
         keyboardIconActive =  new ImageIcon(getClass().getResource("/images/keyboard-icon-active.png"));
+
+        masterIcon =  new ImageIcon(getClass().getResource("/images/master-icon.png"));
+        masterIconActive =  new ImageIcon(getClass().getResource("/images/master-icon-active.png"));
 
         setDefaultTextArea();
         if(flag) {
@@ -151,28 +157,30 @@ public class CtrlGui extends JFrame implements ViewInterface {
         {
             TextArea.setText(textEdit(VPresenter.getConfig().Racing_Words));
         }
-        else
+        else if (key.equals("masterActive"))
         {
-            setDefaultTextArea();
+            TextArea.setText(textEdit(VPresenter.getConfig().Master_Words));
+            master.setIcon(masterIconActive);
+        }
+        else if (key.equals("master"))
+        {
+            master.setIcon(masterIcon);
+        }
+        else if (key.equals("сменить язык"))
+        {
+            TextArea.setText("Назад\n"
+                    +"Английский\n"
+                    +"Русский\n");
+        }
+        else if(key.equals("change language"))
+        {
+            TextArea.setText("Back\n"
+                    +"English\n"
+                    +"Russian\n");
         }
     }
 
-    public void setLanguageText(String key)
-    {
 
-       if (key.equals("russian"))
-       {
-        TextArea.setText("Назад\n"
-                +"Английский\n"
-                +"Русский\n");
-       }
-        else if (key.equals("english"))
-       {
-           TextArea.setText("Back\n"
-                   +"English\n"
-                   +"Russian\n");
-       }
-    }
     private  void setTrayIcon() {
         if(! SystemTray.isSupported() ) {
             return;

@@ -69,14 +69,14 @@ public class Master extends AbstractController {
 
     @Override
     public void exitController() {
-
+        listener.setImage("master");
     }
 
     public String startVoiceControl(LiveSpeechRecognizer jsgfRecognizer,Configuration configuration,Boolean flag) {
         run = flag;
 
             setGrammar("master", configuration, jsgfRecognizer);
-            listener.setImage("");
+            listener.setImage("masterActive");
 
         while (run) {
 
@@ -86,6 +86,7 @@ public class Master extends AbstractController {
 
             if(find(utterance))
             {
+                exitController();
                 return utterance;
             }
 
@@ -122,24 +123,18 @@ public class Master extends AbstractController {
             }
             else if (utterance.equals(Master_Words.get(7)))
             {
-                /*
-                listener.setLanguageText(filecontain);
+
+                listener.setImage(Master_Words.get(7));
 
                 while (true)
                 {
                     utterance = jsgfRecognizer.getResult().getHypothesis();
-                    listener.setWords(utterance);
+                    listener.wordRecognized(utterance);
 
                     if (utterance.equals("английский") || utterance.equals("english"))
                     {
-                        listener.setTreyMessage("Reset Viano");
-                        try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        listener.disposeGui();
-                        wtite(path, "english");
+                        listener.disposeGui("main");
+                        config.wtite(path, "english");
                         jsgfRecognizer.stopRecognition();
                         System.exit(0);
                         break;
@@ -147,14 +142,8 @@ public class Master extends AbstractController {
                     }
                     else if (utterance.equals("русский")|| utterance.equals("russian"))
                     {
-                        listener.setTreyMessage("Reset Viano");
-                        try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        listener.disposeGui();
-                        wtite(path, "russian");
+                        listener.disposeGui("main");
+                        config.wtite(path, "russian");
                         jsgfRecognizer.stopRecognition();
                         System.exit(0);
                         break;
@@ -162,11 +151,11 @@ public class Master extends AbstractController {
                     }
                     else if (utterance.equals("назад") || utterance.equals("back"))
                     {
-                        listener.setImage("");
+                        listener.setImage("masterActive");
                         break;
                     }
                 }
-*/
+
             }
 
         }

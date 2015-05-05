@@ -14,7 +14,6 @@ public interface ViewInterface {
     public String getText();
     public  void setWords(String words);
     public void setImage(String key);
-    void setLanguageText(String key);
     void dispose();
     void setErrorTreyMessage(String message);
     void setLabel(String text);

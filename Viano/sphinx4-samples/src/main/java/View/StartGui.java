@@ -114,12 +114,5 @@ public class StartGui extends JFrame implements ViewInterface{
 
     }
 
-    @Override
-    public void setLanguageText(String key) {
 
-    }
-
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
-    }
 }
