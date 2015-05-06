@@ -124,8 +124,8 @@ public class Config {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        copyFiles("/others/song.wav","C:/Viano/song.wav");
-        copyFiles("/others/cmdow.exe","C:/Viano/cmdow.exe");
+        copyFiles("/others/song.wav","C:/Viano/song.wav",true);
+        copyFiles("/others/cmdow.exe","C:/Viano/cmdow.exe",true);
 
     }
 
@@ -143,7 +143,7 @@ public class Config {
 
     private void setJavaTool()
     {
-        if(isJar) {
+        if(isJar()) {
             try {
                 Runtime.getRuntime().exec("setx JAVA_TOOL_OPTIONS -Dfile.encoding=UTF8");
               /*  String[] str = Config.class.getResource("").toString().split("!");
@@ -183,6 +183,8 @@ public class Config {
         {
             loadWords(filecontain);
             confList  = readMas(pathconfig);
+            if(isJar())
+            startup(confList);
             //internetCtrl.setConfig(conf);!!!!!!!!!!!!!!!!!!!!!!!
         }
         return recognizer;
@@ -210,12 +212,15 @@ public class Config {
         }
     }
 
-    private void copyFiles(String sourcePath,String targetPath){
+    private void copyFiles(String sourcePath,String targetPath,Boolean inJar){
         Path source = null;
         try {
-            if(isJar) {
+            if(isJar()&&inJar) {
                 source = fs.getPath(sourcePath);
-            } else {
+            }else if(isJar()&&!inJar) {
+                source = Paths.get(sourcePath);
+            }
+            else {
                 source = Paths.get(Master.class.getResource(sourcePath).toURI());
             }
         } catch (Exception e) {
@@ -223,6 +228,8 @@ public class Config {
         }
         Path target = Paths.get(targetPath);
         try {
+            System.out.println(source);
+            System.out.println(target);
             Files.copy(source,target);
         } catch (IOException e) {
             e.printStackTrace();
@@ -406,6 +413,41 @@ public class Config {
         }
 
     }
+
+    protected void startup(List<String> list){
+        String startupPath = "C:/Viano/";
+
+        //C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp
+        String[] str = Config.class.getResource("").toString().split("!");
+        String path = str[0].substring(10);
+        System.out.println(path);
+        path = path.replaceAll("/","\\\\");
+        System.out.println("=====================================================================");
+        System.out.println(path);
+        String start = "cmd /C REG ADD HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run /v " +
+                "Viano /d " + path + " /f";
+        String delete = "cmd /C REG ADD HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run /v " +
+                "Viano /d null /f";
+
+        System.out.println(delete);
+
+            if (list.get(0).equals("true")) {
+                try {
+                    Runtime.getRuntime().exec(start);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try{
+                    Runtime.getRuntime().exec(delete);
+                }catch (Exception e)
+                {
+                    return;
+                }
+
+
+            }
+        }
 
 
     public  LiveSpeechRecognizer beginSettings(LiveSpeechRecognizer recognizer)

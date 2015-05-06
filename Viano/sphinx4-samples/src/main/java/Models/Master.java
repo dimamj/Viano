@@ -183,6 +183,7 @@ public class Master extends AbstractController {
                 if (listener.getEdit("setting"))
                 {
                     conf  = config.readMas(pathconfig);
+                    config.startup(conf);
                     break;
                 }
             }
