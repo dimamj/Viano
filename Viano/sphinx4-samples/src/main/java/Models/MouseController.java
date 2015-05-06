@@ -78,6 +78,7 @@ public class MouseController extends AbstractController{
             {
 
                 String utterance = recognizer.getResult().getHypothesis();
+                if(!search(utterance,list,15,17))
                 listener.wordRecognized(utterance);
 
 
@@ -185,7 +186,6 @@ public class MouseController extends AbstractController{
                 else if (utterance.equals(list.get(12)))//колесико
                 {
                     mouseClick(InputEvent.BUTTON2_MASK);
-                    System.out.println("OKEY!");
                     location = MouseInfo.getPointerInfo().getLocation();
                     double x = location.getX();
                     double y = location.getY();
@@ -195,7 +195,6 @@ public class MouseController extends AbstractController{
 
                 else if (utterance.equals(list.get(13)))//зажать
                 {
-                    System.out.println("OKEY!ЗАЖАТЬ");
                     robot.mousePress(InputEvent.BUTTON1_MASK);
                 }
 

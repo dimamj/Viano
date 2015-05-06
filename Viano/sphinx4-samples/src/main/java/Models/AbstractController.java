@@ -85,7 +85,7 @@ public abstract class AbstractController {
 
             runApplications("C:/Viano/cmdow.exe" +" Viano /ACT");
         try {
-            Thread.sleep(100);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -128,18 +128,18 @@ public class Master extends AbstractController {
                     if (utterance.equals("английский") || utterance.equals("english"))
                     {
                         listener.disposeGui("main");
-                        config.wtite(path, "english");
+                        config.wtite(path, "english\ntrue");
                         jsgfRecognizer.stopRecognition();
-                        System.exit(0);
+                        restart();
                         break;
 
                     }
                     else if (utterance.equals("русский")|| utterance.equals("russian"))
                     {
                         listener.disposeGui("main");
-                        config.wtite(path, "russian");
+                        config.wtite(path, "russian\ntrue");
                         jsgfRecognizer.stopRecognition();
-                        System.exit(0);
+                        restart();
                         break;
 
                     }
@@ -158,8 +158,21 @@ public class Master extends AbstractController {
 
     }
 
-
-
+    private void restart(){
+        if(config.isJar()) {
+            String[] str = Config.class.getResource("").toString().split("!");
+            String path = str[0].substring(10);
+            System.out.println(path);
+            try {
+                Runtime.getRuntime().exec("java -jar " + path);
+                System.exit(0);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.exit(0);
+        }
+    }
 
     private static class Parameters implements Runnable
     {

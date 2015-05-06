@@ -7,12 +7,14 @@ import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.LiveSpeechRecognizer;
 
 import java.io.*;
+import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.net.URL;
+import java.nio.file.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by dimamj on 25.04.2015.
@@ -32,7 +34,8 @@ public class Config {
     private static final String GRAMMAR_PATH_RUS =
             "resource:/gram_rus/";
     static Boolean flag = false;
-
+    private FileSystem fs;
+    private Boolean isJar = false;
     public     List<String> Master_Words = new ArrayList<String>();
     public    List<String> KeyBoard_Words = new ArrayList<String>();
     public    List<String> Mouse_Words = new ArrayList<String>();
@@ -75,7 +78,6 @@ public class Config {
 
     private LiveSpeechRecognizer loadFirstModel(LiveSpeechRecognizer recognizer)
     {
-
         String flag = "";
         System.out.println("Enter 1 or 2:");
         while(true) {
@@ -83,12 +85,14 @@ public class Config {
             if (flag.equals("1"))
             {   init();
                 wtite(path, "english");
+                setJavaTool();
                 recognizer =  loadLanguageModel(recognizer, ACOUSTIC_MODEL_ENG, DICTIONARY_PATH_ENG, GRAMMAR_PATH_ENG);
                 break;
             }
             else if(flag.equals("2"))
             {   init();
                 wtite(path,"russian");
+                setJavaTool();
                 recognizer = loadLanguageModel(recognizer,ACOUSTIC_MODEL_RUS,DICTIONARY_PATH_RUS,GRAMMAR_PATH_RUS);
                 break;
 
@@ -108,14 +112,53 @@ public class Config {
         loadLabels(mediaLink, mediaPath);
         loadLabels(paintNetLink,paintNetPath);
         wtite(pathconfig,startupFlag+"\n"+WeatherURL+"\n"+NewsURL+"\n"+FilmsURL+"\n"+TorrentURL);
-        copyFiles("/song.wav","C:/Viano");
-        copyFiles("/cmdow.exe","C:/Viano");
+        try {
+            final URI uri = getClass().getResource("/others").toURI();
+            final Map<String, String> env = new HashMap<>();
+            if(uri.toString().split("!").length>1) {
+                isJar=true;
+                final String[] array = uri.toString().split("!");
+                fs = FileSystems.newFileSystem(URI.create(array[0]), env);
+                // final Path path = fs.getPath(array[1]);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        copyFiles("/others/song.wav","C:/Viano/song.wav");
+        copyFiles("/others/cmdow.exe","C:/Viano/cmdow.exe");
+
     }
 
+    public Boolean isJar(){
+
+        URI uri = null;
+        try {
+            uri = getClass().getResource("/others").toURI();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+       return  uri.toString().split("!").length>1 ? true : false;
+    }
+
+    private void setJavaTool()
+    {
+        if(isJar) {
+            try {
+                Runtime.getRuntime().exec("setx JAVA_TOOL_OPTIONS -Dfile.encoding=UTF8");
+              /*  String[] str = Config.class.getResource("").toString().split("!");
+                String path = str[0].substring(10);
+                System.out.println(path);
+                Runtime.getRuntime().exec("java -jar " + path);*/
+                System.exit(0);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
     private   LiveSpeechRecognizer loadLanguageModel(LiveSpeechRecognizer recognizer,String acoustic,String dict,
                                                      String gram)
     {
-
         configuration = new edu.cmu.sphinx.api.Configuration();
         configuration.setAcousticModelPath(acoustic);
         configuration.setDictionaryPath(dict);
@@ -170,13 +213,17 @@ public class Config {
     private void copyFiles(String sourcePath,String targetPath){
         Path source = null;
         try {
-            source = Paths.get(this.getClass().getResource(sourcePath).toURI());
-        } catch (URISyntaxException e) {
+            if(isJar) {
+                source = fs.getPath(sourcePath);
+            } else {
+                source = Paths.get(Master.class.getResource(sourcePath).toURI());
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
         Path target = Paths.get(targetPath);
         try {
-            Files.copy(source,target.resolve(source.getFileName()));
+            Files.copy(source,target);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -202,7 +249,6 @@ public class Config {
                 e.printStackTrace();
             }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -361,9 +407,6 @@ public class Config {
 
     }
 
-    public Boolean getTest() {
-        return test;
-    }
 
     public  LiveSpeechRecognizer beginSettings(LiveSpeechRecognizer recognizer)
     {
@@ -372,20 +415,16 @@ public class Config {
 
         if (filecontain.isEmpty())
         {
-
-            test = true;
             recognizer = loadFirstModel(recognizer);
         }
         else if (filecontain.equals("english"))
         {
-            test = false;
             listener.disposeElements("start");
             listener.setProgressVisible("start");
             recognizer =  loadLanguageModel(recognizer, ACOUSTIC_MODEL_ENG, DICTIONARY_PATH_ENG, GRAMMAR_PATH_ENG);
         }
         else if(filecontain.equals("russian"))
         {
-            test = false;
             listener.disposeElements("start");
             listener.setProgressVisible("start");
             recognizer = loadLanguageModel(recognizer,ACOUSTIC_MODEL_RUS,DICTIONARY_PATH_RUS,GRAMMAR_PATH_RUS);

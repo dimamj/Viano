@@ -7,6 +7,7 @@ import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.LiveSpeechRecognizer;
 import edu.cmu.sphinx.result.BoundedPriorityQueue;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -32,6 +33,7 @@ public class VPresenter {
 
     private void init()
     {
+
         RecognitionListener listener = new RecognitionListener() {
 
             @Override
@@ -103,6 +105,7 @@ public class VPresenter {
         config = new Config();
         config.setListener(listener);
         startGui = new StartGui();
+        System.out.println(System.getProperty("file.encoding"));
         recognizer = config.beginSettings(recognizer);
 
         master = Master.getInstance();

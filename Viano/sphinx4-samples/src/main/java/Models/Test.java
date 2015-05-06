@@ -31,7 +31,7 @@ public class Test extends AbstractController{
 
         setGrammar("test", configuration, jsgfRecognizer);
 
-        for(int i=6;i<Test_Words.size();i++)
+        for(int i=0;i<Test_Words.size();i++)
         {
             listener.setLabel(Test_Words.get(i),"test");
 
