@@ -156,6 +156,7 @@
         <properties>
           <editable value="true"/>
           <font name="Georgia" size="20" style="0"/>
+          <visible value="true"/>
         </properties>
       </component>
       <hspacer id="f4795">

@@ -23,7 +23,13 @@ public class Settings extends JFrame implements ViewInterface {
     private   Boolean edit ;
     static String pathconfig = "C:"+ File.separator+ "Viano" +File.separator+"config.txt";
 
-    public Settings() {
+    @Override
+    public void dispose() {
+        edit=true;
+        super.dispose();
+    }
+
+    public Settings(String lang) {
         Settings.super.setTitle("Viano Settings");
         Image icon = new ImageIcon(getClass().getResource("/images/trey.png")).getImage();
         Settings.super.setIconImage(icon);
@@ -31,6 +37,7 @@ public class Settings extends JFrame implements ViewInterface {
         Settings.super.setSize(800, 500);
         Settings.super.setLocationRelativeTo(null);
         Settings.super.setResizable(false);
+        Settings.super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setVisible(true);
         saveButton.addActionListener(new ActionListener() {
             @Override
@@ -92,7 +99,7 @@ public class Settings extends JFrame implements ViewInterface {
     }
 
     @Override
-    public String getText() {
+    public String[] getText() {
         return null;
     }
 

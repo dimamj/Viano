@@ -12,7 +12,7 @@ import java.util.List;
 public class Test extends AbstractController{
 
     public    List<String> Test_Words = config.Modules_Words;
-    private  String path = "C:"+ File.separator+ "Viano" +File.separator+"language.txt";
+    private  String path = "C:"+ File.separator+ "Viano" +File.separator+"data/language.txt";
 
     private static final Test instance = new Test();
 

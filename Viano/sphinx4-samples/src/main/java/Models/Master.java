@@ -110,7 +110,7 @@ public class Master extends AbstractController {
 
             else if (utterance.equals(Master_Words.get(6))) //Settings
             {
-                listener.createSettingsGui();
+                listener.createGui("setting",config.getFilecontain());
                 listener.setText("setting",conf);
                 Thread thread = new Thread(new Parameters());//////////////////////////////////////
                 thread.start();
@@ -148,6 +148,19 @@ public class Master extends AbstractController {
                         listener.setImage("masterActive");
                         break;
                     }
+                }
+
+            }
+
+            else if(utterance.equals(Master_Words.get(8))){   //add comand
+
+
+                listener.createGui("addCommand",config.getFilecontain());
+                while (!listener.getEdit("addCommand")){}
+                System.out.println("WHAT");
+                String[] array = listener.getText("addCommand");
+                if(array[0]!=null||array[1]!=null) {
+                    listener.addCommand(array);
                 }
 
             }
