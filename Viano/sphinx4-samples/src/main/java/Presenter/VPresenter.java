@@ -110,6 +110,11 @@ public class VPresenter {
             {
                 getView(view,"").disposeElements();
             }
+
+            @Override
+            public void errorMessage(String message) {
+                gui.setErrorTreyMessage(message);
+            }
         };
         config = new Config();
         config.setListener(listener);

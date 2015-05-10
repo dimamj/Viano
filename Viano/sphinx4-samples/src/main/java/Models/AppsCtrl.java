@@ -94,7 +94,7 @@ public class AppsCtrl extends AbstractController  {
                     String str = "";
                     while ((str=reader.readLine())!=null){
                         if(!str.isEmpty()) {
-                            String[] array = str.split("-");
+                            String[] array = str.split("\\|");
                             if (utterance.equals(array[1])) {
                                 runApplications("cmd /c start " + "C:/" + "Viano/Applications/" +"\""+
                                         array[0].toLowerCase()+"\""+ ".lnk");

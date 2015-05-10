@@ -74,9 +74,11 @@ public class Master extends AbstractController {
 
     public String startVoiceControl(LiveSpeechRecognizer jsgfRecognizer,Configuration configuration,Boolean flag) {
         run = flag;
+        System.out.println("OK");
 
             setGrammar("master", configuration, jsgfRecognizer);
             listener.setImage("masterActive");
+        System.out.println("OK2");
 
         while (run) {
 
@@ -157,10 +159,10 @@ public class Master extends AbstractController {
 
                 listener.createGui("addCommand",config.getFilecontain());
                 while (!listener.getEdit("addCommand")){}
-                System.out.println("WHAT");
                 String[] array = listener.getText("addCommand");
-                if(array[0]!=null||array[1]!=null) {
+                if(array[0]!=null&&array[1]!=null&&array[3]!=null) {
                     listener.addCommand(array);
+                    listener.disposeGui("addCommand");
                 }
 
             }

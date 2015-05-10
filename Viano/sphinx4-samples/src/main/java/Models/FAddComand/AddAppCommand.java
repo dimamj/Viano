@@ -8,6 +8,11 @@ import java.nio.file.Paths;
  */
 public class AddAppCommand extends AbstractAddCommand{
 
+    private static final String GRAMMAR_PATH_APPS_RUS =
+            "C:/Viano/data/gram_rus/apps.gram";
+    private static final String WORDS_PATH_APPS_RUS =
+            "C:/Viano/data/words/apps_rus.txt";
+
     private static final AddAppCommand instance = new AddAppCommand();
     private String fileName = "";
     private String commandName = "";
@@ -29,10 +34,10 @@ public class AddAppCommand extends AbstractAddCommand{
 
         init(array,lang);
 
-            writeToGram(gram,commandName);
-            writeToWords(words,commandName);
-            writeToDict(dict,commandName,accent);
-            writeToFile(file,fileName,commandName);
+        writeToGram(gram,commandName);
+        writeToWords(words,commandName);
+        writeToDict(dict,commandName,accent);
+        writeToFile(file,fileName,commandName);
 
     }
 

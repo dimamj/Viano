@@ -33,5 +33,6 @@ public interface RecognitionListener {
 
     public void createGui(String view,String lang);
 
+    public void errorMessage(String message);
 
 }

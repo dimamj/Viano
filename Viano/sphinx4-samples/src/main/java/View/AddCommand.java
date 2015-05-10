@@ -19,7 +19,9 @@ public class AddCommand extends JFrame implements ViewInterface {
     private JTextField accentTextField;
     private JButton addButton;
     private JCheckBox checkBox1;
-    private JLabel img;
+    private JLabel label1;
+    private JLabel label2;
+    private JLabel label3;
     private Boolean flag = false;
     private String language;
     String file ;
@@ -45,7 +47,7 @@ public class AddCommand extends JFrame implements ViewInterface {
         initText(lang);
         language = lang;
         setVisible(true);
-        System.out.println(isDisplayable());
+
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -58,7 +60,6 @@ public class AddCommand extends JFrame implements ViewInterface {
                         accent = accentTextField.getText();
                         flags = String.valueOf(checkBox1.isSelected());
                         flag=true;
-                        dispose();
 
                     } else {
                         error();
@@ -89,6 +90,9 @@ public class AddCommand extends JFrame implements ViewInterface {
             textField1.setToolTipText("Введите название ссылки или приложения");
             textField2.setToolTipText("Введите название команды");
             accentTextField.setToolTipText("Введите номер буквы на которую падает ударение");
+            label1.setText("Имя приложения/ссылки");
+            label2.setText("Номер буквы с ударением");
+            label3.setText("Название комманды");
         }else if(lang.equals("english")){
             checkBox1.setText("URL");
             checkBox1.setToolTipText("Click if you want to add web link");
@@ -96,7 +100,9 @@ public class AddCommand extends JFrame implements ViewInterface {
             textField1.setToolTipText("Enter apps or web link name");
             textField2.setToolTipText("Enter command name");
             accentTextField.setToolTipText("Enter the number of letter on  which the falls accent ");
-
+            label1.setText("App/URL name");
+            label2.setText("НNumber of letter accent");
+            label3.setText("Commands name");
         }
 
     }

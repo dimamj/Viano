@@ -38,6 +38,8 @@ public class Settings extends JFrame implements ViewInterface {
         Settings.super.setLocationRelativeTo(null);
         Settings.super.setResizable(false);
         Settings.super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+
         setVisible(true);
         saveButton.addActionListener(new ActionListener() {
             @Override

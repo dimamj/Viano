@@ -8,24 +8,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 
-/**
- * Created by dimamj on 07.05.2015.
- */
+
 public abstract class AbstractAddCommand {
 
     protected static final String DICTIONARY_PATH_ENG =
             "C:/Viano/data/dict/cmudict-en-us.dict";
-    protected static final String GRAMMAR_PATH_ENG =
-            "C:/Viano/data/gram_eng/";
     protected static final String DICTIONARY_PATH_RUS =
             "C:/Viano/data/dict/msu_ru_nsh.dic";
-    protected static final String GRAMMAR_PATH_APPS_RUS =
-            "C:/Viano/data/gram_rus/apps.gram";
-    protected static final String WORDS_PATH_APPS_RUS =
-            "C:/Viano/data/words/apps_rus.txt";
     private static final String transcriptions =
-            "C:/Viano/data/dict/transcription.txt";
-    private Boolean flag = false;
+            "C:/Viano/data/dict/Transcription.txt";
 
     private final Map<String,String> letters = initLetters();
     private final List<String> vowelLetters = Arrays.asList("а","е","ё","и","о",
@@ -86,18 +77,15 @@ public abstract class AbstractAddCommand {
     protected void writeToWords(String path, String word) {
         Path filePath = Paths.get(path);
         Charset charset = Charset.forName("UTF-8");
-
-        try (BufferedWriter writer = Files.newBufferedWriter(filePath, charset, StandardOpenOption.WRITE);
-             BufferedReader reader = Files.newBufferedReader(filePath, charset);) {
-
-            String str = "";
-            String result = "";
-            String line = "";
+        String head = "";
+        String str = "";
+        String result = "";
+        String line = "";
+        try (BufferedReader reader = Files.newBufferedReader(filePath, charset);) {
 
             while ((str = reader.readLine()) != null) {
                 line = str;
-                if (str.startsWith("!# Applications")) {
-                    line = str;
+                if (str.startsWith("!# Applications")||str.startsWith("!# Internet")) {
                     while ((str = reader.readLine()) != null) {
                         if (str.startsWith("#")) {
                             break;
@@ -107,12 +95,14 @@ public abstract class AbstractAddCommand {
                         }
                         line += "\n" + str;
                     }
-                    line = line + "\n" + word + "\n#";
+                    line = line + "\n" + word + "\n" +"#";
 
                 }
-                result += line + "\n";
+                result += line;
             }
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath.toFile()));
             writer.write(result);
+            writer.close();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -125,13 +115,19 @@ public abstract class AbstractAddCommand {
         Path filePath = Paths.get(path);
         Charset charset = Charset.forName("UTF-8");
 
-        try {
-            try (BufferedWriter writer = Files.newBufferedWriter(filePath, charset, StandardOpenOption.APPEND);){
-                writer.write("\n"+fileName+"-"+commandName);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        try (BufferedWriter writer = Files.newBufferedWriter(filePath, charset, StandardOpenOption.APPEND);
+             BufferedReader reader = Files.newBufferedReader(filePath, charset);) {
+                String str = "";
+                while ((str=reader.readLine())!=null){
+                    if(str.startsWith(fileName)){
+                        return;
+                    }
+                }
+                writer.write("\n"+fileName+"|"+commandName);
+            } catch (IOException e1) {
+            e1.printStackTrace();
         }
+
     }
 
     private String[] conversionWord(String word,int accent){
@@ -155,10 +151,14 @@ public abstract class AbstractAddCommand {
                         pre+=value;
                     }
                     if(i>0){
-                        if(!isVowel(word.substring(i-1,i))&&ch.equals("и")||ch.equals("е")
-                                ||ch.equals("ю")||ch.equals("я")){
+                        String becomeWord=word.substring(i-1,i);
+                        String becomeRes[] = result.split(" ");
+                        if(!isVowel(becomeWord)&&!becomeWord.equals("ц")&&
+                                becomeRes[becomeRes.length-1].toCharArray().length<2
+                                &&(ch.equals("и")||ch.equals("е")
+                                ||ch.equals("ю")||ch.equals("я"))){
 
-                           result =  result.trim();
+                            result =  result.trim();
                             int size = result.toCharArray().length;
                             String s = result.substring(size - 1, size);
                             result+=s+" ";

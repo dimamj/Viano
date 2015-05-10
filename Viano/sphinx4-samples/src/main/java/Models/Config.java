@@ -66,6 +66,10 @@ public class Config {
 
     private List<String> gramsList = Arrays.asList("apps.gram","computer.gram","internet.gram","keyboard.gram",
             "master.gram","mouse.gram","paint.gram","racing.gram","test.gram");
+    private List<String> wordsList = Arrays.asList("apps_rus.txt","forApps.txt","forLinks.txt","web_rus.txt",
+            "words_rus.txt");
+    private List<String> othersList = Arrays.asList("cmdow.exe","song.wav");
+    private List<String> dictList = Arrays.asList("msu_ru_nsh.dic","cmudict-en-us.dict");
 
     private  RecognitionListener listener;
     private  Boolean test;
@@ -129,22 +133,22 @@ public class Config {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        copyFiles("/others/song.wav","C:/Viano/data/song.wav",true);
-        copyFiles("/others/cmdow.exe","C:/Viano/data/cmdow.exe",true);
-        copyFiles("/others/transcription.txt","C:/Viano/data/dict/transcription.txt",true);
-        copyFiles("/words/words_rus.txt","C:/Viano/data/words/words_rus.txt",true);
-        copyFiles("/words/apps_rus.txt","C:/Viano/data/words/apps_rus.txt",true);
-        copyFiles("/words/forApps.txt","C:/Viano/data/words/forApps.txt",true);
+        String path = "C:/Viano/data/";
+        copyFiles("/others/Transcription.txt",path+"dict/Transcription.txt",true);
 
-        copyFiles("/edu/cmu/sphinx/models/en-us/msu_ru_nsh.dic",
-                "C:/Viano/data/dict/msu_ru_nsh.dic",true);
-        copyFiles("/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict",
-                "C:/Viano/data/dict/cmudict-en-us.dict",true);
-
-        for(String s:gramsList){
-            copyFiles("/gram_rus/"+s,"C:/Viano/data/gram_rus/"+s,true);
+        for(String s:dictList){
+            copyFiles("/edu/cmu/sphinx/models/en-us/"+s,path+"dict/"+s,true);
         }
 
+        for(String s:gramsList){
+            copyFiles("/gram_rus/"+s,path+"gram_rus/"+s,true);
+        }
+        for(String s:wordsList){
+            copyFiles("/words/"+s,path+"words/"+s,true);
+        }
+        for(String s:othersList){
+            copyFiles("/others/"+s,path+s,true);
+        }
 
     }
 
@@ -279,7 +283,7 @@ public class Config {
 
             Runtime.getRuntime().exec("wscript.exe " + file.getAbsolutePath());
             try {
-                Thread.sleep(700);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -333,6 +337,7 @@ public class Config {
         {
             parserWords("C:/Viano/data/words/words_rus.txt");
             parserWords("C:/Viano/data/words/apps_rus.txt");
+            parserWords("C:/Viano/data/words/web_rus.txt");
         }
     }
 
@@ -356,6 +361,9 @@ public class Config {
         }
         else if (str.equals("Internet"))
         {
+            if(!Internet_Words.isEmpty())
+                Internet_Words.clear();
+
             Internet_Words.addAll(list);
         }
         else if (str.equals("Applications"))
