@@ -250,9 +250,6 @@ public class CtrlGui extends JFrame implements ViewInterface {
         }
         return result;
     }
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
-    }
 
     @Override
     public void setText(List<String> list) {
@@ -275,7 +272,7 @@ public class CtrlGui extends JFrame implements ViewInterface {
     }
 
     @Override
-    public String getText() {
+    public String[] getText() {
         return null;
     }
 }

@@ -5,6 +5,14 @@ import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.LiveSpeechRecognizer;
 
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 
 /**
@@ -34,9 +42,10 @@ public class AppsCtrl extends AbstractController  {
 
 
 
-    public String startVoiceControl(LiveSpeechRecognizer jsgfRecognizer, Configuration config,Boolean flag) {
+    public String startVoiceControl(LiveSpeechRecognizer jsgfRecognizer, Configuration configuration,Boolean flag) {
+        config.parserWords("C:/Viano/data/words/apps_rus.txt");
         listener.setImage("games active");
-        setGrammar("apps", config, jsgfRecognizer);
+        setGrammar("apps", configuration, jsgfRecognizer);
         List<String> list = Applications_Words;
         run = flag;
         while (run) {
@@ -50,19 +59,24 @@ public class AppsCtrl extends AbstractController  {
                 exitController();
                 return utterance;
             }
-            else if (utterance.equals(list.get(1)))
-            {
+
+            findAddApps(utterance);
+
+            if (utterance.equals(list.get(1))) {
                 super.runApplications("cmd /c start " + "C:" + "Viano/Applications/PaintNet.lnk");
                 return utterance;
             }
 
-            else if (utterance.equals(list.get(2)))
-            {
+            else if (utterance.equals(list.get(2))) {
 
-                racingCtrl(jsgfRecognizer, config, racing);
-                setGrammar("apps", config, jsgfRecognizer);
+                racingCtrl(jsgfRecognizer, configuration, racing);
+                setGrammar("apps", configuration, jsgfRecognizer);
                 listener.setImage("games active");
             }
+
+
+
+
 
 
         }
@@ -71,7 +85,29 @@ public class AppsCtrl extends AbstractController  {
     }
 
 
+        private void findAddApps(String utterance){
+            Path filePath = Paths.get("C:/Viano/data/words/forApps.txt");
+            Charset charset = Charset.forName("UTF-8");
 
+            try {
+                try (BufferedReader reader = Files.newBufferedReader(filePath, charset)){
+                    String str = "";
+                    while ((str=reader.readLine())!=null){
+                        if(!str.isEmpty()) {
+                            String[] array = str.split("\\|");
+                            if (utterance.equals(array[1])) {
+                                runApplications("cmd /c start " + "C:/" + "Viano/Applications/" +"\""+
+                                        array[0].toLowerCase()+"\""+ ".lnk");
+                                break;
+                            }
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                listener.errorMessage("Error: Code #2");
+                e.printStackTrace();
+            }
+        }
 
 
     /*

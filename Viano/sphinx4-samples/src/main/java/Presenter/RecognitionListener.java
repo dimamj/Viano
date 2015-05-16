@@ -15,7 +15,7 @@ public interface RecognitionListener {
 
     public void setSpeedCursor(int speed,Boolean flag);
 
-    public String getText(String view);
+    public String[] getText(String view);
 
     public void setText(String view,List<String> list);
 
@@ -25,11 +25,14 @@ public interface RecognitionListener {
 
     void disposeGui(String view);
 
-    public void createSettingsGui();
-
     public Boolean getEdit(String view);
 
     public void setLabel(String text,String view);
 
+    public void addCommand(String[] array);
+
+    public void createGui(String view,String lang);
+
+    public void errorMessage(String message);
 
 }

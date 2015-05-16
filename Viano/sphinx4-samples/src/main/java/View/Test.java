@@ -52,7 +52,7 @@ public class Test extends JFrame implements ViewInterface{
     }
 
     @Override
-    public String getText() {
+    public String[] getText() {
         return null;
     }
 

@@ -90,13 +90,13 @@ public class StartGui extends JFrame implements ViewInterface{
         TextArea.setVisible(false);
     }
 
-    public String getText()
+    public String[] getText()
     { text = "";
         while (text=="")
         {
 
         }
-        return this.text;
+        return new String[]{this.text};
     }
 
     @Override

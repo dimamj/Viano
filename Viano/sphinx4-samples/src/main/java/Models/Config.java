@@ -11,10 +11,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by dimamj on 25.04.2015.
@@ -24,15 +21,15 @@ public class Config {
     private static final String ACOUSTIC_MODEL_ENG =
             "resource:/edu/cmu/sphinx/models/en-us/en-us";
     private static final String DICTIONARY_PATH_ENG =
-            "resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict";
+            "file:C:/Viano/data/dict/cmudict-en-us.dict";
     private static final String GRAMMAR_PATH_ENG =
-            "resource:/gram_eng/";
+            "file:C:/Viano/data/gram_eng/";
     private static final String ACOUSTIC_MODEL_RUS =
             "resource:/edu/cmu/sphinx/models/en-us/rus";
     private static final String DICTIONARY_PATH_RUS =
-            "resource:/edu/cmu/sphinx/models/en-us/msu_ru_nsh.dic";
+            "file:C:/Viano/data/dict/msu_ru_nsh.dic";
     private static final String GRAMMAR_PATH_RUS =
-            "resource:/gram_rus/";
+            "file:C:/Viano/data/gram_rus/";
     static Boolean flag = false;
     private FileSystem fs;
     private Boolean isJar = false;
@@ -48,19 +45,31 @@ public class Config {
     public  static   List<String> confList  = new ArrayList<String>();
 
     private     String WeatherURL = "google.com.ua/search?q=weather";
+
+    public String getFilecontain() {
+        return filecontain;
+    }
+
     private     String NewsURL = "ukr.net";
     private     String startupFlag = "false";
     private     String FilmsURL = "kinogo.net";
     private     String TorrentURL = "rutorg.org";
     private  String filecontain = "";
-    private  String path = "C:"+ File.separator+ "Viano" +File.separator+"language.txt";
-    private static String pathconfig = "C:"+ File.separator+ "Viano" +File.separator+"config.txt";
+    private  String path = "C:"+ File.separator+ "Viano" +File.separator+"data/language.txt";
+    private static String pathconfig = "C:"+ File.separator+ "Viano" +File.separator+"data/config.txt";
 
     private  edu.cmu.sphinx.api.Configuration configuration;
 
     public void setListener(RecognitionListener listener) {
         this.listener = listener;
     }
+
+    private List<String> gramsList = Arrays.asList("apps.gram","computer.gram","internet.gram","keyboard.gram",
+            "master.gram","mouse.gram","paint.gram","racing.gram","test.gram");
+    private List<String> wordsList = Arrays.asList("apps_rus.txt","forApps.txt","forLinks.txt","web_rus.txt",
+            "words_rus.txt");
+    private List<String> othersList = Arrays.asList("cmdow.exe","song.wav");
+    private List<String> dictList = Arrays.asList("msu_ru_nsh.dic","cmudict-en-us.dict");
 
     private  RecognitionListener listener;
     private  Boolean test;
@@ -78,18 +87,18 @@ public class Config {
 
     private LiveSpeechRecognizer loadFirstModel(LiveSpeechRecognizer recognizer)
     {
-        String flag = "";
+        String flag[];
         System.out.println("Enter 1 or 2:");
         while(true) {
             flag = listener.getText("start");
-            if (flag.equals("1"))
+            if (flag[0].equals("1"))
             {   init();
                 wtite(path, "english");
                 setJavaTool();
                 recognizer =  loadLanguageModel(recognizer, ACOUSTIC_MODEL_ENG, DICTIONARY_PATH_ENG, GRAMMAR_PATH_ENG);
                 break;
             }
-            else if(flag.equals("2"))
+            else if(flag[0].equals("2"))
             {   init();
                 wtite(path,"russian");
                 setJavaTool();
@@ -124,10 +133,25 @@ public class Config {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        copyFiles("/others/song.wav","C:/Viano/song.wav",true);
-        copyFiles("/others/cmdow.exe","C:/Viano/cmdow.exe",true);
+        String path = "C:/Viano/data/";
+        copyFiles("/others/Transcription.txt",path+"dict/Transcription.txt",true);
+
+        for(String s:dictList){
+            copyFiles("/edu/cmu/sphinx/models/en-us/"+s,path+"dict/"+s,true);
+        }
+
+        for(String s:gramsList){
+            copyFiles("/gram_rus/"+s,path+"gram_rus/"+s,true);
+        }
+        for(String s:wordsList){
+            copyFiles("/words/"+s,path+"words/"+s,true);
+        }
+        for(String s:othersList){
+            copyFiles("/others/"+s,path+s,true);
+        }
 
     }
+
 
     public Boolean isJar(){
 
@@ -204,6 +228,14 @@ public class Config {
         myPath.mkdirs();
         myPath = new File("C:/Viano/Video/");
         myPath.mkdirs();
+        myPath = new File("C:/Viano/data/gram_rus");
+        myPath.mkdirs();
+        myPath = new File("C:/Viano/data/gram_eng");
+        myPath.mkdirs();
+        myPath = new File("C:/Viano/data/words");
+        myPath.mkdirs();
+        myPath = new File("C:/Viano/data/dict");
+        myPath.mkdirs();
 
         try {
             Thread.sleep(300);
@@ -251,7 +283,7 @@ public class Config {
 
             Runtime.getRuntime().exec("wscript.exe " + file.getAbsolutePath());
             try {
-                Thread.sleep(700);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -260,16 +292,15 @@ public class Config {
         }
     }
 
-    private  void parserWords(String resource)
+    protected    void parserWords(String resource)
     {
         String str = "";
         Boolean flag = false;
         ArrayList<String> ex = new ArrayList<String>();
         String[] list = null;
 
-        InputStream in=Master.class.getResourceAsStream(resource);
         BufferedReader reader = null;
-        try {reader = new BufferedReader(new InputStreamReader(in));}
+        try {reader = new BufferedReader(new FileReader(resource));}
         catch (Exception e) {/*NOP*/}
 
         try {
@@ -299,12 +330,14 @@ public class Config {
     {
         if (filecontain.equals("english"))
         {
-            parserWords("/words/words_eng.txt");
+            parserWords("C:/Viano/data/words/words_eng.txt");
         }
 
         else if (filecontain.equals("russian"))
         {
-            parserWords("/words/words_rus.txt");
+            parserWords("C:/Viano/data/words/words_rus.txt");
+            parserWords("C:/Viano/data/words/apps_rus.txt");
+            parserWords("C:/Viano/data/words/web_rus.txt");
         }
     }
 
@@ -328,10 +361,16 @@ public class Config {
         }
         else if (str.equals("Internet"))
         {
+            if(!Internet_Words.isEmpty())
+                Internet_Words.clear();
+
             Internet_Words.addAll(list);
         }
         else if (str.equals("Applications"))
         {
+            if(!Applications_Words.isEmpty())
+                Applications_Words.clear();
+
             Applications_Words.addAll(list);
         }
         else if (str.equals("Paint"))

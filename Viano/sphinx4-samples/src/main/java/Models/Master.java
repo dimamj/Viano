@@ -74,9 +74,11 @@ public class Master extends AbstractController {
 
     public String startVoiceControl(LiveSpeechRecognizer jsgfRecognizer,Configuration configuration,Boolean flag) {
         run = flag;
+        System.out.println("OK");
 
             setGrammar("master", configuration, jsgfRecognizer);
             listener.setImage("masterActive");
+        System.out.println("OK2");
 
         while (run) {
 
@@ -110,7 +112,7 @@ public class Master extends AbstractController {
 
             else if (utterance.equals(Master_Words.get(6))) //Settings
             {
-                listener.createSettingsGui();
+                listener.createGui("setting",config.getFilecontain());
                 listener.setText("setting",conf);
                 Thread thread = new Thread(new Parameters());//////////////////////////////////////
                 thread.start();
@@ -148,6 +150,19 @@ public class Master extends AbstractController {
                         listener.setImage("masterActive");
                         break;
                     }
+                }
+
+            }
+
+            else if(utterance.equals(Master_Words.get(8))){   //add comand
+
+
+                listener.createGui("addCommand",config.getFilecontain());
+                while (!listener.getEdit("addCommand")){}
+                String[] array = listener.getText("addCommand");
+                if(array[0]!=null&&array[1]!=null&&array[3]!=null) {
+                    listener.addCommand(array);
+                    listener.disposeGui("addCommand");
                 }
 
             }

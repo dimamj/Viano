@@ -11,12 +11,13 @@ public interface ViewInterface {
     public Boolean getEdit();
     public void setProgressVisible();
     public void disposeElements();
-    public String getText();
+    public String[] getText();
     public  void setWords(String words);
     public void setImage(String key);
     void dispose();
     void setErrorTreyMessage(String message);
     void setLabel(String text);
+    boolean isDisplayable();
 
 
 }
