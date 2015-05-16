@@ -104,6 +104,7 @@ public class AppsCtrl extends AbstractController  {
                     }
                 }
             } catch (IOException e) {
+                listener.errorMessage("Error: Code #2");
                 e.printStackTrace();
             }
         }

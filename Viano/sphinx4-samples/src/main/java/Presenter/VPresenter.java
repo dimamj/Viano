@@ -35,8 +35,7 @@ public class VPresenter {
         init();
     }
 
-    private void init()
-    {
+    private void init() {
 
         RecognitionListener listener = new RecognitionListener() {
 
@@ -119,21 +118,20 @@ public class VPresenter {
         config = new Config();
         config.setListener(listener);
         startGui = new StartGui();
-        System.out.println(System.getProperty("file.encoding"));
         recognizer = config.beginSettings(recognizer);
 
         master = Master.getInstance();
         master.setListener(listener);
 
-
         configuration = config.getConfiguration();
 
         MWords = config.Modules_Words;
         try {recognizer.startRecognition(true);}
-        catch (Exception e){error(e.getMessage());}
+        catch (Exception e){
+            listener.errorMessage("Error: Code #3");
+            error(e.getMessage());}
 
-        if(!config.read("C:/Viano/data/language.txt",2).equals("true"))
-        {
+        if(!config.read("C:/Viano/data/language.txt",2).equals("true")) {
             test = new View.Test();
             Test.getInstance().startVoiceControl(recognizer, configuration, true);
         }

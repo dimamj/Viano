@@ -94,7 +94,7 @@ public class InternetCtrl extends AbstractController {
                 return utterance;
             }
 
-            findAddApps(utterance);
+            findAddLinks(utterance);
             if (utterance.equals(list.get(1)))
             {
                 openURL("google.com");
@@ -146,7 +146,7 @@ public class InternetCtrl extends AbstractController {
                 screenKeyBoard(jsgfRecognizer, configuration, list);
             }
 
-            else if (utterance.equals(list.get(9))) //Okey Google
+            else if (utterance.equals(list.get(9))) //Голосовой поиск
             {
                 robot.keyPress(KeyEvent.VK_CONTROL);
                 robot.keyPress(KeyEvent.VK_SHIFT);
@@ -182,7 +182,7 @@ public class InternetCtrl extends AbstractController {
 
     }
 
-    private void findAddApps(String utterance){
+    private void findAddLinks(String utterance){
         Path filePath = Paths.get("C:/Viano/data/words/forLinks.txt");
         Charset charset = Charset.forName("UTF-8");
 
