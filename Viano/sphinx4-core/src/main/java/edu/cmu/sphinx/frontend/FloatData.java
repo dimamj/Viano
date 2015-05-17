@@ -18,7 +18,6 @@ import edu.cmu.sphinx.util.MatrixUtils;
  *
  * @see Data
  */
-@SuppressWarnings("serial")
 public class FloatData implements Data, Cloneable {
 
     private final float[] values;
@@ -99,8 +98,10 @@ public class FloatData implements Data, Cloneable {
     }
 
 
-    /** Converts a given Data-object into a <code>FloatData</code> if possible.
-     *  @param data
+    /** 
+     * Converts a given Data-object into a <code>FloatData</code> if possible.
+     * @param data data to convert
+     * @return converted data
      */
     public static FloatData toFloatData(Data data) {
         FloatData convertData;

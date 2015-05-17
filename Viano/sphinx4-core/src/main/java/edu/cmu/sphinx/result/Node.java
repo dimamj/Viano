@@ -11,8 +11,10 @@
  */
 package edu.cmu.sphinx.result;
 
+import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
+import edu.cmu.sphinx.util.TimeFrame;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -20,13 +22,12 @@ import java.io.PrintWriter;
 import java.util.*;
 
 /**
- * <p/>
+ * <p>
  * A node is part of Lattices, representing the theory that a word was spoken over a given period of time. A node also
  * has a set of entering and leaving {@link edu.cmu.sphinx.result.Edge edges}, connecting it to other nodes. One can get
  * and set the beginning and end frames of the word via the getBeginTime and getEndTime methods. When setting these
  * times, the beginning time must be earlier or equal to the end time, otherwise an error will be thrown. </p>
- * <p/>
- * <p/>
+ * <p>
  * The posterior probability of any word in a word lattice is the probability that the node representing that word
  * occurs on any path through the lattice. It is usually computed as the ratio of the total likelihood scores of all
  * paths through the lattice that pass through the node, to the total likelihood score of all paths through the lattice.
@@ -42,9 +43,8 @@ public class Node {
 
     private String id;
     private Word word;
-    // TODO: use TimeFrame
-    private int beginTime = -1;
-    private int endTime = -1;
+    private long beginTime = -1;
+    private long endTime = -1;
     private List<Edge> enteringEdges;
     private List<Edge> leavingEdges;
     private double forwardScore;
@@ -69,7 +69,7 @@ public class Node {
      * @param beginTime the start time of the word
      * @param endTime   the end time of the word
      */
-    protected Node(Word word, int beginTime, int endTime) {
+    protected Node(Word word, long beginTime, long endTime) {
         this(getNextNodeId(), word, beginTime, endTime);
     }
 
@@ -77,22 +77,19 @@ public class Node {
     /**
      * Create a new Node with given ID. Used when creating a Lattice from a .LAT file
      *
-     * @param id
-     * @param word
-     * @param beginTime
-     * @param endTime
+     * @param id id of the node
+     * @param word word
+     * @param beginTime begin time
+     * @param endTime end time
      */
-    protected Node(String id, Word word, int beginTime, int endTime) {
+    protected Node(String id, Word word, long beginTime, long endTime) {
         this.id = id;
         this.word = word;
         this.beginTime = beginTime;
         this.endTime = endTime;
-        if (endTime != -1) {
-            if (beginTime > endTime) {
-                throw new Error("Begin time (" + beginTime +
-                        ") later than end time (" + endTime + ')');
-            }
-        }
+        
+        assert beginTime <= endTime || endTime < 0;
+
         this.forwardScore = LogMath.LOG_ZERO;
         this.backwardScore = LogMath.LOG_ZERO;
         this.posterior = LogMath.LOG_ZERO;
@@ -112,7 +109,7 @@ public class Node {
     /**
      * Test if a node has an Edge to a Node
      *
-     * @param n
+     * @param n node to check
      * @return unique Node ID
      */
     protected boolean hasEdgeToNode(Node n) {
@@ -139,7 +136,7 @@ public class Node {
     /**
      * Test is a Node has an Edge from a Node
      *
-     * @param n
+     * @param n node to check
      * @return true if this node has an Edge from n
      */
     protected boolean hasEdgeFromNode(Node n) {
@@ -166,7 +163,7 @@ public class Node {
     /**
      * Test if a Node has all Edges from the same Nodes and another Node.
      *
-     * @param n
+     * @param n node to check
      * @return true if this Node has Edges from the same Nodes as n
      */
     protected boolean hasEquivalentEnteringEdges(Node n) {
@@ -243,7 +240,7 @@ public class Node {
     /**
      * Add an Edge from this Node
      *
-     * @param e
+     * @param e edge to add
      */
     protected void addEnteringEdge(Edge e) {
         enteringEdges.add(e);
@@ -253,7 +250,7 @@ public class Node {
     /**
      * Add an Edge to this Node
      *
-     * @param e
+     * @param e edge to add
      */
     protected void addLeavingEdge(Edge e) {
         leavingEdges.add(e);
@@ -263,7 +260,7 @@ public class Node {
     /**
      * Remove an Edge from this Node
      *
-     * @param e
+     * @param e edge to remove
      */
     protected void removeEnteringEdge(Edge e) {
         enteringEdges.remove(e);
@@ -305,7 +302,7 @@ public class Node {
      *
      * @return the begin frame number, or -1 if the frame number is unknown
      */
-    public int getBeginTime() {
+    public long getBeginTime() {
         if (beginTime == -1) {
             calculateBeginTime();
         }
@@ -319,12 +316,8 @@ public class Node {
      *
      * @param beginTime the frame number when the word began
      */
-    public void setBeginTime(int beginTime) {
-        if (beginTime > getEndTime()) {
-            throw new Error("Attempting to set a begin time (" + beginTime +
-                    ") that is later than the end time (" +
-                    getEndTime() + ").");
-        }
+    public void setBeginTime(long beginTime) {
+        assert beginTime <= endTime;
         this.beginTime = beginTime;
     }
 
@@ -334,7 +327,7 @@ public class Node {
      *
      * @return the end time, or -1 if the frame number if is unknown
      */
-    public int getEndTime() {
+    public long getEndTime() {
         return endTime;
     }
 
@@ -345,13 +338,19 @@ public class Node {
      *
      * @param endTime the frame number when the word ended
      */
-    public void setEndTime(int endTime) {
-        if (getBeginTime() > endTime) {
-            throw new Error("Attempting to set an end time (" + endTime +
-                    ") that is earlier than the start time (" +
-                    getBeginTime() + ").");
-        }
+    public void setEndTime(long endTime) {
+        assert beginTime <= endTime;
         this.endTime = endTime;
+    }
+
+
+    /**
+     * Returns TimeFrame of the Node
+     * 
+     * @return TimeFrame
+     */
+    public TimeFrame getTimeFrame() {
+        return new TimeFrame(getBeginTime(), getEndTime());
     }
 
 
@@ -386,8 +385,8 @@ public class Node {
     /**
      * Internal routine when dumping Lattices as Graphviz files
      * 
-     * @param f
-     * @throws IOException
+     * @param f file writer to store
+     * @throws IOException if error occurred
      */
     public void dumpDot(FileWriter f) throws IOException {
         String posterior = String.valueOf(getPosterior());
@@ -401,13 +400,14 @@ public class Node {
     /**
      * Internal routine used when dumping Lattices as .LAT files
      *
-     * @param f
-     * @throws IOException
+     * @param f print writer to store
+     * @throws IOException if error occurred
      */
     void dump(PrintWriter f) throws IOException {
         f.println("node: " + id + ' ' + word.getSpelling() +
                 //" a:" + getForwardProb() + " b:" + getBackwardProb()
-                " p:" + getPosterior());
+                //" p:" + getPosterior());
+                ' ' + getBeginTime() + ' ' + getEndTime());
     }
 
 
@@ -421,8 +421,11 @@ public class Node {
 
         String id = tokens.nextToken();
         String label = tokens.nextToken();
+        long beginTime = Long.parseLong(tokens.nextToken());
+        long endTime = Long.parseLong(tokens.nextToken());
 
-        lattice.addNode(id, label, 0, 0);
+        Word word = new Word(label, new Pronunciation[0], label.startsWith("<") || label.startsWith("["));
+        lattice.addNode(id, word, beginTime, endTime);
     }
 
 

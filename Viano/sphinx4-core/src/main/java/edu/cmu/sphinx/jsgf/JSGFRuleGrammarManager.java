@@ -13,13 +13,7 @@ import java.util.Map;
 
 public class JSGFRuleGrammarManager {
 	protected Map<String, JSGFRuleGrammar> grammars;
-	protected boolean caseSensitiveNames = true;
 
-	JSGFRuleGrammarManager (boolean caseSensitiveNames) {
-		this.caseSensitiveNames = caseSensitiveNames; 
-		grammars = new HashMap<String, JSGFRuleGrammar>();
-	}
-	
 	public JSGFRuleGrammarManager () {
 		grammars = new HashMap<String, JSGFRuleGrammar>();
 	}
@@ -37,24 +31,23 @@ public class JSGFRuleGrammarManager {
 		grammars.remove(name);
 	}
 	
-	/** Add a grammar to the grammar list. */
+	/** Add a grammar to the grammar list. 
+	 * @param grammar to store
+	 **/
 	protected void storeGrammar(JSGFRuleGrammar grammar) {
-		// System.out.println ("Storing grammar " + grammar.getName());
-		if (caseSensitiveNames) {
-			grammars.put(grammar.getName(), grammar);
-		} else {
-			grammars.put(grammar.getName().toLowerCase(), grammar);
-		}
+		grammars.put(grammar.getName(), grammar);
 	}
 
-	/** Retrieve a grammar from the grammar list. */
+	/** Retrieve a grammar from the grammar list.
+	 * @param name grammar name to load
+	 * @return grammar object
+	 */
 	public JSGFRuleGrammar retrieveGrammar(String name) {
 		// System.out.println ("Looking for grammar " + name);
 		// for (String key : grammars.keySet()) {
 		//  	System.out.println ("    " + key);
 		// }
-		return grammars.get(caseSensitiveNames ? name : name
-				.toLowerCase());
+		return grammars.get(name);
 	}
 
 	public void linkGrammars() throws JSGFGrammarException {

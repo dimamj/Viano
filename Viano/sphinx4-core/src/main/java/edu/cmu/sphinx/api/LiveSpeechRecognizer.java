@@ -27,6 +27,7 @@ public class LiveSpeechRecognizer extends AbstractSpeechRecognizer {
      * Constructs new live recognition object.
      *
      * @param configuration common configuration
+     * @throws IOException if model IO went wrong
      */
     public LiveSpeechRecognizer(Configuration configuration) throws IOException
     {
@@ -36,6 +37,10 @@ public class LiveSpeechRecognizer extends AbstractSpeechRecognizer {
             .setInputStream(microphone.getStream());
     }
 
+    public void setContext(Configuration configuration)
+    {
+        this.context.setGrammar(configuration.getGrammarPath(),configuration.getGrammarName());
+    }
     /**
      * Starts recognition process.
      *
@@ -47,26 +52,6 @@ public class LiveSpeechRecognizer extends AbstractSpeechRecognizer {
         microphone.startRecording();
     }
 
-    public void setContext(Configuration configuration)
-    {
-        this.context.setGrammar(configuration.getGrammarPath(),configuration.getGrammarName());
-    }
-
-    public void setLang(Configuration configuration)
-    {
-        this.context.setLanguageModel(configuration.getLanguageModelPath());
-    }
-
-    public void setConf(Configuration configuration)
-    {
-        try {
-            this.context.setAcousticModel(configuration.getAcousticModelPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        this.context.setDictionary(configuration.getDictionaryPath());
-        this.context.setGrammar(configuration.getGrammarPath(),configuration.getGrammarName());
-    }
     /**
      * Stops recognition process.
      *

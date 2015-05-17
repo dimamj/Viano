@@ -35,7 +35,7 @@ public class Context {
 
     /**
      * Constructs builder that uses default XML configuration.
-     *
+     * @param config configuration
      * @throws MalformedURLException if failed to load configuration file
      */
     public Context(Configuration config)
@@ -48,8 +48,7 @@ public class Context {
      * Constructs builder using user-supplied XML configuration.
      *
      * @param  path path to XML-resource with configuration
-     * @return      the same instance of {@link Configuration}
-     *
+     * @param  config configuration
      * @throws MalformedURLException if failed to load configuration file
      * @throws IOException           if failed to load configuration file
      */
@@ -137,7 +136,7 @@ public class Context {
      * Currently it supports ".lm" and ".dmp" file formats.
      *
      * @param  path path to the language model file
-     * @see         Context#setGrammar(String)
+     * @see   Context#setGrammar(String, String)
      *
      * @throws IllegalArgumentException if path ends with unsupported extension
      */
@@ -154,41 +153,23 @@ public class Context {
             throw new IllegalArgumentException(
                 "Unknown format extension: " + path);
         }
-        setLocalProperty("decoder->searchManager", "wordPruningSearchManager");
+        //search manager for LVCSR is set by deafult
     }
 
 
     public void setSpeechSource(InputStream stream, TimeFrame timeFrame) {
         getInstance(StreamDataSource.class).setInputStream(stream, timeFrame);
-        String scorerComponentName = "";
-        if (configurationManager.getComponentNames().contains("threadedScorer")) {
-        	scorerComponentName = "threadedScorer";
-        } else if (configurationManager.getComponentNames().contains("trivialScorer")) {
-        	scorerComponentName = "trivialScorer";
-        } else {
-        	throw new RuntimeException("There are no scorer component in configuration. 'threadedScorer' or 'trivialScorer' is expected.");
-        }
-        setLocalProperty(scorerComponentName + "->frontend", "liveFrontEnd");
+        setLocalProperty("trivialScorer->frontend", "liveFrontEnd");
     }
 
     /**
      * Sets byte stream as the speech source.
      *
-     * @param  stream stream
-     * @see           Context#useMicrophone()
+     * @param  stream stream to process
      */
     public void setSpeechSource(InputStream stream) {
-        // TODO: setup stream sample rate and other parameters
         getInstance(StreamDataSource.class).setInputStream(stream);
-        String scorerComponentName = "";
-        if (configurationManager.getComponentNames().contains("threadedScorer")) {
-        	scorerComponentName = "threadedScorer";
-        } else if (configurationManager.getComponentNames().contains("trivialScorer")) {
-        	scorerComponentName = "trivialScorer";
-        } else {
-        	throw new RuntimeException("There are no scorer component in configuration. 'threadedScorer' or 'trivialScorer' is expected.");
-        }
-        setLocalProperty(scorerComponentName + "->frontend", "liveFrontEnd");
+        setLocalProperty("trivialScorer->frontend", "liveFrontEnd");
     }
 
     /**
@@ -223,7 +204,8 @@ public class Context {
      * Returns instance of the XML configuration by its class.
      *
      * @param  clazz class to look up
-     * @return       instance of the specified class or null
+     * @param  <C> generic
+     * @return instance of the specified class or null
      */
     public <C extends Configurable> C getInstance(Class<C> clazz) {
         return configurationManager.lookup(clazz);

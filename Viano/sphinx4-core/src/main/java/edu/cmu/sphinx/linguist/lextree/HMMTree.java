@@ -22,7 +22,6 @@ import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.Utilities;
 
 import java.util.*;
@@ -48,7 +47,6 @@ class Node {
 
     private static int nodeCount;
     private static int successorCount;
-    private static final Map<Pronunciation, WordNode> wordNodeMap = new HashMap<Pronunciation, WordNode>();
     
     /** 
      * This can be either Map during tree construction or Array after
@@ -181,13 +179,18 @@ class Node {
      * set of right context
      *
      * @param pronunciation the pronunciation to add
+     * @param wordNodeMap 
      * @return the node that holds the pronunciation (new or old)
      */
-    WordNode addSuccessor(Pronunciation pronunciation, float probability) {
+    WordNode addSuccessor(Pronunciation pronunciation, float probability, Map<Pronunciation, WordNode> wordNodeMap) {
         WordNode child = null;
         WordNode matchingChild = (WordNode) getSuccessor(pronunciation);
         if (matchingChild == null) {
-            child = getWordNode(pronunciation, probability);
+            child = wordNodeMap.get(pronunciation);
+            if (child == null) {
+                child = new WordNode(pronunciation, probability);
+                wordNodeMap.put(pronunciation, child);
+            }
             putSuccessor(pronunciation, child);
         } else {
             if (matchingChild.getUnigramProbability() < probability) {
@@ -224,22 +227,6 @@ class Node {
             child = matchingChild;
         }
         return child;
-    }
-
-
-    /**
-     * Gets a word node associated with the pronunciation.
-     *
-     * @param p the pronunciation
-     * @return the word node
-     */
-    private WordNode getWordNode(Pronunciation p, float probability) {
-        WordNode node = wordNodeMap.get(p);
-        if (node == null) {
-            node = new WordNode(p, probability);
-            wordNodeMap.put(p, node);
-        }
-        return node;
     }
 
 
@@ -688,7 +675,10 @@ class HMMTree {
     private EntryPointTable entryPointTable;
     private boolean debug;
     private final float languageWeight;
+    
     private final Map<Object, HMMNode[]> endNodeMap;
+    private final Map<Pronunciation, WordNode> wordNodeMap;
+    
     private WordNode sentenceEndWordNode;
     private Logger logger;
 
@@ -708,14 +698,12 @@ class HMMTree {
         this.dictionary = dictionary;
         this.lm = lm;
         this.endNodeMap = new HashMap<Object, HMMNode[]>();
+        this.wordNodeMap = new HashMap<Pronunciation, WordNode>();
         this.addFillerWords = addFillerWords;
         this.languageWeight = languageWeight;
         
         logger = Logger.getLogger(HMMTree.class.getSimpleName());
-
-        TimerPool.getTimer(this,"Create HMM Tree").start();
         compile();
-        TimerPool.getTimer(this,"Create HMM Tree").stop();
     }
 
 
@@ -857,6 +845,8 @@ class HMMTree {
         lm = null;
         exitPoints = null;
         allWords = null;
+        wordNodeMap.clear();
+        endNodeMap.clear();
     }
 
 
@@ -922,7 +912,7 @@ class HMMTree {
             baseUnit = units[units.length - 1];
             EndNode endNode = new EndNode(baseUnit, lc, probability);
             curNode = curNode.addSuccessor(endNode, probability);
-            wordNode = curNode.addSuccessor(pronunciation, probability);
+            wordNode = curNode.addSuccessor(pronunciation, probability, wordNodeMap);
             if (wordNode.getWord().isSentenceEndWord()) {
                 sentenceEndWordNode = wordNode;
             }
@@ -1207,7 +1197,7 @@ class HMMTree {
                             initialNode = new InitialWordNode(p, tailNode);
                         } else {
                             float prob = getWordUnigramProbability(p.getWord());
-                            wordNode = tailNode.addSuccessor(p, prob);
+                            wordNode = tailNode.addSuccessor(p, prob, wordNodeMap);
                             if (p.getWord() ==
                                 dictionary.getSentenceEndWord()) {
                                 sentenceEndWordNode = wordNode;

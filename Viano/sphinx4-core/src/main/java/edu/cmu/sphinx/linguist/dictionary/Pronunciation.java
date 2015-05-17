@@ -20,10 +20,9 @@ import edu.cmu.sphinx.linguist.acoustic.Unit;
 /** Provides pronunciation information for a word. */
 public class Pronunciation {
 
-    public static final Pronunciation UNKNOWN = new Pronunciation(Unit.EMPTY_ARRAY, null, null, 1.0f);
+    public static final Pronunciation UNKNOWN = new Pronunciation(Unit.EMPTY_ARRAY, null, 1.0f);
 
     private Word word;
-    private final WordClassification wordClassification;
     private final Unit[] units;
     private final String tag;
     private final float probability;
@@ -34,14 +33,11 @@ public class Pronunciation {
      *
      * @param units              represents the pronunciation
      * @param tag                a grammar specific tag
-     * @param wordClassification the classification for this word
      * @param probability        the probability of this pronunciation occurring
      */
     public Pronunciation(Unit[] units,
                   String tag,
-                  WordClassification wordClassification,
                   float probability) {
-        this.wordClassification = wordClassification;
         this.units = units;
         this.tag = tag;
         this.probability = probability;
@@ -52,15 +48,12 @@ public class Pronunciation {
      *
      * @param units              represents the pronunciation
      * @param tag                a grammar specific tag
-     * @param wordClassification the classification for this word
      * @param probability        the probability of this pronunciation occurring
      */
     protected Pronunciation(List<Unit> units,
                   String tag,
-                  WordClassification wordClassification,
                   float probability) {
         Unit[] unitsArray = units.toArray(new Unit[units.size()]);
-        this.wordClassification = wordClassification;
         this.units = unitsArray;
         this.tag = tag;
         this.probability = probability;
@@ -72,7 +65,7 @@ public class Pronunciation {
      * @param units              represents the pronunciation
      */
     protected Pronunciation(List<Unit> units) {
-        this(units, null, null, 1.0f);
+        this(units, null, 1.0f);
     }
 
 
@@ -97,16 +90,6 @@ public class Pronunciation {
      */
     public Word getWord() {
         return word;
-    }
-
-
-    /**
-     * Retrieves the word classification for this pronunciation
-     *
-     * @return the word classification for this pronunciation.
-     */
-    public WordClassification getWordClassification() {
-        return wordClassification;
     }
 
 
@@ -137,7 +120,7 @@ public class Pronunciation {
      * probable. All probabilities for particular word sum to 1.0.
      *
      * @return the probability of this pronunciation as a value between 0 and 1.0.
-     *         <p/>
+     *         <p>
      *         TODO: FIX Note that probabilities are currently maintained in the linear domain (unlike just about
      *         everything else)
      */
@@ -169,7 +152,7 @@ public class Pronunciation {
 
 
     /**
-     * Returns a detailed string representation of this Pronunication.
+     * Returns a detailed string representation of this Pronunciation.
      *
      * @return a string of this Pronunciation
      */
@@ -178,8 +161,7 @@ public class Pronunciation {
         for (Unit unit : units) {
             result.append(unit).append(' ');
         }
-        result.append("\n   class: ").append(wordClassification)
-            .append(" tag: ").append(tag).append(" prob: ").append(probability);
+        result.append("\n   class: ").append(" tag: ").append(tag).append(" prob: ").append(probability);
 
         return result.toString();
     }

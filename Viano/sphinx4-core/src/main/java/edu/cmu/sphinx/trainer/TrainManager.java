@@ -44,7 +44,7 @@ public interface TrainManager extends Configurable {
 
     /**
      * Copy the model.
-     * <p/>
+     * <p>
      * This method copies to model set, possibly to a new location and new format. This is useful if one wants to
      * convert from binary to ascii and vice versa, or from a directory structure to a JAR file. If only one model is
      * used, then name can be null.
@@ -59,6 +59,7 @@ public interface TrainManager extends Configurable {
      * Initializes the acoustic models.
      *
      * @param context the context of this TrainManager
+     * @throws IOException if something went wrong
      */
     void initializeModels(String context) throws IOException;
 
@@ -68,7 +69,7 @@ public interface TrainManager extends Configurable {
      * automatically.
      *
      * @param context the context of this train manager.
-     * @throws IOException
+     * @throws IOException if something went wrong
      */
     void trainContextIndependentModels(String context) throws IOException;
 }

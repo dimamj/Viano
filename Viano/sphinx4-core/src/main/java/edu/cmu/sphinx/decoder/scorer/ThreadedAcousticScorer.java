@@ -25,7 +25,7 @@ import java.util.concurrent.*;
 
 /**
  * An acoustic scorer that breaks the scoring up into a configurable number of separate threads.
- * <p/>
+ * <p>
  * All scores are maintained in LogMath log base
  */
 public class ThreadedAcousticScorer extends SimpleAcousticScorer {
@@ -44,7 +44,7 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
      * property is true, then this value is combined with the number of available processors on the system. If you want
      * to have one thread per CPU available to score states, set the NUM_THREADS property to 0 and the isCpuRelative to
      * true. If you want exactly one thread to process scores set NUM_THREADS to 1 and isCpuRelative to false.
-     * <p/>
+     * <p>
      * If the value is 1 isCpuRelative is false no additional thread will be instantiated, and all computation will be
      * done in the calling thread itself. The default value is 0.
      */
@@ -93,7 +93,7 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
      *            the NUM_THREADS property to 0 and the isCpuRelative to true.
      *            If you want exactly one thread to process scores set
      *            NUM_THREADS to 1 and isCpuRelative to false.
-     *            <p/>
+     *            <p>
      *            If the value is 1 isCpuRelative is false no additional thread
      *            will be instantiated, and all computation will be done in the
      *            calling thread itself. The default value is 0.
@@ -165,7 +165,7 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
     }
 
     @Override
-    protected <T extends Scoreable> T doScoring(List<T> scoreableList, final Data data) throws Exception {
+    protected <T extends Scoreable> T doScoring(List<T> scoreableList, final Data data) {
         if (numThreads > 1) {
             int totalSize = scoreableList.size();
             int jobSize = Math.max((totalSize + numThreads - 1) / numThreads, minScoreablesPerThread);
@@ -183,11 +183,11 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
 
                 List<T> finalists = new ArrayList<T>(tasks.size());
        
-                for (Future<T> result : executorService.invokeAll(tasks))
-                    finalists.add(result.get());
-       
-                if (finalists.size() == 0) {
-                    throw new DataProcessingException("No scoring jobs ended");
+                try {
+                    for (Future<T> result : executorService.invokeAll(tasks))
+                        finalists.add(result.get());
+                } catch (Exception e) {
+                    throw new DataProcessingException("No scoring jobs ended", e);
                 }
                 
                 return Collections.min(finalists, Scoreable.COMPARATOR);

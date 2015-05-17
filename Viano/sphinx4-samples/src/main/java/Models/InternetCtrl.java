@@ -65,7 +65,7 @@ public class InternetCtrl extends AbstractController {
         config.setUseGrammar(false);
         config.setLanguageModelPath(LANGUAGE_MODEL);
         jsgfRecognizer.stopRecognition();
-        jsgfRecognizer.setLang(config);
+      //  jsgfRecognizer.setLang(config);
         jsgfRecognizer.startRecognition(true);
     }
 

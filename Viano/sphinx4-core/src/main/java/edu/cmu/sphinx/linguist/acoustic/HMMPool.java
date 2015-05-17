@@ -45,6 +45,8 @@ public class HMMPool {
      * Constructs a HMMPool object.
      *
      * @param model the model to use for the pool
+     * @param logger the logger for messages
+     * @param unitManager manager for units
      */
     public HMMPool(AcousticModel model, Logger logger, UnitManager unitManager)
     {
@@ -52,7 +54,6 @@ public class HMMPool {
         int maxCIUnits = 0;
         this.model = model;
         this.unitManager = unitManager;
-        TimerPool.getTimer(this,"Build HMM Pool").start();
 
         if (model.getLeftContextSize() != 1)
             throw new Error("LexTreeLinguist: Unsupported left context size");
@@ -99,7 +100,6 @@ public class HMMPool {
                 }
             }
         }
-        TimerPool.getTimer(this,"Build HMM Pool").stop();
     }
 
 

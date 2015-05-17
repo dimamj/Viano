@@ -12,7 +12,7 @@ import java.util.Comparator;
  * holds its outgoing {@link edu.cmu.sphinx.fst.Arc} objects in a fixed size
  * array not allowing additions/deletions.
  * 
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  */
 public class ImmutableState extends State {
 
@@ -34,7 +34,7 @@ public class ImmutableState extends State {
     /**
      * Constructor specifying the capacity of the arcs array.
      * 
-     * @param numArcs
+     * @param numArcs number of arcs
      */
     protected ImmutableState(int numArcs) {
         super(0);

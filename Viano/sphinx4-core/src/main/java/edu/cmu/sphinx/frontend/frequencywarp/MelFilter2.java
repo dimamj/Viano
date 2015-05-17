@@ -16,8 +16,7 @@ import static java.util.Arrays.copyOfRange;
 /**
  * Defines a triangular mel-filter.
  *
- * The {@link MelFrequencyFilterBank2} creates mel-filters and filters spectrum
- * data using the method {@link #filterOutput(double[]) filterOutput}.
+ * The {@link MelFrequencyFilterBank2} creates mel-filters and filters spectrum.
  *
  * A mel-filter is a triangular shaped bandpass filter. When a mel-filter is
  * constructed, the parameters <code>leftEdge</code>, <code>rightEdge</code>,
@@ -36,7 +35,7 @@ import static java.util.Arrays.copyOfRange;
  *
  * Figure 1 below shows pictorially what the other parameters mean.
  *
- * <img src="doc-files/melfilter.jpg"> <br>
+ * <img alt="Mel filter" src="doc-files/melfilter.jpg"> <br>
  * <center><b>Figure 1: A triangular mel-filter.</b></center>
  * 
  * @see MelFrequencyFilterBank2

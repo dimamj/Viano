@@ -32,7 +32,7 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 /**
  * An ASCII ARPA language model loader. This loader makes no attempt to
  * optimize storage, so it can only load very small language models
- * <p/>
+ * <p>
  * Note that all probabilities in the grammar are stored in LogMath log base
  * format. Language Probabilities in the language model file are stored in log
  * 10 base.
@@ -362,7 +362,7 @@ public class SimpleNGramModel implements LanguageModel {
      * Returns a list of all the word sequences in the language model This
      * method is used to create Finite State Transducers of the language model.
      *
-     * @return LinkedList<WordSequence> containing all the word sequences
+     * @return List containing all the word sequences
      */
     public LinkedList<WordSequence> getNGrams() {
         return tokens;
