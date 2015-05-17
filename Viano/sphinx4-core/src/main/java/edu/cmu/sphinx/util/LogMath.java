@@ -22,7 +22,7 @@ public final class LogMath {
     public static final float LOG_ZERO = -Float.MAX_VALUE;
     public static final float LOG_ONE = 0.f;
 
-    // Singeleton instance.
+    // Singleton instance.
     private static LogMath instance;
     private static float logBase = 1.0001f;
     private static boolean useTable = true;
@@ -31,21 +31,10 @@ public final class LogMath {
     private float inverseNaturalLogBase;
 
     private float theAddTable[];
-    private float maxLogValue;
-    private float minLogValue;
 
     private LogMath() {
         naturalLogBase = (float) Math.log(logBase);
         inverseNaturalLogBase = 1.0f / naturalLogBase;
-        // When converting a number from/to linear, we need to make
-        // sure it's within certain limits to prevent it from
-        // underflowing/overflowing.
-        // We compute the max value by computing the log of the max
-        // value that a float can contain.
-        maxLogValue = linearToLog(Double.MAX_VALUE);
-        // We compute the min value by computing the log of the min
-        // (absolute) value that a float can hold.
-        minLogValue = linearToLog(Double.MIN_VALUE);
         if (useTable) {
             // Now create the addTable table.
             // summation needed in the loop
@@ -118,13 +107,11 @@ public final class LogMath {
 
     /**
      * Sets log base.
-     *
+     * <p>
      * According to forum discussions a value between 1.00001 and 1.0004 should
      * be used for speech recognition. Going above 1.0005 will probably hurt.
      *
-     * @param logbase Log base
-     *
-     * @throws IllegalStateException if LogMath instance has been already got
+     * @param logBase Log base
      */
     public static void setLogBase(float logBase) {
         synchronized(LogMath.class) {
@@ -136,8 +123,7 @@ public final class LogMath {
     /**
      * The property that controls whether we use the old, slow (but correct)
      * method of performing the LogMath.add by doing the actual computation.
-     *
-     * @throws IllegalStateException if LogMath instance has been already got
+     * @param useTable to configure table lookups
      */
     public static void setUseTable(boolean useTable) {
         synchronized(LogMath.class) {
@@ -147,12 +133,12 @@ public final class LogMath {
     }
 
     /**
-     * Returns the summation of two numbers when the arguments and the result are in log. <p/> <p/> That is, it returns
-     * log(a + b) given log(a) and log(b) </p> <p/> <p/> This method makes use of the equality: </p> <p/> <p/> <b>log(a
-     * + b) = log(a) + log (1 + exp(log(b) - log(a))) </b> </p> <p/> <p/> which is derived from: </p> <p/> <p/> <b>a + b
-     * = a * (1 + (b / a)) </b> </p> <p/> <p/> which in turns makes use of: </p> <p/> <p/> <b>b / a = exp (log(b) -
-     * log(a)) </b> </p> <p/> <p/> Important to notice that <code>subtractAsLinear(a, b)</code> is *not* the same as
-     * <code>addAsLinear(a, -b)</code>, since we're in the log domain, and -b is in fact the inverse. </p> <p/> <p/> No
+     * Returns the summation of two numbers when the arguments and the result are in log. <p>  That is, it returns
+     * log(a + b) given log(a) and log(b) </p> <p>  This method makes use of the equality: </p> <p>  <b>log(a
+     * + b) = log(a) + log (1 + exp(log(b) - log(a))) </b> </p> <p>  which is derived from: </p> <p>  <b>a + b
+     * = a * (1 + (b / a)) </b> </p> <p>  which in turns makes use of: </p> <p>  <b>b / a = exp (log(b) -
+     * log(a)) </b> </p> <p>  Important to notice that <code>subtractAsLinear(a, b)</code> is *not* the same as
+     * <code>addAsLinear(a, -b)</code>, since we're in the log domain, and -b is in fact the inverse. </p> <p>  No
      * underflow/overflow check is performed. </p>
      *
      * @param logVal1 value in log domain (i.e. log(val1)) to add
@@ -177,9 +163,9 @@ public final class LogMath {
 
     /**
      * Method used by add() internally. It returns the difference between the highest number and the total summation of
-     * two numbers. <p/> Considering the expression (in which we assume natural log) <p/> <p/> <b>log(a + b) = log(a) +
+     * two numbers. <p> Considering the expression (in which we assume natural log) <p>  <b>log(a + b) = log(a) +
      * log(1 + exp(log(b) - log(a))) </b> </p>
-     * <p/>
+     * <p>
      * the current function returns the second term of the right hand side of the equality above, generalized for the
      * case of any log base. This function can be constructed as a table, if table lookup is faster than actual
      * computation.
@@ -187,6 +173,7 @@ public final class LogMath {
      * @param index the index into the addTable
      * @return the value pointed to by index
      */
+    @SuppressWarnings("unused")
     private float addTableActualComputation(float index) {
         double logInnerSummation;
         // Negate index, since the derivation of this formula implies
@@ -199,9 +186,9 @@ public final class LogMath {
 
     /**
      * Method used by add() internally. It returns the difference between the highest number and the total summation of
-     * two numbers. <p/> Considering the expression (in which we assume natural log) <p/> <p/> <b>log(a + b) = log(a) +
+     * two numbers. <p> Considering the expression (in which we assume natural log) <p>  <b>log(a + b) = log(a) +
      * log(1 + exp(log(b) - log(a))) </b> </p>
-     * <p/>
+     * <p>
      * the current function returns the second term of the right hand side of the equality above, generalized for the
      * case of any log base. This function is constructed as a table lookup.
      *
@@ -210,39 +197,30 @@ public final class LogMath {
      * @throws IllegalArgumentException
      */
     private float addTable(float index) throws IllegalArgumentException {
-        if (useTable) {
             // int intIndex = (int) Math.rint(index);
             int intIndex = (int) (index + 0.5);
             // When adding two numbers, the highest one should be
             // preserved, and therefore the difference should always
             // be positive.
-            if (0 <= intIndex) {
-                if (intIndex < theAddTable.length) {
-                    return theAddTable[intIndex];
-                } else {
-                    return 0.0f;
-                }
+            if (intIndex < theAddTable.length) {
+                return theAddTable[intIndex];
             } else {
-                throw new IllegalArgumentException("addTable index has "
-                        + "to be negative");
+                return 0.0f;
             }
-        } else {
-            return addTableActualComputation(index);
-        }
     }
 
     /**
-     * Returns the difference between two numbers when the arguments and the result are in log. <p/> <p/> That is, it
-     * returns log(a - b) given log(a) and log(b) </p> <p/> <p/> Implementation is less efficient than add(), since
+     * Returns the difference between two numbers when the arguments and the result are in log. <p>  That is, it
+     * returns log(a - b) given log(a) and log(b) </p> <p>  Implementation is less efficient than add(), since
      * we're less likely to use this function, provided for completeness. Notice however that the result only makes
      * sense if the minuend is higher than the subtrahend. Otherwise, we should return the log of a negative number.
-     * </p> <p/> <p/> It implements the subtraction as: </p> <p/> <p/> <b>log(a - b) = log(a) + log(1 - exp(log(b) -
-     * log(a))) </b> </p> <p/> <p/> No need to check for underflow/overflow. </p>
+     * </p> <p>  It implements the subtraction as: </p> <p>  <b>log(a - b) = log(a) + log(1 - exp(log(b) -
+     * log(a))) </b> </p> <p>  No need to check for underflow/overflow. </p>
      *
      * @param logMinuend    value in log domain (i.e. log(minuend)) to be subtracted from
      * @param logSubtrahend value in log domain (i.e. log(subtrahend)) that is being subtracted
      * @return difference between minuend and the subtrahend in the log domain
-     * @throws IllegalArgumentException <p/> This is a very slow way to do this, but this method should rarely be used.
+     * @throws IllegalArgumentException <p> This is a very slow way to do this, but this method should rarely be used.
      *                                  </p>
      */
     public final float subtractAsLinear(float logMinuend, float logSubtrahend)
@@ -261,32 +239,24 @@ public final class LogMath {
     /**
      * Converts the source, which is assumed to be a log value whose base is sourceBase, to a log value whose base is
      * resultBase. Possible values for both the source and result bases include Math.E, 10.0, LogMath.getLogBase(). If a
-     * source or result base is not supported, an IllegalArgumentException will be thrown. <p/> <p/> It takes advantage
-     * of the relation: </p> <p/> <p/> <b>log_a(b) = log_c(b) / lob_c(a) </b> </p> <p/> <p/> or: </p> <p/> <p/>
-     * <b>log_a(b) = log_c(b) * lob_a(c) </b> </p> <p/> <p/> where <b>log_a(b) </b> is logarithm of <b>b </b> base <b>a
+     * source or result base is not supported, an IllegalArgumentException will be thrown. <p>  It takes advantage
+     * of the relation: </p> <p>  <b>log_a(b) = log_c(b) / lob_c(a) </b> </p> <p>  or: </p> <p> 
+     * <b>log_a(b) = log_c(b) * lob_a(c) </b> </p> <p>  where <b>log_a(b) </b> is logarithm of <b>b </b> base <b>a
      * </b> etc. </p>
      *
      * @param logSource  log value whose base is sourceBase
      * @param sourceBase the base of the log the source
      * @param resultBase the base to convert the source log to
-     * @throws IllegalArgumentException
+     * @return converted value
+     * @throws IllegalArgumentException if arguments out of bounds
      */
-    //  [[[ TODO: This is slow, but it probably doesn't need
-    //  to be too fast ]]]
-    // [ EBG: it can be made more efficient if one of the bases is
-    // Math.E. So maybe we should consider two functions logToLn and
-    // lnToLog instead of a generic function like this??
-    //
     public static float logToLog(float logSource, float sourceBase,
                                  float resultBase) throws IllegalArgumentException {
-        if ((sourceBase <= 0) || (resultBase <= 0)) {
-            throw new IllegalArgumentException("Trying to take log of "
-                    + " non-positive number: " + sourceBase + " or "
-                    + resultBase);
-        }
-        if (logSource == LOG_ZERO) {
-            return LOG_ZERO;
-        }
+        //  TODO: This is slow, but it probably doesn't need
+	//  to be too fast.
+        // It can be made more efficient if one of the bases is
+        // Math.E. So maybe we should consider two functions logToLn and
+        // lnToLog instead of a generic function like this??
         float lnSourceBase = (float) Math.log(sourceBase);
         float lnResultBase = (float) Math.log(resultBase);
         return (logSource * lnSourceBase / lnResultBase);
@@ -295,24 +265,20 @@ public final class LogMath {
     /**
      * Converts the source, which is a number in base Math.E, to a log value which base is the LogBase of this LogMath.
      *
+     * @return converted value
      * @param logSource the number in base Math.E to convert
      */
     public final float lnToLog(float logSource) {
-        if (logSource == LOG_ZERO) {
-            return LOG_ZERO;
-        }
         return (logSource * inverseNaturalLogBase);
     }
 
     /**
      * Converts the source, which is a number in base 10, to a log value which base is the LogBase of this LogMath.
      *
+     * @return converted value
      * @param logSource the number in base Math.E to convert
      */
     public final float log10ToLog(float logSource) {
-        if (logSource == LOG_ZERO) {
-            return LOG_ZERO;
-        }
         return logToLog(logSource, 10.0f, logBase);
     }
 
@@ -320,11 +286,9 @@ public final class LogMath {
      * Converts the source, whose base is the LogBase of this LogMath, to a log value which is a number in base Math.E.
      *
      * @param logSource the number to convert to base Math.E
+     * @return converted value
      */
     public final float logToLn(float logSource) {
-        if (logSource == LOG_ZERO) {
-            return LOG_ZERO;
-        }
         return logSource * naturalLogBase;
     }
 
@@ -334,30 +298,11 @@ public final class LogMath {
      *
      * @param linearValue the value to be converted to log scale
      * @return the value in log scale
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException if value out of range
      */
     public final float linearToLog(double linearValue)
             throws IllegalArgumentException {
-        double returnValue;
-        if (linearValue < 0.0) {
-            throw new IllegalArgumentException(
-                    "linearToLog: param must be >= 0: " + linearValue);
-        } else if (linearValue == 0.0) {
-            // [EBG] Shouldn't the comparison above be something like
-            // linearValue < "epsilon"? Is it ever going to be 0.0?
-            return LOG_ZERO;
-        } else {
-            returnValue = Math.log(linearValue) * inverseNaturalLogBase;
-            if (returnValue > Float.MAX_VALUE) {
-                return Float.MAX_VALUE;
-            } else {
-                if (returnValue < -Float.MAX_VALUE) {
-                    return -Float.MAX_VALUE;
-                } else {
-                    return (float) returnValue;
-                }
-            }
-        }
+           return (float)Math.log(linearValue) * inverseNaturalLogBase;
     }
 
     /**
@@ -367,19 +312,11 @@ public final class LogMath {
      * @return the value in the linear scale
      */
     public final double logToLinear(float logValue) {
-        // return Math.pow(logBase, logValue);
-        double returnValue;
-        if (logValue < minLogValue) {
-            returnValue = 0.0;
-        } else if (logValue > maxLogValue) {
-            returnValue = Double.MAX_VALUE;
-        } else {
-            returnValue = Math.exp(logToLn(logValue));
-        }
-        return returnValue;
+        return Math.exp(logToLn(logValue));
     }
 
-    /** Returns the actual log base. */
+    /** @return the actual log base. 
+     */
     public final float getLogBase() {
         return logBase;
     }
@@ -402,7 +339,9 @@ public final class LogMath {
         // return ((1.0f / Math.log(10.0f)) * Math.log(value));
     }
 
-    /** Converts a vector from linear domain to log domain using a given <code>LogMath</code>-instance for conversion. */
+    /** Converts a vector from linear domain to log domain using a given <code>LogMath</code>-instance for conversion. 
+     * @param vector to convert in-place
+     */
     public void linearToLog(float[] vector) {
         int nbGaussians = vector.length;
         for (int i = 0; i < nbGaussians; i++) {
@@ -411,7 +350,10 @@ public final class LogMath {
     }
 
 
-    /** Converts a vector from log to linear domain using a given <code>LogMath</code>-instance for conversion. */
+    /** Converts a vector from log to linear domain using a given <code>LogMath</code>-instance for conversion. 
+     * @param vector to convert
+     * @param out result
+     */
     public void logToLinear(float[] vector, float[] out) {
         for (int i = 0; i < vector.length; i++) {
             out[i] = (float)logToLinear(vector[i]);

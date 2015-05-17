@@ -33,18 +33,15 @@ import java.util.*;
 
 /**
  * A simple form of the linguist.
- * <p/>
+ * <p>
  * The flat linguist takes a Grammar graph (as returned by the underlying, configurable grammar), and generates a search
  * graph for this grammar.
- * <p/>
+ * <p>
  * It makes the following simplifying assumptions:
- * <p/>
  * <ul> <li>Zero or one word per grammar node <li> No fan-in allowed ever <li> No composites (yet) <li> Only Unit,
  * HMMState, and pronunciation states (and the initial/final grammar state are in the graph (no word, alternative or
  * grammar states attached). <li> Only valid transitions (matching contexts) are allowed <li> No tree organization of
  * units <li> Branching grammar states are  allowed </ul>
- * <p/>
- * <p/>
  * Note that all probabilities are maintained in the log math domain
  */
 public class FlatLinguist implements Linguist, Configurable {
@@ -275,7 +272,7 @@ public class FlatLinguist implements Linguist, Configurable {
 
     /**
      * Allocates the acoustic model.
-     * @throws java.io.IOException
+     * @throws java.io.IOException if error occured
      */
     protected void allocateAcousticModel() throws IOException {
         acousticModel.allocate();
@@ -325,18 +322,12 @@ public class FlatLinguist implements Linguist, Configurable {
     }
 
     /**
-     * Compiles the grammar into a sentence HMM. A GrammarJob is created for
-     * the initial grammar node and added to the GrammarJob queue. While there
-     * are jobs left on the grammar job queue, a job is removed from the queue
-     * and the associated grammar node is expanded and attached to the tails.
-     * GrammarJobs for the successors are added to the grammar job queue.
-     */
-    /**
      * Compiles the grammar into a sentence HMM. A GrammarJob is created for the
      * initial grammar node and added to the GrammarJob queue. While there are
      * jobs left on the grammar job queue, a job is removed from the queue and
      * the associated grammar node is expanded and attached to the tails.
      * GrammarJobs for the successors are added to the grammar job queue.
+     * @return collection of states
      */
     protected Collection<SentenceHMMState> compileGrammar() {
         initialGrammarState = grammar.getInitialNode();
@@ -408,7 +399,7 @@ public class FlatLinguist implements Linguist, Configurable {
 
     /**
      * Returns a new GState for the given GrammarNode.
-     *
+     * @param grammarNode grammar node
      * @return a new GState for the given GrammarNode
      */
     protected GState createGState(GrammarNode grammarNode) {
@@ -419,15 +410,15 @@ public class FlatLinguist implements Linguist, Configurable {
     /**
      * Ensures that there is a starting path by adding an empty left context to the starting gstate
      */
-    // TODO: Currently the FlatLinguist requires that the initial
-    // grammar node returned by the Grammar contains a "sil" word
     protected void addStartingPath() {
+        // TODO: Currently the FlatLinguist requires that the initial
+        // grammar node returned by the Grammar contains a "sil" word
         addStartingPath(grammar.getInitialNode());
     }
 
     /**
      * Start the search at the indicated node
-     *
+     * @param initialNode initial node
      */
     protected void addStartingPath(GrammarNode initialNode) {
         // guarantees a starting path into the initial node by
@@ -467,6 +458,7 @@ public class FlatLinguist implements Linguist, Configurable {
      * @param nextState               the next state
      * @param logLanguageProbability  the log language probability
      * @param logInsertionProbability the log insertion probability
+     * @return sentence arc
      */
     protected SentenceHMMStateArc getArc(SentenceHMMState nextState,
                                          float logLanguageProbability,
@@ -590,7 +582,7 @@ public class FlatLinguist implements Linguist, Configurable {
                 } else {
 //                    int maxSize = getRightContextSize();
                     Word word = node.getWord();
-                    Pronunciation[] prons = word.getPronunciations(null);
+                    Pronunciation[] prons = word.getPronunciations();
                     for (Pronunciation pron : prons) {
                         UnitContext startingContext = getStartingContext(pron);
                         startingContexts.add(startingContext);
@@ -625,7 +617,7 @@ public class FlatLinguist implements Linguist, Configurable {
             if (!node.isEmpty()) {
                 int maxSize = getLeftContextSize();
                 Word word = node.getWord();
-                Pronunciation[] prons = word.getPronunciations(null);
+                Pronunciation[] prons = word.getPronunciations();
                 for (Pronunciation pron : prons) {
                     Unit[] units = pron.getUnits();
                     int size = units.length;
@@ -861,7 +853,7 @@ public class FlatLinguist implements Linguist, Configurable {
         private void expandWord(UnitContext leftContext) {
             Word word = node.getWord();
             T("  Expanding word " + word + " for lc " + leftContext);
-            Pronunciation[] pronunciations = word.getPronunciations(null);
+            Pronunciation[] pronunciations = word.getPronunciations();
             for (int i = 0; i < pronunciations.length; i++) {
                 expandPronunciation(leftContext, pronunciations[i], i);
             }
@@ -1212,7 +1204,7 @@ public class FlatLinguist implements Linguist, Configurable {
          * context is (the exiting context) and the right context (the entering context) for the transition. To connect
          * up a state, the connect does the following: 1) Iterate through all of the grammar successors for this state
          * 2) Get the 'entry points' for the successor that match the exit points. 3) Hook them up.
-         * <p/>
+         * <p>
          * Note that for a task with 1000 words this will involve checking on the order of 35,000,000 connections and
          * making about 2,000,000 connections
          */
@@ -1231,7 +1223,7 @@ public class FlatLinguist implements Linguist, Configurable {
                 // word, then each pronunciation gets 1/3 of the total
                 // probability.
                 if (spreadWordProbabilitiesAcrossPronunciations && !gstate.getNode().isEmpty()) {
-                    int numPronunciations = gstate.getNode().getWord().getPronunciations(null).length;
+                    int numPronunciations = gstate.getNode().getWord().getPronunciations().length;
                     probability -= logMath.linearToLog(numPronunciations);
                 }
                 float fprob = probability;

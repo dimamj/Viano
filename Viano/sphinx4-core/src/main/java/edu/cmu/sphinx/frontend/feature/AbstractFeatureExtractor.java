@@ -38,11 +38,7 @@ public abstract class AbstractFeatureExtractor extends BaseDataProcessor {
     protected int cepstraBufferSize;
     protected DoubleData[] cepstraBuffer;
 
-    /**
-     * 
-     * @param window
-     */
-    public AbstractFeatureExtractor( int window ) {
+    public AbstractFeatureExtractor(int window) {
         initLogger();
         this.window = window;
     }
@@ -108,10 +104,12 @@ public abstract class AbstractFeatureExtractor extends BaseDataProcessor {
                     if (pendingSignal != null) {
                         outputQueue.add(pendingSignal);
                     }
-                } else if (input instanceof DataEndSignal || input instanceof SpeechEndSignal) {
+                } else if (input instanceof SpeechEndSignal) {
                     // when the DataEndSignal is right at the boundary
                     int n = replicateLastCepstrum();
                     computeFeatures(n);
+                    outputQueue.add(input);
+                } else if (input instanceof DataEndSignal) {
                     outputQueue.add(input);
                 }
             }

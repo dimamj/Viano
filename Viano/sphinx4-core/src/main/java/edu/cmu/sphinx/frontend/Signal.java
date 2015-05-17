@@ -24,7 +24,6 @@ import java.util.Map;
  * @see Data
  * @see DataProcessor
  */
-@SuppressWarnings("serial")
 public class Signal implements Data {
 
     /** the time this Signal was issued. */
@@ -57,7 +56,8 @@ public class Signal implements Data {
     }
 
 
-    /** Returns the properties associated to this signal.
+    /** 
+     * @return the properties associated to this signal.
      */
     public synchronized Map<String, Object> getProps() {
         if (props == null)

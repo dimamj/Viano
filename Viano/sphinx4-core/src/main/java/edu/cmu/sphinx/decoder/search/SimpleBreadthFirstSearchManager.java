@@ -34,10 +34,9 @@ import java.io.IOException;
  * Provides the breadth first search. To perform recognition an application should call initialize before recognition
  * begins, and repeatedly call <code> recognize </code> until Result.isFinal() returns true. Once a final result has
  * been obtained, <code> terminate </code> should be called.
- * <p/>
- * <p/>
+ * <p>
  * All scores and probabilities are maintained in the log math log domain.
- * <p/>
+ * <p>
  * For information about breadth first search please refer to "Spoken Language Processing", X. Huang, PTR
  */
 
@@ -95,6 +94,7 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
     private Pruner pruner; // used to prune the active list
     private AcousticScorer scorer; // used to score the active list
     protected int currentFrameNumber; // the current frame number
+    protected long currentCollectTime; // the current frame number
     protected ActiveList activeList; // the list of active tokens
     protected List<Token> resultList; // the current set of results
     protected LogMath logMath;
@@ -137,15 +137,16 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
     }
 
     /**
+     * Creates a manager for simple search
      * 
-     * @param linguist
-     * @param pruner
-     * @param scorer
-     * @param activeListFactory
-     * @param showTokenCount
-     * @param relativeWordBeamWidth
-     * @param growSkipInterval
-     * @param wantEntryPruning
+     * @param linguist linguist to configure search space
+     * @param pruner pruner to prune extra paths
+     * @param scorer scorer to estimate token probability
+     * @param activeListFactory factory for list of tokens
+     * @param showTokenCount show count of the tokens during decoding
+     * @param relativeWordBeamWidth relative pruning beam for lookahead
+     * @param growSkipInterval interval to skip growth step
+     * @param wantEntryPruning entry pruning
      */
     public SimpleBreadthFirstSearchManager(Linguist linguist, Pruner pruner,
                                            AcousticScorer scorer, ActiveListFactory activeListFactory,
@@ -226,7 +227,7 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
             // Now create the result using the fixed active-list.
             if (!streamEnd)
            		result =
-                    new Result(fixedList, resultList, currentFrameNumber, done);
+                    new Result(fixedList, resultList, currentFrameNumber, done, linguist.getSearchGraph().getWordTokenFirst(), false);
         }
 
         if (showTokenCount) {
@@ -300,7 +301,7 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
         curTokensScored.value = 0;
         ActiveList newActiveList = activeListFactory.newInstance();
         SearchState state = linguist.getSearchGraph().getInitialState();
-        newActiveList.add(new Token(state, currentFrameNumber));
+        newActiveList.add(new Token(state, -1));
         activeList = newActiveList;
 
         growBranches();
@@ -363,6 +364,7 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
         
         if (bestToken != null) {
             hasMoreFrames = true;
+            currentCollectTime = bestToken.getCollectTime();
             activeList.setBestToken(bestToken);
         }
 
@@ -486,7 +488,7 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
                 Token newToken = new Token(predecessor, nextState, logEntryScore,
                         arc.getInsertionProbability(),
                         arc.getLanguageProbability(), 
-                        currentFrameNumber);
+                        currentCollectTime);
                 tokensCreated.value++;
                 if (!isVisited(newToken)) {
                     collectSuccessorTokens(newToken);
@@ -508,7 +510,7 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
                     bestToken.update(predecessor, nextState, logEntryScore,
                             arc.getInsertionProbability(),
                             arc.getLanguageProbability(), 
-                            currentFrameNumber);
+                            currentCollectTime);
                     viterbiPruned.value++;
                 } else {
                     viterbiPruned.value++;

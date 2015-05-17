@@ -23,7 +23,7 @@ import edu.cmu.sphinx.fst.semiring.Semiring;
 /**
  * Extend an Fst to a single final state and undo operations.
  * 
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  */
 public class ExtendFinal {
 
@@ -67,6 +67,7 @@ public class ExtendFinal {
 
     /**
      * Undo of the extend operation
+     * @param fst fst to work with
      */
     public static void undo(Fst fst) {
         State f = null;

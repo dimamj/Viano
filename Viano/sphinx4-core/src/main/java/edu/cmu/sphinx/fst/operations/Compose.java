@@ -31,7 +31,7 @@ import edu.cmu.sphinx.fst.utils.Pair;
  * See: M. Mohri, "Weighted automata algorithms", Handbook of Weighted Automata.
  * Springer, pp. 213-250, 2009.
  * 
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  */
 
 public class Compose {
@@ -49,7 +49,7 @@ public class Compose {
      * @param fst1 the first Fst
      * @param fst2 the second Fst
      * @param semiring the semiring to use in the operation
-     * @param sorted
+     * @param sorted sort result
      * @return the composed Fst
      */
     public static Fst compose(Fst fst1, Fst fst2, Semiring semiring,

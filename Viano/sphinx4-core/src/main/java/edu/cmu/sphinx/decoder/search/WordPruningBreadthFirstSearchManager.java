@@ -35,7 +35,7 @@ import java.util.logging.Logger;
  * should call initialize before recognition begins, and repeatedly call
  * <code> recognize </code> until Result.isFinal() returns true. Once a final
  * result has been obtained, <code> stopRecognition </code> should be called.
- * <p/>
+ * <p>
  * All scores and probabilities are maintained in the log math log domain.
  */
 
@@ -110,62 +110,63 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
     // -----------------------------------
     // Configured Subcomponents
     // -----------------------------------
-    private Linguist linguist; // Provides grammar/language info
-    private Pruner pruner; // used to prune the active list
-    private AcousticScorer scorer; // used to score the active list
+    protected Linguist linguist; // Provides grammar/language info
+    protected Pruner pruner; // used to prune the active list
+    protected AcousticScorer scorer; // used to score the active list
     private ActiveListManager activeListManager;
-    private LogMath logMath;
+    protected LogMath logMath;
 
     // -----------------------------------
     // Configuration data
     // -----------------------------------
-    private Logger logger;
-    private boolean showTokenCount;
-    private boolean checkStateOrder;
+    protected Logger logger;
+    protected boolean showTokenCount;
+    protected boolean checkStateOrder;
     private int growSkipInterval;
-    private float relativeBeamWidth;
-    private float acousticLookaheadFrames;
+    protected float relativeBeamWidth;
+    protected float acousticLookaheadFrames;
     private int maxLatticeEdges = 100;
 
     // -----------------------------------
     // Instrumentation
     // -----------------------------------
-    private Timer scoreTimer;
-    private Timer pruneTimer;
-    private Timer growTimer;
-    private StatisticsVariable totalTokensScored;
-    private StatisticsVariable curTokensScored;
-    private StatisticsVariable tokensCreated;
+    protected Timer scoreTimer;
+    protected Timer pruneTimer;
+    protected Timer growTimer;
+    protected StatisticsVariable totalTokensScored;
+    protected StatisticsVariable curTokensScored;
+    protected StatisticsVariable tokensCreated;
     private long tokenSum;
     private int tokenCount;
 
     // -----------------------------------
     // Working data
     // -----------------------------------
-    private int currentFrameNumber; // the current frame number
+    protected int currentFrameNumber; // the current frame number
+    protected long currentCollectTime; // the current frame number
     protected ActiveList activeList; // the list of active tokens
-    private List<Token> resultList; // the current set of results
+    protected List<Token> resultList; // the current set of results
     protected Map<SearchState, Token> bestTokenMap;
-    private AlternateHypothesisManager loserManager;
+    protected AlternateHypothesisManager loserManager;
     private int numStateOrder;
     // private TokenTracker tokenTracker;
     // private TokenTypeTracker tokenTypeTracker;
-    private boolean streamEnd;
+    protected boolean streamEnd;
 
     /**
-     * 
-     * @param linguist
-     * @param pruner
-     * @param scorer
-     * @param activeListManager
-     * @param showTokenCount
-     * @param relativeWordBeamWidth
-     * @param growSkipInterval
-     * @param checkStateOrder
-     * @param buildWordLattice
-     * @param maxLatticeEdges
-     * @param acousticLookaheadFrames
-     * @param keepAllTokens
+     * Creates a pruning manager withs separate lists for tokens
+     * @param linguist a linguist for search space
+     * @param pruner pruner to drop tokens
+     * @param scorer scorer to estimate token probability
+     * @param activeListManager active list manager to store tokens
+     * @param showTokenCount show count during decoding
+     * @param relativeWordBeamWidth relative beam for lookahead pruning
+     * @param growSkipInterval skip interval for grown
+     * @param checkStateOrder check order of states during growth
+     * @param buildWordLattice build a lattice during decoding
+     * @param maxLatticeEdges max edges to keep in lattice
+     * @param acousticLookaheadFrames frames to do lookahead
+     * @param keepAllTokens keep tokens including emitting tokens
      */
     public WordPruningBreadthFirstSearchManager(Linguist linguist, Pruner pruner, AcousticScorer scorer,
             ActiveListManager activeListManager, boolean showTokenCount, double relativeWordBeamWidth, int growSkipInterval,
@@ -290,8 +291,8 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
         }
 
         if (!streamEnd) {
-            result = new Result(loserManager, activeList, resultList, currentFrameNumber, done, linguist.getSearchGraph()
-                    .getWordTokenFirst());
+            result = new Result(loserManager, activeList, resultList, currentCollectTime, done, linguist.getSearchGraph()
+                    .getWordTokenFirst(), true);
         }
 
         // tokenTypeTracker.show();
@@ -301,7 +302,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
         return result;
     }
 
-    private boolean recognize() {
+    protected boolean recognize() {
 
         activeList = activeListManager.getEmittingList();
         boolean more = scoreTokens();
@@ -363,7 +364,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
         SearchState state = searchGraph.getInitialState();
 
         activeList = activeListManager.getEmittingList();
-        activeList.add(new Token(state, currentFrameNumber));
+        activeList.add(new Token(state, -1));
 
         clearCollectors();
 
@@ -403,24 +404,24 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
      * lookahead based upon the rate of change in the current acoustic score.
      */
     protected void growEmittingBranches() {
-        if (acousticLookaheadFrames > 0F) {
-            growTimer.start();
-            float bestScore = -Float.MAX_VALUE;
-            for (Token t : activeList) {
-                float score = t.getScore() + t.getAcousticScore() * acousticLookaheadFrames;
-                if (score > bestScore) {
-                    bestScore = score;
-                }
-            }
-            float relativeBeamThreshold = bestScore + relativeBeamWidth;
-            for (Token t : activeList) {
-                if (t.getScore() + t.getAcousticScore() * acousticLookaheadFrames > relativeBeamThreshold)
-                    collectSuccessorTokens(t);
-            }
-            growTimer.stop();
-        } else {
+        if (acousticLookaheadFrames <= 0.0f) {
             growBranches();
+            return;
         }
+        growTimer.start();
+        float bestScore = -Float.MAX_VALUE;
+        for (Token t : activeList) {
+            float score = t.getScore() + t.getAcousticScore() * acousticLookaheadFrames;
+            if (score > bestScore) {
+                bestScore = score;
+            }
+        }
+        float relativeBeamThreshold = bestScore + relativeBeamWidth;
+        for (Token t : activeList) {
+            if (t.getScore() + t.getAcousticScore() * acousticLookaheadFrames > relativeBeamThreshold)
+                collectSuccessorTokens(t);
+        }
+        growTimer.stop();
     }
 
     /**
@@ -457,6 +458,10 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
             streamEnd = true;
         }
 
+        if (bestToken != null) {
+            currentCollectTime = bestToken.getCollectTime();
+        }
+        
         moreTokens = (bestToken != null);
         activeList.setBestToken(bestToken);
 
@@ -518,7 +523,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
      * @param activeList
      *            the active list of states
      */
-    private void monitorStates(ActiveList activeList) {
+    protected void monitorStates(ActiveList activeList) {
 
         tokenSum += activeList.size();
         tokenCount++;
@@ -561,10 +566,10 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
     /**
      * Checks that the given two states are in legitimate order.
      * 
-     * @param fromState
-     * @param toState
+     * @param fromState parent state
+     * @param toState child state
      */
-    private void checkStateOrder(SearchState fromState, SearchState toState) {
+    protected void checkStateOrder(SearchState fromState, SearchState toState) {
         if (fromState.getOrder() == numStateOrder - 1) {
             return;
         }
@@ -637,7 +642,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
 
             if (bestToken == null) {
                 Token newBestToken = new Token(predecessor, nextState, logEntryScore, arc.getInsertionProbability(),
-                        arc.getLanguageProbability(), currentFrameNumber);
+                        arc.getLanguageProbability(), currentCollectTime);
                 tokensCreated.value++;
                 setBestToken(newBestToken, nextState);
                 activeListAdd(newBestToken);
@@ -646,7 +651,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
                 // newBestToken);
                 Token oldPredecessor = bestToken.getPredecessor();
                 bestToken.update(predecessor, nextState, logEntryScore, arc.getInsertionProbability(),
-                        arc.getLanguageProbability(), currentFrameNumber);
+                        arc.getLanguageProbability(), currentCollectTime);
                 if (buildWordLattice && nextState instanceof WordSearchState) {
                     loserManager.addAlternatePredecessor(bestToken, oldPredecessor);
                 }
@@ -662,10 +667,10 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
      * Determines whether or not we've visited the state associated with this
      * token since the previous frame.
      * 
-     * @param t
+     * @param t token to check
      * @return true if we've visited the search state since the last frame
      */
-    private boolean isVisited(Token t) {
+    protected boolean isVisited(Token t) {
         SearchState curState = t.getSearchState();
 
         t = t.getPredecessor();
@@ -699,7 +704,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
      * Counts all the tokens in the active list (and displays them). This is an
      * expensive operation.
      */
-    private void showTokenCount() {
+    protected void showTokenCount() {
         Set<Token> tokenSet = new HashSet<Token>();
 
         for (Token token : activeList) {

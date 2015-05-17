@@ -27,7 +27,7 @@ public class Decoder extends AbstractDecoder {
     }
 
     /** The property for the number of features to recognize at once. */
-    @S4Integer(defaultValue = 100000)
+    @S4Integer(defaultValue = Integer.MAX_VALUE)
     public final static String PROP_FEATURE_BLOCK_SIZE = "featureBlockSize";
     private int featureBlockSize;
 
@@ -38,12 +38,13 @@ public class Decoder extends AbstractDecoder {
     }
 
     /**
+     * Main decoder
      *
-     * @param searchManager
-     * @param fireNonFinalResults
-     * @param autoAllocate
-     * @param resultListeners
-     * @param featureBlockSize
+     * @param searchManager search manager to configure search space
+     * @param fireNonFinalResults should we notify about non-final results
+     * @param autoAllocate automatic allocation of all componenets
+     * @param resultListeners listeners to get signals
+     * @param featureBlockSize frequency of notification about results
      */
     public Decoder( SearchManager searchManager, boolean fireNonFinalResults, boolean autoAllocate, List<ResultListener> resultListeners, int featureBlockSize) {
         super( searchManager, fireNonFinalResults, autoAllocate, resultListeners);
