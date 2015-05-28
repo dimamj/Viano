@@ -1,6 +1,7 @@
 package View;
 
 import Models.FAddComand.AddAppCommand;
+import Presenter.RecognitionListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,24 +29,26 @@ public class AddCommand extends JFrame implements ViewInterface {
     String commandName;
     String accent ;
     String  flags ;
-
+    RecognitionListener listener;
     @Override
     public void dispose() {
         flag=true;
         super.dispose();
     }
 
-    public AddCommand(final String lang) {
+    public AddCommand(final String lang, RecognitionListener listener) {
         AddCommand.super.setTitle("Viano Add Command");
         Image icon = new ImageIcon(getClass().getResource("/images/trey.png")).getImage();
         AddCommand.super.setIconImage(icon);
         setContentPane(panel);
+        this.listener = listener;
         AddCommand.super.setSize(800, 500);
         AddCommand.super.setLocationRelativeTo(null);
         AddCommand.super.setResizable(false);
         AddCommand.super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        initText(lang);
+     //   initText(lang);
         language = lang;
+        init();
         setVisible(true);
 
         addButton.addActionListener(new ActionListener() {
@@ -56,7 +59,7 @@ public class AddCommand extends JFrame implements ViewInterface {
                     if(!textField1.getText().isEmpty()&&!textField2.getText().isEmpty()
                             &&!accentTextField.getText().isEmpty()){
                         file = textField1.getText();
-                        commandName = textField2.getText();
+                        commandName = textField2.getText().toLowerCase();
                         accent = accentTextField.getText();
                         flags = String.valueOf(checkBox1.isSelected());
                         flag=true;
@@ -73,39 +76,29 @@ public class AddCommand extends JFrame implements ViewInterface {
 
     }
 
+    @Override
+    public void init() {
+        Properties prop = listener.getProperties();
+        checkBox1.setText("URL");
+        checkBox1.setToolTipText(prop.getProperty("checkBox"));
+        addButton.setText(prop.getProperty("addButton"));
+        textField1.setToolTipText(prop.getProperty("textField1"));
+        textField2.setToolTipText(prop.getProperty("textField2"));
+        accentTextField.setToolTipText(prop.getProperty("accentTextField"));
+        label1.setText(prop.getProperty("label1"));
+        label2.setText(prop.getProperty("label2"));
+        label3.setText(prop.getProperty("label3"));
+    }
+
     private void error(){
         if(language.equals("russian")){
-            CtrlGui.setErrorTM("Введите корректные данные!");
+            listener.errorMessage("Введите корректные данные!");
         } else if(language.equals("english")){
-            CtrlGui.setErrorTM("Enter the correct data!");
+            listener.errorMessage("Enter the correct data!");
         }
     }
 
-    private void initText(String lang)
-    {
-        if(lang.equals("russian")){
-            checkBox1.setText("URL");
-            checkBox1.setToolTipText("Нажмите, если хотите добавить команду на открытие веб=ссылки.");
-            addButton.setText("Добавить");
-            textField1.setToolTipText("Введите название ссылки или приложения");
-            textField2.setToolTipText("Введите название команды");
-            accentTextField.setToolTipText("Введите номер буквы на которую падает ударение");
-            label1.setText("Имя приложения/ссылки");
-            label2.setText("Номер буквы с ударением");
-            label3.setText("Название комманды");
-        }else if(lang.equals("english")){
-            checkBox1.setText("URL");
-            checkBox1.setToolTipText("Click if you want to add web link");
-            addButton.setText("Add");
-            textField1.setToolTipText("Enter apps or web link name");
-            textField2.setToolTipText("Enter command name");
-            accentTextField.setToolTipText("Enter the number of letter on  which the falls accent ");
-            label1.setText("App/URL name");
-            label2.setText("НNumber of letter accent");
-            label3.setText("Commands name");
-        }
 
-    }
     @Override
     public void setText(List<String> list) {
 

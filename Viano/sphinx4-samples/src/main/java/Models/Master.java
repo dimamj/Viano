@@ -36,35 +36,10 @@ public class Master extends AbstractController {
 
     static Boolean flag = false;
 
-    public    List<String> Master_Words = config.Master_Words;
+    private    List<String> Master_Words;
 
-    private     String WeatherURL = "google.com.ua/search?q=weather";
-    private     String NewsURL = "ukr.net";
-    private     String startupFlag = "false";
-    private     String FilmsURL = "kinogo.net";
-    private     String TorrentURL = "rutorg.org";
-
-    private  String filecontain = "";
-    private  String path = "C:"+ File.separator+ "Viano" +File.separator+"language.txt";
-    private static String pathconfig = "C:"+ File.separator+ "Viano" +File.separator+"config.txt";
-
-    private static Configuration configuration;
-
-
-
-
-    public  void wtite(String path,String language)
-    {
-
-        try {
-            PrintWriter out = new PrintWriter(path);
-            out.print(language);
-            out.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-    }
+    private  String path = "C:/Viano/data/language.txt";
+    private static String pathconfig = "C:/Viano/data/config.txt";
 
 
     @Override
@@ -74,11 +49,11 @@ public class Master extends AbstractController {
 
     public String startVoiceControl(LiveSpeechRecognizer jsgfRecognizer,Configuration configuration,Boolean flag) {
         run = flag;
-        System.out.println("OK");
+        Master_Words = config.Master_Words;
 
-            setGrammar("master", configuration, jsgfRecognizer);
-            listener.setImage("masterActive");
-        System.out.println("OK2");
+        setGrammar("master", configuration, jsgfRecognizer);
+        listener.setImage("masterActive");
+
 
         while (run) {
 
@@ -156,11 +131,15 @@ public class Master extends AbstractController {
 
             else if(utterance.equals(Master_Words.get(8))){   //add comand
 
-
                 listener.createGui("addCommand",config.getFilecontain());
                 while (!listener.getEdit("addCommand")){}
                 String[] array = listener.getText("addCommand");
-                if(array[0]!=null&&array[1]!=null&&array[3]!=null) {
+                if(array[1]!=null)
+                if(array[1].split(" ").length>1){
+                    listener.errorMessage("Error: Code #4");
+                    listener.disposeGui("addCommand");
+                }
+                else if(array[0]!=null&&array[1]!=null&&array[3]!=null) {
                     listener.addCommand(array);
                     listener.disposeGui("addCommand");
                 }

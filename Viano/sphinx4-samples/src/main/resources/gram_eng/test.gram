@@ -1,0 +1,8 @@
+#JSGF V1.0;
+
+grammar test;
+
+
+<standard> = keyboard|mouse|master|computer|browser|apps|photo editor;
+
+public <command> = <standard>;

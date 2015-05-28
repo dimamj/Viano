@@ -18,6 +18,7 @@ public interface ViewInterface {
     void setErrorTreyMessage(String message);
     void setLabel(String text);
     boolean isDisplayable();
+    public void init();
 
 
 }

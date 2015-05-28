@@ -25,11 +25,7 @@ public abstract class AbstractController {
 
     protected Boolean run = false;
 
-    {
-        setConfig(VPresenter.getConfig());
-    }
-
-    protected static List<String> conf = config.getConfList();////////
+    protected static List<String> conf;
 
     public  RecognitionListener getListener() {
         return listener;
@@ -43,6 +39,7 @@ public abstract class AbstractController {
 
     public void setListener(RecognitionListener listener) {
         this.listener = listener;
+        conf = config.getConfList();
     }
 
     {
@@ -73,7 +70,7 @@ public abstract class AbstractController {
 
     }
 
-    public   void setGrammar(String grammar,Configuration config,LiveSpeechRecognizer jsgfRecognizer)
+    protected void setGrammar(String grammar,Configuration config,LiveSpeechRecognizer jsgfRecognizer)
     {
         config.setGrammarName(grammar);
         jsgfRecognizer.stopRecognition();

@@ -10,6 +10,7 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.util.*;
 
@@ -17,6 +18,11 @@ import java.util.*;
  * Created by dimamj on 25.04.2015.
  */
 public class Config {
+
+
+    private  Properties prop = new Properties();
+    private  Properties properties = new Properties();
+    private  final String version = "1.0";
 
     private static final String ACOUSTIC_MODEL_ENG =
             "resource:/edu/cmu/sphinx/models/en-us/en-us";
@@ -44,19 +50,19 @@ public class Config {
     public    List<String> Modules_Words = new ArrayList<String>();
     public  static   List<String> confList  = new ArrayList<String>();
 
-    private     String WeatherURL = "google.com.ua/search?q=weather";
+    private     String WeatherURL;
 
     public String getFilecontain() {
         return filecontain;
     }
 
-    private     String NewsURL = "ukr.net";
-    private     String startupFlag = "false";
-    private     String FilmsURL = "kinogo.net";
-    private     String TorrentURL = "rutorg.org";
+    private  String NewsURL;
+    private  String startupFlag;
+    private  String FilmsURL;
+    private  String TorrentURL;
     private  String filecontain = "";
-    private  String path = "C:"+ File.separator+ "Viano" +File.separator+"data/language.txt";
-    private static String pathconfig = "C:"+ File.separator+ "Viano" +File.separator+"data/config.txt";
+    private  String path = "C:/Viano/data/language.txt";
+    private static String pathconfig = "C:/Viano/data/config.txt";
 
     private  edu.cmu.sphinx.api.Configuration configuration;
 
@@ -66,24 +72,27 @@ public class Config {
 
     private List<String> gramsList = Arrays.asList("apps.gram","computer.gram","internet.gram","keyboard.gram",
             "master.gram","mouse.gram","paint.gram","racing.gram","test.gram");
+    private List<String> gramsListEng = Arrays.asList("master.gram","test.gram");
     private List<String> wordsList = Arrays.asList("apps_rus.txt","forApps.txt","forLinks.txt","web_rus.txt",
-            "words_rus.txt");
+            "words_rus.txt","words_eng.txt");
     private List<String> othersList = Arrays.asList("cmdow.exe","song.wav");
     private List<String> dictList = Arrays.asList("msu_ru_nsh.dic","cmudict-en-us.dict");
 
     private  RecognitionListener listener;
-    private  Boolean test;
-  //  private  static  InternetCtrl internetCtrl = InternetCtrl.getInstance();!!!!!!!!!!!!!!!!!!!!
-
 
     public  Configuration getConfiguration() {
         return configuration;
     }
 
-    private  String mediaPath = "C:/Program Files/Windows Media Player/wmplayer.exe";
-    private  String mediaLink = "C:/Viano/Applications/wmplayer.lnk";
-    private  String paintNetPath = "C:/Program Files/Paint.NET/PaintDotNet.exe";
-    private  String paintNetLink = "C:/Viano/Applications/PaintNet.lnk";
+    private  String mediaPath;
+    private  String mediaLink;
+    private  String paintNetPath ;
+    private  String paintNetLink ;
+
+
+    public Properties getProp() {
+        return prop;
+    }
 
     private LiveSpeechRecognizer loadFirstModel(LiveSpeechRecognizer recognizer)
     {
@@ -116,11 +125,37 @@ public class Config {
 
     private void init()
     {
+        fileSystemInit();
+        propertiesInit();
         listener.setProgressVisible("start");
         createFolders();
         loadLabels(mediaLink, mediaPath);
         loadLabels(paintNetLink,paintNetPath);
         wtite(pathconfig,startupFlag+"\n"+WeatherURL+"\n"+NewsURL+"\n"+FilmsURL+"\n"+TorrentURL);
+
+        String path = "C:/Viano/data/";
+        copyFiles("/others/Transcription.txt",path+"dict/Transcription.txt",true);
+
+        for(String s:dictList){
+            copyFiles("/edu/cmu/sphinx/models/en-us/"+s,path+"dict/"+s,true);
+        }
+
+        for(String s:gramsList){
+            copyFiles("/gram_rus/"+s,path+"gram_rus/"+s,true);
+        }
+        for(String s:gramsListEng){
+            copyFiles("/gram_eng/"+s,path+"gram_eng/"+s,true);
+        }
+        for(String s:wordsList){
+            copyFiles("/words/"+s,path+"words/"+s,true);
+        }
+        for(String s:othersList){
+            copyFiles("/others/"+s,path+s,true);
+        }
+
+    }
+
+    private void fileSystemInit(){
         try {
             final URI uri = getClass().getResource("/others").toURI();
             final Map<String, String> env = new HashMap<>();
@@ -133,25 +168,33 @@ public class Config {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        String path = "C:/Viano/data/";
-        copyFiles("/others/Transcription.txt",path+"dict/Transcription.txt",true);
-
-        for(String s:dictList){
-            copyFiles("/edu/cmu/sphinx/models/en-us/"+s,path+"dict/"+s,true);
-        }
-
-        for(String s:gramsList){
-            copyFiles("/gram_rus/"+s,path+"gram_rus/"+s,true);
-        }
-        for(String s:wordsList){
-            copyFiles("/words/"+s,path+"words/"+s,true);
-        }
-        for(String s:othersList){
-            copyFiles("/others/"+s,path+s,true);
-        }
-
     }
 
+    private void propertiesInit(){
+        String path = "C:/Viano/data/";
+        copyFiles("/config.properties",path+"config.properties",true);
+        copyFiles("/ru.properties",path+"ru.properties",true);
+        copyFiles("/eng.properties",path+"eng.properties",true);
+
+        try {
+            String pathF = "C:/Viano/data/config.properties";
+            prop.load(new InputStreamReader(new FileInputStream(pathF),"UTF-8"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        WeatherURL = prop.getProperty("WeatherURL");
+        NewsURL = prop.getProperty("NewsURL");
+        startupFlag = prop.getProperty("startupFlag");
+        FilmsURL = prop.getProperty("FilmsURL");
+        TorrentURL = prop.getProperty("TorrentURL");
+        mediaPath = prop.getProperty("mediaPath");
+        mediaLink = prop.getProperty("mediaLink");
+        paintNetPath = prop.getProperty("paintNetPath");
+        paintNetLink = prop.getProperty("paintNetLink");
+
+    }
 
     public Boolean isJar(){
 
@@ -180,6 +223,11 @@ public class Config {
             }
         }
     }
+
+    public Properties getProperties() {
+        return properties;
+    }
+
     private   LiveSpeechRecognizer loadLanguageModel(LiveSpeechRecognizer recognizer,String acoustic,String dict,
                                                      String gram)
     {
@@ -196,29 +244,43 @@ public class Config {
             e.printStackTrace();
         }
 
-            listener.disposeGui("start");
+        listener.disposeGui("start");
 
         filecontain = read(path,1);
-        if (filecontain.equals("english"))
-        {
-
-        }
-        else if(filecontain.equals("russian"))
-        {
-            loadWords(filecontain);
-            confList  = readMas(pathconfig);
-            if(isJar())
+        loadWords(filecontain);
+        confList  = readMas(pathconfig);
+        if(isJar())
             startup(confList);
-            //internetCtrl.setConfig(conf);!!!!!!!!!!!!!!!!!!!!!!!
+
+        if (filecontain.equals("english")) {
+            try {
+                String path = "C:/Viano/data/eng.properties";
+                FileInputStream in = new FileInputStream(path);
+                properties.load(new InputStreamReader(in,"UTF-8"));
+                in.close();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else if(filecontain.equals("russian")) {
+            try {
+                String path = "C:/Viano/data/ru.properties";
+                FileInputStream in = new FileInputStream(path);
+                properties.load(new InputStreamReader(in,"UTF-8"));
+                in.close();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return recognizer;
 
     }
 
-    public static List<String> getConfList() {
+    public List<String> getConfList() {
         return confList;
     }
-
 
     private  void createFolders() {
 
@@ -263,6 +325,15 @@ public class Config {
             System.out.println(source);
             System.out.println(target);
             Files.copy(source,target);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void deleteFiles(String sourcePath){
+        Path source = Paths.get(sourcePath);
+        try {
+            Files.delete(source);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -488,6 +559,84 @@ public class Config {
             }
         }
 
+    private void restart(){
+        if(isJar()) {
+            String[] str = Config.class.getResource("").toString().split("!");
+            String path = str[0].substring(10);
+            System.out.println(path);
+            try {
+                Runtime.getRuntime().exec("java -jar " + path);
+                System.exit(0);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.exit(0);
+        }
+    }
+
+    private void version(){
+        try {
+            String pathF = "C:/Viano/data/config.properties";
+            FileInputStream in = new FileInputStream(pathF);
+            prop.load(new InputStreamReader(in,"UTF-8"));
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if(!version.equals(prop.getProperty("version"))){
+            update();
+            restart();
+        }
+    }
+
+    private void update(){
+        listener.setLabel("Viano Update","start");
+        fileSystemInit();
+        String path = "C:/Viano/data/";
+        deleteFiles(path+"dict/Transcription.txt");
+        copyFiles("/others/Transcription.txt",path+"dict/Transcription.txt",true);
+
+        for(String s:dictList){
+            deleteFiles(path+"dict/"+s);
+            copyFiles("/edu/cmu/sphinx/models/en-us/"+s,path+"dict/"+s,true);
+        }
+
+        for(String s:gramsList){
+            if(!s.equals("apps.gram")) {
+                if(!s.equals("internet.gram")) {
+                    deleteFiles(path + "gram_rus/" + s);
+                    copyFiles("/gram_rus/" + s, path + "gram_rus/" + s, true);
+                }
+            }
+        }
+        for(String s:gramsListEng){
+            if(!s.equals("apps.gram")||!s.equals("internet.gram")) {
+                deleteFiles(path + "gram_eng/" + s);
+                copyFiles("/gram_eng/" + s, path + "gram_eng/" + s, true);
+            }
+        }
+
+            deleteFiles(path+"words/words_eng.txt");
+            copyFiles("/words/words_eng.txt",path+"words/words_eng.txt",true);
+            deleteFiles(path+"words/words_rus.txt");
+            copyFiles("/words/words_rus.txt",path+"words/words_rus.txt",true);
+
+        for(String s:othersList){
+            deleteFiles(path+s);
+            copyFiles("/others/"+s,path+s,true);
+        }
+
+        deleteFiles(path + "config.properties");
+        copyFiles("/config.properties", path + "config.properties",true);
+        deleteFiles(path+"ru.properties");
+        copyFiles("/ru.properties",path+"ru.properties",true);
+        deleteFiles(path+"eng.properties");
+        copyFiles("/eng.properties",path+"eng.properties",true);
+
+
+    }
 
     public  LiveSpeechRecognizer beginSettings(LiveSpeechRecognizer recognizer)
     {
@@ -501,12 +650,14 @@ public class Config {
         else if (filecontain.equals("english"))
         {
             listener.disposeElements("start");
+            version();
             listener.setProgressVisible("start");
             recognizer =  loadLanguageModel(recognizer, ACOUSTIC_MODEL_ENG, DICTIONARY_PATH_ENG, GRAMMAR_PATH_ENG);
         }
         else if(filecontain.equals("russian"))
         {
             listener.disposeElements("start");
+            version();
             listener.setProgressVisible("start");
             recognizer = loadLanguageModel(recognizer,ACOUSTIC_MODEL_RUS,DICTIONARY_PATH_RUS,GRAMMAR_PATH_RUS);
         }

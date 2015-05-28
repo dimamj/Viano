@@ -52,20 +52,20 @@
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
       </hspacer>
-      <component id="6c484" class="javax.swing.JLabel">
+      <component id="6c484" class="javax.swing.JLabel" binding="textStartup">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Startup (автозагрузка)"/>
+          <text value=""/>
         </properties>
       </component>
-      <component id="d7231" class="javax.swing.JLabel">
+      <component id="d7231" class="javax.swing.JLabel" binding="textWeather">
         <constraints>
           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="URL Weather "/>
+          <text value=""/>
         </properties>
       </component>
       <component id="10eb7" class="javax.swing.JTextField" binding="urlWeather">
@@ -79,12 +79,12 @@
           <enabled value="true"/>
         </properties>
       </component>
-      <component id="928e1" class="javax.swing.JLabel">
+      <component id="928e1" class="javax.swing.JLabel" binding="textNews">
         <constraints>
           <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="URL News"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="dbb0d" class="javax.swing.JTextField" binding="urlNews">
@@ -133,15 +133,15 @@
           </grid>
         </constraints>
         <properties>
-          <text value="Save"/>
+          <text value=""/>
         </properties>
       </component>
-      <component id="b7ec3" class="javax.swing.JLabel">
+      <component id="b7ec3" class="javax.swing.JLabel" binding="textFilms">
         <constraints>
           <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="URL Films"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="3e2e9" class="javax.swing.JTextField" binding="urlFilms">
@@ -155,12 +155,12 @@
           <enabled value="true"/>
         </properties>
       </component>
-      <component id="1b6c6" class="javax.swing.JLabel">
+      <component id="1b6c6" class="javax.swing.JLabel" binding="textTorrent">
         <constraints>
           <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="URL Torrent"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="deb7" class="javax.swing.JTextField" binding="urlTorrent">

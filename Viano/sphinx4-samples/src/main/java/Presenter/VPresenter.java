@@ -9,8 +9,11 @@ import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.LiveSpeechRecognizer;
 import edu.cmu.sphinx.result.BoundedPriorityQueue;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Created by dimamj on 25.04.2015.
@@ -28,7 +31,7 @@ public class VPresenter {
     static Config config;
     AbstractController master;
     List<String> MWords;
-    FactoryMethod factory;
+    RecognitionListener listener;
 
     public VPresenter()
     {
@@ -37,16 +40,31 @@ public class VPresenter {
 
     private void init() {
 
-        RecognitionListener listener = new RecognitionListener() {
+        listener = new RecognitionListener() {
 
             @Override
             public void addCommand(String[] array) {
-                new FactoryMethod().getInstance(Boolean.parseBoolean(array[3])).start(array,config.getFilecontain());
+                new FactoryMethod().getInstance(Boolean.parseBoolean(array[3])).start(array, config.getFilecontain());
+            }
+
+            @Override
+            public Config getConfig() {
+                return config;
+            }
+
+            @Override
+            public Properties getProperties() {
+                return config.getProperties();
             }
 
             @Override
             public void setLabel(String text,String view) {
                 getView(view,"").setLabel(text);
+            }
+
+            @Override
+            public void write(String path, String language) {
+                writeToFile(path,language);
             }
 
             @Override
@@ -117,10 +135,11 @@ public class VPresenter {
         };
         config = new Config();
         config.setListener(listener);
-        startGui = new StartGui();
+        startGui = new StartGui(listener);
         recognizer = config.beginSettings(recognizer);
 
         master = Master.getInstance();
+        master.setConfig(config);
         master.setListener(listener);
 
         configuration = config.getConfiguration();
@@ -128,16 +147,17 @@ public class VPresenter {
         MWords = config.Modules_Words;
         try {recognizer.startRecognition(true);}
         catch (Exception e){
+            gui = new CtrlGui(true,listener);
             listener.errorMessage("Error: Code #3");
             error(e.getMessage());}
 
         if(!config.read("C:/Viano/data/language.txt",2).equals("true")) {
-            test = new View.Test();
+            test = new View.Test(listener);
             Test.getInstance().startVoiceControl(recognizer, configuration, true);
         }
 
         master.audio("C:/Viano/data/song.wav");
-        gui = new CtrlGui(true);
+        gui = new CtrlGui(true,listener);
         String next =  master.startVoiceControl(recognizer, configuration, true);
 
         while (true) {
@@ -148,16 +168,18 @@ public class VPresenter {
 
     }
 
-    public static Config getConfig() {
-        return config;
-    }
-
-
-    public List<String> getConfigList()
+    private static void writeToFile(String path,String language)
     {
-       return config.getConfList();
-    }
 
+        try {
+            PrintWriter out = new PrintWriter(path);
+            out.print(language);
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
     private void error(String str)
     {
         gui.dispose();
@@ -186,20 +208,20 @@ public class VPresenter {
     {
 
         if( str.equals("setting")&&settingsGui==null){
-            settingsGui = new Settings(lang);
+            settingsGui = new Settings(lang,listener);
             return settingsGui;
         } else if(str.equals("setting")&&!settingsGui.isDisplayable()){
-            settingsGui = new Settings(lang);
+            settingsGui = new Settings(lang,listener);
             return settingsGui;
         } else if(str.equals("setting")&&settingsGui.isDisplayable()){
             return settingsGui;
         }
 
         if( str.equals("addCommand")&&addCommandGui==null){
-            addCommandGui = new AddCommand(lang);
+            addCommandGui = new AddCommand(lang,listener);
             return addCommandGui;
         } else if(str.equals("addCommand")&&!addCommandGui.isDisplayable()){
-            addCommandGui = new AddCommand(lang);
+            addCommandGui = new AddCommand(lang,listener);
             return addCommandGui;
         } else if(str.equals("addCommand")&&addCommandGui.isDisplayable()){
             return addCommandGui;

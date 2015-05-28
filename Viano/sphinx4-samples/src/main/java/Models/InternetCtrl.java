@@ -23,7 +23,7 @@ import java.util.List;
 public class InternetCtrl extends AbstractController {
 
     private static final InternetCtrl instance = new InternetCtrl();
-    public    List<String> Internet_Words = config.Internet_Words;
+    private List<String> Internet_Words = config.Internet_Words;
     private static final String LANGUAGE_MODEL =
             "resource:/gram_rus/lmbase.lm";
 

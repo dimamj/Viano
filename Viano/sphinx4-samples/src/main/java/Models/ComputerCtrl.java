@@ -25,7 +25,7 @@ public class ComputerCtrl extends AbstractController {
 
     private static final ComputerCtrl instance = new ComputerCtrl();
     private String sl = File.separator;
-    public    List<String> Computer_Words = config.Computer_Words;
+    private    List<String> Computer_Words = config.Computer_Words;
     {
         /*
            Computer_Words =

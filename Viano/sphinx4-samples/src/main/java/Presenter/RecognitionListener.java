@@ -1,6 +1,9 @@
 package Presenter;
 
+import Models.Config;
+
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Created by dimamj on 25.04.2015.
@@ -34,5 +37,11 @@ public interface RecognitionListener {
     public void createGui(String view,String lang);
 
     public void errorMessage(String message);
+
+    public Config getConfig();
+
+    public void write(String path,String language);
+
+    public Properties getProperties();
 
 }

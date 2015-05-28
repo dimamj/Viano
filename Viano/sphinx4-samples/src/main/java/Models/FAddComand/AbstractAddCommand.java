@@ -28,8 +28,8 @@ public abstract class AbstractAddCommand {
         Path filePath = Paths.get(path);
         Charset charset = Charset.forName("UTF-8");
 
-        try (BufferedWriter writer = Files.newBufferedWriter(filePath, charset, StandardOpenOption.WRITE);
-             BufferedReader reader = Files.newBufferedReader(filePath, charset);) {
+        try (BufferedReader reader = Files.newBufferedReader(filePath, charset);
+             BufferedWriter writer = new BufferedWriter(new FileWriter(filePath.toFile(),true))) {
 
             String str = "";
             String result = "";
@@ -53,6 +53,8 @@ public abstract class AbstractAddCommand {
                 }
                 result += line + "\n";
             }
+            BufferedWriter reload = new BufferedWriter(new FileWriter(filePath.toFile()));
+            reload.close();
             writer.write(result);
         } catch (IOException e) {
             e.printStackTrace();
@@ -77,11 +79,11 @@ public abstract class AbstractAddCommand {
     protected void writeToWords(String path, String word) {
         Path filePath = Paths.get(path);
         Charset charset = Charset.forName("UTF-8");
-        String head = "";
         String str = "";
         String result = "";
         String line = "";
-        try (BufferedReader reader = Files.newBufferedReader(filePath, charset);) {
+        try (BufferedReader reader = Files.newBufferedReader(filePath, charset);
+             BufferedWriter writer = new BufferedWriter(new FileWriter(filePath.toFile(),true))) {
 
             while ((str = reader.readLine()) != null) {
                 line = str;
@@ -100,10 +102,9 @@ public abstract class AbstractAddCommand {
                 }
                 result += line;
             }
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath.toFile()));
+            BufferedWriter reload = new BufferedWriter(new FileWriter(filePath.toFile()));
+            reload.close();
             writer.write(result);
-            writer.close();
-
         } catch (IOException e) {
             e.printStackTrace();
         }

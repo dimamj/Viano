@@ -1,12 +1,13 @@
 import Models.AbstractController;
 import Models.Master;
-import Models.VoiceControl;
 import Presenter.VPresenter;
 import View.CtrlGui;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.LiveSpeechRecognizer;
 import org.apache.commons.math3.analysis.function.Abs;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -16,7 +17,7 @@ import java.util.List;
 public class Main  {
 
     public static void main(String[] args) {
-        VPresenter presenter = new VPresenter();
+       VPresenter presenter = new VPresenter();
     }
 
 }

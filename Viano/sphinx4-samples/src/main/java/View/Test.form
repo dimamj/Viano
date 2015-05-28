@@ -71,10 +71,10 @@
           <text value=""/>
         </properties>
       </component>
-      <component id="eac86" class="javax.swing.JTextArea" binding="пройдитеТестПроизнесяВышеTextArea" default-binding="true">
+      <component id="eac86" class="javax.swing.JTextArea" binding="textArea">
         <constraints>
           <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="50"/>
+            <preferred-size width="520" height="50"/>
           </grid>
         </constraints>
         <properties>
@@ -82,10 +82,10 @@
           <autoscrolls value="false"/>
           <editable value="false"/>
           <font name="Bookman Old Style" size="13" style="2"/>
-          <lineWrap value="false"/>
-          <text value="Пройдите тест произнеся выше предоставленные слова. &#10;В случае плохого распознавания, в настройках микрофона, отрегулируйте уровни.&#10;&#10;Усиление микрофона должно быть не больше 12 дБ,&#10;остальные параметры зависят от вашего микрофона.&#10;"/>
+          <lineWrap value="true"/>
+          <text value=""/>
           <visible value="true"/>
-          <wrapStyleWord value="false"/>
+          <wrapStyleWord value="true"/>
         </properties>
       </component>
       <component id="7cc0a" class="javax.swing.JToolBar$Separator">

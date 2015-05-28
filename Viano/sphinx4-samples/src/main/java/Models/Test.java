@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class Test extends AbstractController{
 
-    public    List<String> Test_Words = config.Modules_Words;
+    private    List<String> Test_Words = config.Modules_Words;
     private  String path = "C:"+ File.separator+ "Viano" +File.separator+"data/language.txt";
 
     private static final Test instance = new Test();
@@ -47,7 +47,7 @@ public class Test extends AbstractController{
             }
         }
 
-        wtite(path,"true");
+        write(path,"true");
         listener.disposeGui("test");
         return "";
     }
@@ -57,7 +57,7 @@ public class Test extends AbstractController{
         //NOP//
     }
 
-    public  void wtite(String path,String test)
+    private void write(String path,String test)
     {
         BufferedWriter writer = null;
         try {

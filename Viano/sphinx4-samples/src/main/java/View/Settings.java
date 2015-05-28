@@ -1,5 +1,7 @@
 package View;
 
+import Presenter.RecognitionListener;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -19,27 +21,32 @@ public class Settings extends JFrame implements ViewInterface {
     private JButton saveButton;
     private JTextField urlFilms;
     private JTextField urlTorrent;
+    private JLabel textStartup;
+    private JLabel textWeather;
+    private JLabel textNews;
+    private JLabel textFilms;
+    private JLabel textTorrent;
     String flag = "";
     private   Boolean edit ;
-    static String pathconfig = "C:"+ File.separator+ "Viano" +File.separator+"config.txt";
-
+    static String pathconfig = "C:/Viano/data/config.txt";
+    RecognitionListener listener;
     @Override
     public void dispose() {
         edit=true;
         super.dispose();
     }
 
-    public Settings(String lang) {
+    public Settings(String lang, final RecognitionListener listener) {
         Settings.super.setTitle("Viano Settings");
         Image icon = new ImageIcon(getClass().getResource("/images/trey.png")).getImage();
         Settings.super.setIconImage(icon);
         setContentPane(panel);
+        this.listener = listener;
         Settings.super.setSize(800, 500);
         Settings.super.setLocationRelativeTo(null);
         Settings.super.setResizable(false);
         Settings.super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-
+        init();
         setVisible(true);
         saveButton.addActionListener(new ActionListener() {
             @Override
@@ -48,14 +55,14 @@ public class Settings extends JFrame implements ViewInterface {
                 if(!urlWeather.getText().isEmpty()&&!urlNews.getText().isEmpty()&&!urlFilms.getText().isEmpty()
                         &&!urlTorrent.getText().isEmpty())
                 {
-                    wtite(pathconfig, flag + "\n" + urlWeather.getText() + "\n" + urlNews.getText() + "\n" + urlFilms.getText()
+                    listener.write(pathconfig, flag + "\n" + urlWeather.getText() + "\n" + urlNews.getText() + "\n" + urlFilms.getText()
                             + "\n" + urlTorrent.getText());
-                    edit=true;
+                    edit = true;
                     dispose();
                 }
                 else
                 {
-                   CtrlGui.setErrorTM("Error:URL is empty!"); /////////////////!!!!!!!!!
+                    listener.errorMessage("Error:URL is empty!");
                 }
 
             }
@@ -72,17 +79,15 @@ public class Settings extends JFrame implements ViewInterface {
         urlTorrent.setText(list.get(4));
     }
 
-    public static void wtite(String path,String language)
-    {
-
-        try {
-            PrintWriter out = new PrintWriter(path);
-            out.print(language);
-            out.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
+    @Override
+    public void init() {
+        Properties prop = listener.getProperties();
+        textStartup.setText(prop.getProperty("textStartup"));
+        textWeather.setText(prop.getProperty("textWeather"));
+        textNews.setText(prop.getProperty("textNews"));
+        textFilms.setText(prop.getProperty("textFilms"));
+        textTorrent.setText(prop.getProperty("textTorrent"));
+        saveButton.setText(prop.getProperty("textButton1"));
     }
 
     public Boolean getEdit()

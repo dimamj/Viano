@@ -15,7 +15,7 @@ public class KeyboardController extends AbstractController {
 
     private static final KeyboardController instance = new KeyboardController();
 
-    List<String> list = config.KeyBoard_Words;
+    private  List<String> list = config.KeyBoard_Words;
 
 
     {

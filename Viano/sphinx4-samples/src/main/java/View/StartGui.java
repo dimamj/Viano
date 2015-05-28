@@ -1,5 +1,7 @@
 package View;
 
+import Presenter.RecognitionListener;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -17,16 +19,15 @@ public class StartGui extends JFrame implements ViewInterface{
     private JTextArea TextArea;
     private JProgressBar progressBar1;
     private JToolBar.Separator ToolBar;
+    private JTextArea version;
     private String text ="";
+    RecognitionListener listener;
 
-    @Override
-    public void setLabel(String text) {
 
-    }
-
-    public StartGui()
+    public StartGui(RecognitionListener listener)
     {   StartGui.super.setTitle("Viano");
         setContentPane(panel);
+        this.listener = listener;
         progressBar1.setVisible(false);
         Image icon = new ImageIcon(getClass().getResource("/images/trey.png")).getImage();
         StartGui.super.setIconImage(icon);
@@ -69,6 +70,17 @@ public class StartGui extends JFrame implements ViewInterface{
     }
 
     @Override
+    public void setLabel(String text) {
+        progressBar1.setVisible(true);
+        version.setText(text);
+    }
+
+    @Override
+    public void init() {
+    version.setText("Version " + listener.getConfig().getProp().getProperty("version"));
+    }
+
+    @Override
     public void setText(List<String> list) {
 
     }
@@ -80,6 +92,7 @@ public class StartGui extends JFrame implements ViewInterface{
 
     public void setProgressVisible()
     {
+        init();
         progressBar1.setVisible(true);
     }
 

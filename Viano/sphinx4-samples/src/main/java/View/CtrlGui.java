@@ -1,5 +1,6 @@
 package View;
 
+import Presenter.RecognitionListener;
 import Presenter.VPresenter;
 
 import javax.swing.*;
@@ -7,6 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.Properties;
 
 
 /**
@@ -17,13 +19,16 @@ public class CtrlGui extends JFrame implements ViewInterface {
     private JTextArea TextArea;
     private JTextField textField1;
     private static String word = "";
-    private JTextArea подсказкаДляУлучшенияРаспознаванияTextArea;
+    private JTextArea helps;
     private JLabel comp;
     private JLabel mouse;
     private JLabel keyboard;
     private JLabel internet;
     private JLabel games;
     private JLabel master;
+    private JLabel textComp;
+    private JLabel textInternet;
+    private JLabel textApps;
 
     private Icon iconcompActive;
     private Icon iconcomp;
@@ -42,13 +47,16 @@ public class CtrlGui extends JFrame implements ViewInterface {
     String s = "";
     Settings settings;
 
-    public CtrlGui(Boolean flag)
+    RecognitionListener listener;
+
+    public CtrlGui(Boolean flag, RecognitionListener listener)
     {   CtrlGui.super.setTitle("Viano");
         Image icon = new ImageIcon(getClass().getResource("/images/trey.png")).getImage();
         CtrlGui.super.setIconImage(icon);
         Dimension sSize = Toolkit.getDefaultToolkit ().getScreenSize ();
         int vert = sSize.height;
         int hor  = sSize.width;
+        this.listener = listener;
         setContentPane(panel);
         CtrlGui.super.setSize(800, 500);
         CtrlGui.super.setLocationRelativeTo(null);
@@ -75,14 +83,21 @@ public class CtrlGui extends JFrame implements ViewInterface {
 
         masterIcon =  new ImageIcon(getClass().getResource("/images/master-icon.png"));
         masterIconActive =  new ImageIcon(getClass().getResource("/images/master-icon-active.png"));
-
+        init();
         setDefaultTextArea();
         if(flag) {
             setVisible(true);
         }
     }
 
-
+    @Override
+    public void init() {
+        Properties prop = listener.getProperties();
+        textComp.setText(prop.getProperty("textComp"));
+        textInternet.setText(prop.getProperty("textInternet"));
+        textApps.setText(prop.getProperty("textApps"));
+        helps.setText(prop.getProperty("help1"));
+    }
     @Override
     public void setLabel(String text) {
 
@@ -106,7 +121,7 @@ public class CtrlGui extends JFrame implements ViewInterface {
         if (key=="computer active")
         {
 
-            TextArea.setText(textEdit(VPresenter.getConfig().Computer_Words));
+            TextArea.setText(textEdit(listener.getConfig().Computer_Words));
             comp.setIcon(iconcompActive);
         }
         else if(key=="computer")
@@ -115,7 +130,7 @@ public class CtrlGui extends JFrame implements ViewInterface {
         }
         else if(key=="mouse active")
         {
-            TextArea.setText(textEdit(VPresenter.getConfig().Mouse_Words));
+            TextArea.setText(textEdit(listener.getConfig().Mouse_Words));
             mouse.setIcon(mouseIconActive);
         }
         else if(key=="mouse")
@@ -124,7 +139,7 @@ public class CtrlGui extends JFrame implements ViewInterface {
         }
         else if(key=="keyboard active")
         {
-            TextArea.setText(textEdit(VPresenter.getConfig().KeyBoard_Words));
+            TextArea.setText(textEdit(listener.getConfig().KeyBoard_Words));
             keyboard.setIcon(keyboardIconActive);
         }
         else if(key=="keyboard")
@@ -133,7 +148,7 @@ public class CtrlGui extends JFrame implements ViewInterface {
         }
         else if(key=="internet active")
         {
-            TextArea.setText(textEdit(VPresenter.getConfig().Internet_Words));
+            TextArea.setText(textEdit(listener.getConfig().Internet_Words));
             internet.setIcon(internetIconActive);
         }
         else if(key=="internet")
@@ -142,7 +157,7 @@ public class CtrlGui extends JFrame implements ViewInterface {
         }
         else if(key=="games active")
         {
-            TextArea.setText(textEdit(VPresenter.getConfig().Applications_Words));
+            TextArea.setText(textEdit(listener.getConfig().Applications_Words));
             games.setIcon(gamesIconActive);
         }
         else if(key=="games")
@@ -151,15 +166,15 @@ public class CtrlGui extends JFrame implements ViewInterface {
         }
         else if (key.equals("paint"))
         {
-            TextArea.setText(textEdit(VPresenter.getConfig().Paint_Words));
+            TextArea.setText(textEdit(listener.getConfig().Paint_Words));
         }
         else if (key.equals("racing"))
         {
-            TextArea.setText(textEdit(VPresenter.getConfig().Racing_Words));
+            TextArea.setText(textEdit(listener.getConfig().Racing_Words));
         }
         else if (key.equals("masterActive"))
         {
-            TextArea.setText(textEdit(VPresenter.getConfig().Master_Words));
+            TextArea.setText(textEdit(listener.getConfig().Master_Words));
             master.setIcon(masterIconActive);
         }
         else if (key.equals("master"))
@@ -235,10 +250,8 @@ public class CtrlGui extends JFrame implements ViewInterface {
     }
     private void setDefaultTextArea()
     {
-       TextArea.setText(textEdit(VPresenter.getConfig().Master_Words));
+       TextArea.setText(textEdit(listener.getConfig().Master_Words));
     }
-
-
 
 
     private String textEdit(List<String> list)

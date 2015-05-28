@@ -13,12 +13,11 @@ import java.util.List;
  */
 public class MouseController extends AbstractController{
 
-    private  int speed = 15;
-
+    private int speed = 15;
 
     private static final MouseController instance = new MouseController();
 
-    List<String> list = config.Mouse_Words;
+    private List<String> list = config.Mouse_Words;
 
     {
         /*
@@ -78,9 +77,8 @@ public class MouseController extends AbstractController{
             {
 
                 String utterance = recognizer.getResult().getHypothesis();
-                if(!search(utterance,list,15,17))
                 listener.wordRecognized(utterance);
-
+                System.out.println(speed);
 
                 if(find(utterance))
                 {
@@ -203,6 +201,17 @@ public class MouseController extends AbstractController{
                     robot.mouseRelease(InputEvent.BUTTON1_MASK);
 
                 }
+                 else if (utterance.equals(list.get(15)))//уменьшить скорость
+                 {
+                     setSpeed(5, true);
+
+                 }
+
+                 else if (utterance.equals(list.get(16)))//увеличить скорость
+                 {
+                     setSpeed(-5, true);
+
+                 }
             }
 
 

@@ -23,7 +23,7 @@ public class AppsCtrl extends AbstractController  {
     private static final AppsCtrl instance = new AppsCtrl();
 
     private List<String> racing = config.Racing_Words;
-    public  List<String> Applications_Words = config.Applications_Words;
+    private  List<String> Applications_Words = config.Applications_Words;
     private AppsCtrl() {
     }
 
