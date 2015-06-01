@@ -59,79 +59,61 @@ public class KeyboardController extends AbstractController {
             setGrammar("keyboard", configuration, recognizer);
             listener.setImage("keyboard active");
 
-            while (run)
-            {
+            while (run) {
                 String utterance = recognizer.getResult().getHypothesis();
                 listener.wordRecognized(utterance);
 
-                if(find(utterance))
-                {
+                if(find(utterance)) {
                     exitController();
                     return utterance;
                 }
-                if (utterance.equals(list.get(0)))
-                {
+                if (utterance.equals(list.get(0))) {
                     oneButtonPress(KeyEvent.VK_UP);
                 }
-                else if (utterance.equals(list.get(1)))
-                {
+                else if (utterance.equals(list.get(1))) {
                     oneButtonPress(KeyEvent.VK_DOWN);
                 }
-                else if (utterance.equals(list.get(2)))
-                {
+                else if (utterance.equals(list.get(2))) {
                     oneButtonPress(KeyEvent.VK_RIGHT);
                 }
-                else if (utterance.equals(list.get(3)))
-                {
+                else if (utterance.equals(list.get(3))) {
                     oneButtonPress(KeyEvent.VK_LEFT);
                 }
-                else if (utterance.equals(list.get(4)))
-                {
+                else if (utterance.equals(list.get(4))) {
                     twoButtonPress(KeyEvent.VK_WINDOWS,KeyEvent.VK_D);
                 }
-                else if (utterance.equals(list.get(5)))//close
-                {
+                else if (utterance.equals(list.get(5))){//close
                     twoButtonPress(KeyEvent.VK_ALT, KeyEvent.VK_F4);
                 }
-                else if (utterance.equals(list.get(6)))//ENTER
-                {
+                else if (utterance.equals(list.get(6))){//ENTER
                     oneButtonPress(KeyEvent.VK_ENTER);
 
                 }
-                else if (utterance.equals(list.get(7)))//ALT+TAB
-                {
+                else if (utterance.equals(list.get(7))) {//ALT+TAB
                     oneButtonPress(KeyEvent.VK_F6);
                 }
-                else if (utterance.equals(list.get(8)))//copy
-                {
+                else if (utterance.equals(list.get(8))) {//copy
                     twoButtonPress(KeyEvent.VK_CONTROL,KeyEvent.VK_C);
                 }
-                else if (utterance.equals(list.get(9)))//paste
-                {
+                else if (utterance.equals(list.get(9))) {//paste
                     twoButtonPress(KeyEvent.VK_CONTROL, KeyEvent.VK_V);
                 }
-                else if (utterance.equals(list.get(10)))//cut
-                {
+                else if (utterance.equals(list.get(10))) {//cut
                     twoButtonPress(KeyEvent.VK_CONTROL, KeyEvent.VK_X);
                 }
-                else if (utterance.equals(list.get(11)))//CTRL+Z
-                {
+                else if (utterance.equals(list.get(11))) {//CTRL+Z
                     twoButtonPress(KeyEvent.VK_CONTROL, KeyEvent.VK_Z);
                 }
-                else if (utterance.equals(list.get(12)))//Delete
-                {
+                else if (utterance.equals(list.get(12))){//Delete
                     oneButtonPress(KeyEvent.VK_DELETE);
                 }
-                else if (utterance.equals(list.get(13)))//CTRL+A
-                {
+                else if (utterance.equals(list.get(13))){//CTRL+A
                     twoButtonPress(KeyEvent.VK_CONTROL, KeyEvent.VK_A);
                 }
-                else if (utterance.equals(list.get(14)))//start menu
-                {
+                else if (utterance.equals(list.get(14))){//start menu
                     oneButtonPress(KeyEvent.VK_WINDOWS);
                 }
-                else if (utterance.equals(list.get(15)))//
-                {
+                else if (utterance.equals(list.get(15))){
                     robot.keyPress(KeyEvent.VK_CONTROL);
                     robot.keyPress(KeyEvent.VK_SHIFT);
                     robot.keyPress(KeyEvent.VK_ESCAPE);
@@ -139,16 +121,13 @@ public class KeyboardController extends AbstractController {
                     robot.keyRelease(KeyEvent.VK_SHIFT);
                     robot.keyRelease(KeyEvent.VK_ESCAPE);
                 }
-                else if (utterance.equals(list.get(16)))//
-                {
+                else if (utterance.equals(list.get(16))) {
                     oneButtonPress(KeyEvent.VK_TAB);
                 }
-                else if (utterance.equals(list.get(17)))//
-                {
+                else if (utterance.equals(list.get(17))) {
                     oneButtonPress(KeyEvent.VK_ESCAPE);
                 }
-                else if (utterance.equals(list.get(18)))//
-                {
+                else if (utterance.equals(list.get(18))) {
                     oneButtonPress(KeyEvent.VK_SPACE);
                 }
 

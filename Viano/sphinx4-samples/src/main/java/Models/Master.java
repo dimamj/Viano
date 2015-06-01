@@ -23,6 +23,19 @@ import java.util.List;
 
 public class Master extends AbstractController {
 
+    /*
+    !# Master
+    компьютер 0
+    браузер 1
+    приложения 2
+    клавиатура 3
+    мышь 4
+    завершить работу 5
+    настройки6
+    сменить язык7
+    добавить команду8
+    #
+     */
 
     private static final Master instance = new Master();
 
@@ -61,14 +74,15 @@ public class Master extends AbstractController {
 
             listener.wordRecognized(utterance);
 
-            if(find(utterance))
-            {
+            if(find(utterance)) {
                 exitController();
                 return utterance;
             }
 
-            else if (utterance.equals(Master_Words.get(5))) //Shutdown
-            {
+            /*
+             Запуск Завершения работы
+             */
+            else if (utterance.equals(Master_Words.get(5))){ //Shutdown
                 try {
                     Robot robot = new Robot();
                     robot.keyPress(KeyEvent.VK_WINDOWS);
@@ -84,51 +98,52 @@ public class Master extends AbstractController {
                     /*NOP*/
                 }
             }
-
-            else if (utterance.equals(Master_Words.get(6))) //Settings
-            {
+            /*
+            Запуск настроек
+             */
+            else if (utterance.equals(Master_Words.get(6))){ //Settings
                 listener.createGui("setting",config.getFilecontain());
                 listener.setText("setting",conf);
-                Thread thread = new Thread(new Parameters());//////////////////////////////////////
+                Thread thread = new Thread(new Parameters());
                 thread.start();
             }
-            else if (utterance.equals(Master_Words.get(7)))
-            {
+            /*
+            Команда смены языка
+             */
+            else if (utterance.equals(Master_Words.get(7))) {
 
                 listener.setImage(Master_Words.get(7));
 
-                while (true)
-                {
+                while (true) {
                     utterance = jsgfRecognizer.getResult().getHypothesis();
                     listener.wordRecognized(utterance);
 
-                    if (utterance.equals("английский") || utterance.equals("english"))
-                    {
+                    if (utterance.equals("английский") || utterance.equals("english")) {
                         listener.disposeGui("main");
-                        config.wtite(path, "english\ntrue");
+                        config.getFop().write(path, "english\ntrue");
                         jsgfRecognizer.stopRecognition();
                         restart();
                         break;
 
                     }
-                    else if (utterance.equals("русский")|| utterance.equals("russian"))
-                    {
+                    else if (utterance.equals("русский")|| utterance.equals("russian")) {
                         listener.disposeGui("main");
-                        config.wtite(path, "russian\ntrue");
+                        config.getFop().write(path, "russian\ntrue");
                         jsgfRecognizer.stopRecognition();
                         restart();
                         break;
 
                     }
-                    else if (utterance.equals("назад") || utterance.equals("back"))
-                    {
+                    else if (utterance.equals("назад") || utterance.equals("back")) {
                         listener.setImage("masterActive");
                         break;
                     }
                 }
 
             }
-
+            /*
+            Запуск добавления команды
+             */
             else if(utterance.equals(Master_Words.get(8))){   //add comand
 
                 listener.createGui("addCommand",config.getFilecontain());
@@ -151,7 +166,10 @@ public class Master extends AbstractController {
         return "";
 
     }
-
+    /**
+     * Метод перезапускает запущенный Jar файл. То есть
+     * берется путь к файлу и запускается через командную строку.
+     */
     private void restart(){
         if(config.isJar()) {
             String[] str = Config.class.getResource("").toString().split("!");
@@ -168,15 +186,16 @@ public class Master extends AbstractController {
         }
     }
 
+    /*
+    Поток который ожидает сохранение настроек в окне настроек.
+     */
     private static class Parameters implements Runnable
     {
         @Override
         public void run() {
-            while (true)
-            {
-                if (listener.getEdit("setting"))
-                {
-                    conf  = config.readMas(pathconfig);
+            while (true) {
+                if (listener.getEdit("setting")) {
+                    conf  =   config.getFop().readMas(pathconfig,conf);
                     config.startup(conf);
                     break;
                 }

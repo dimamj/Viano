@@ -1,14 +1,3 @@
-/*
- * Copyright 2013 Carnegie Mellon University.
- * Portions Copyright 2004 Sun Microsystems, Inc.
- * Portions Copyright 2004 Mitsubishi Electric Research Laboratories.
- * All Rights Reserved.  Use is subject to license terms.
- *
- * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL
- * WARRANTIES.
- */
-
 package Models;
 
 import Presenter.VPresenter;
@@ -77,25 +66,20 @@ public class ComputerCtrl extends AbstractController {
             String utterance = jsgfRecognizer.getResult().getHypothesis();
             listener.wordRecognized(utterance);
 
-            if(find(utterance))
-            {
+            if(find(utterance)) {
                 exitController();
                 return utterance;
             }
-            else if (utterance.equals(list.get(1)))
-            {
+            else if (utterance.equals(list.get(1))) {
                    twoButtonPress(KeyEvent.VK_WINDOWS, KeyEvent.VK_E);
             }
-            else if (utterance.equals(list.get(2)))
-            {
+            else if (utterance.equals(list.get(2))) {
                 twoButtonPress(KeyEvent.VK_WINDOWS, KeyEvent.VK_Q);
             }
-            else if (utterance.equals(list.get(3)))
-            {
+            else if (utterance.equals(list.get(3))) {
                 twoButtonPress(KeyEvent.VK_WINDOWS, KeyEvent.VK_I);
             }
-            else if (utterance.equals(list.get(4)))
-            {
+            else if (utterance.equals(list.get(4))) {
                 try {
                     Runtime.getRuntime().exec("cmd /c start " + "C:" + "Viano/Applications/wmplayer.lnk");;
                 } catch (IOException e) {
@@ -104,21 +88,18 @@ public class ComputerCtrl extends AbstractController {
 
             }
 
-            else if (utterance.equals(list.get(5)))
-            {
+            else if (utterance.equals(list.get(5))) {
                 super.runApplications("cmd /c start " + "C:" + "Viano/Applications/wmplayer.lnk");
                 commandOfMedia(jsgfRecognizer,list);
 
                 listener.setImage("computer active");
             }
 
-            else if (utterance.equals(list.get(9)))
-            {
+            else if (utterance.equals(list.get(9))) {
                 super.runApplications("cmd /c start " + "Explorer" + " C:" + sl + "Viano" + sl + "Photo" + sl);
             }
 
-            else if (utterance.equals(list.get(10)))
-            {
+            else if (utterance.equals(list.get(10))) {
                 super.runApplications("cmd /c start " + "Explorer" + " C:" + sl + "Viano" + sl + "Video" + sl);
             }
 
@@ -135,25 +116,20 @@ public class ComputerCtrl extends AbstractController {
     }
 
 
-    private void commandOfMedia(LiveSpeechRecognizer recognizer,List list )
-    {
-        while (true)
-        {
+    private void commandOfMedia(LiveSpeechRecognizer recognizer,List list ) {
+        while (true) {
             String utterance = recognizer.getResult().getHypothesis();
             listener.wordRecognized(utterance);
 
-            if (utterance.equals(list.get(6)))//тише
-            {
+            if (utterance.equals(list.get(6))){//тише
                 robot.keyPress(KeyEvent.VK_F9);
                 robot.keyRelease(KeyEvent.VK_F9);
             }
-            else if(utterance.equals(list.get(7)))//громче
-            {
+            else if(utterance.equals(list.get(7))){//громче
                 robot.keyPress(KeyEvent.VK_F8);
                 robot.keyRelease(KeyEvent.VK_F8);
             }
-            else if (utterance.equals(list.get(8)))//назад
-            {
+            else if (utterance.equals(list.get(8))){//назад
                 break;
             }
         }

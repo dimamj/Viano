@@ -54,21 +54,17 @@ public class PaintCtrl extends AbstractController{
                 String utterance = jsgfRecognizer.getResult().getHypothesis();
                 listener.wordRecognized(utterance);
 
-                if(find(utterance))
-                {
+                if(find(utterance)) {
                     exitController();
                     return utterance;
                 }
-                 else if (utterance.equals(list.get(1))) //открыть
-                {
+                 else if (utterance.equals(list.get(1))){ //открыть
                     super.twoButtonPress(KeyEvent.VK_CONTROL, KeyEvent.VK_O);
                 }
-                else if (utterance.equals(list.get(2))) //сохранить
-                {
+                else if (utterance.equals(list.get(2))){ //сохранить
                     super.twoButtonPress(KeyEvent.VK_CONTROL, KeyEvent.VK_S);
                 }
-                else if (utterance.equals(list.get(3))) //обрезать
-                {
+                else if (utterance.equals(list.get(3))){ //обрезать
                     robot.keyPress(KeyEvent.VK_CONTROL);
                     robot.keyPress(KeyEvent.VK_SHIFT);
                     robot.keyPress(KeyEvent.VK_X);
@@ -76,20 +72,19 @@ public class PaintCtrl extends AbstractController{
                     robot.keyRelease(KeyEvent.VK_CONTROL);
                     robot.keyRelease(KeyEvent.VK_SHIFT);
                     robot.keyRelease(KeyEvent.VK_X);
-                } else if (utterance.equals(list.get(4))) //размер
-                {
+                }
+            else if (utterance.equals(list.get(4))) { //размер
                     super.twoButtonPress(KeyEvent.VK_CONTROL, KeyEvent.VK_R);
                 }
-                else if (utterance.equals(list.get(5))) //фоторедактор
-                {
+                else if (utterance.equals(list.get(5))){ //фоторедактор
                     try {
                         Runtime.getRuntime().exec("cmd /c start "+ "C:" + "Viano/Applications/PaintNet.lnk");;
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-                else if (utterance.equals(list.get(6))) //меню
-                {
+
+                else if (utterance.equals(list.get(6))){ //меню
                     super.oneButtonPress(KeyEvent.VK_ALT);
                 }
 

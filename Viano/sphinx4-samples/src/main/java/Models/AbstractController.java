@@ -50,10 +50,32 @@ public abstract class AbstractController {
         }
     }
 
+    /**
+     * Данный метод реализован в каждом из слушателей.
+     * Он является стартовым для каждого из слушателей, в нем в цикде
+     * вызывается метод ожилающий речь и он содержит реализацию всех команд.
+     * Результат распознавания проходит по многочисленным условиям проверки
+     * на соответствие, в случае истины, команда выполняется.
+     * Метод останавливается, как только результат распознавания
+     * равен названию какого либо слушателя. В этом случае
+     * происхоит возврат имени слушателя.
+     *
+     * @param jsgfRecognizer обьект для распознавания речи
+     * @param config параметры для распознавания
+     * @param run переменная позволяющая остановить цикл
+     * @return имя слушателя, на который произойдет переход
+     */
     public abstract String startVoiceControl(LiveSpeechRecognizer jsgfRecognizer,Configuration config,Boolean run);
 
-    protected Boolean find(String str)
-    {
+    /**
+     * Данный метод выывается после любого распознавания слова
+     * и результат передается в качестве входного параметра.
+     * Есди совпадение есть, метод возвращает истину.
+     *
+     * @param str результат распознавания
+     * @return истина если есть совпадение
+     */
+    protected Boolean find(String str) {
         List<String> MWords = config.Modules_Words;
 
         if(str.equals("виано")||str.equals("viano")){
@@ -70,8 +92,16 @@ public abstract class AbstractController {
 
     }
 
-    protected void setGrammar(String grammar,Configuration config,LiveSpeechRecognizer jsgfRecognizer)
-    {
+    /**
+     *  Данный метод вызывается при переходе на другой слушатель
+     *  он останавливает прослушивание и меняет грамматику, после
+     *  чего снова запускает прослушивание
+     *
+     * @param grammar имя грамматики без расширений
+     * @param config  параметры для распознавания
+     * @param jsgfRecognizer обьект для распознавания
+     */
+    protected void setGrammar(String grammar,Configuration config,LiveSpeechRecognizer jsgfRecognizer) {
         config.setGrammarName(grammar);
         jsgfRecognizer.stopRecognition();
         jsgfRecognizer.setContext(config);
@@ -93,8 +123,7 @@ public abstract class AbstractController {
 
 
 
-    public void audio(String str) //!поток не закрыт
-    {
+    public void audio(String str){
         Clip c = null;
         try {
             c = AudioSystem.getClip();
@@ -106,13 +135,25 @@ public abstract class AbstractController {
             e.printStackTrace();
         }
     }
-    public static Boolean search(String s,List list,int a,int b)
-    {
+
+    /**
+     * Данный метод ищет совпадение указанного слова в указанном
+     * списке и в указанном диапазоне.
+     * Он нужен например, если необходимо запускать какое либо действие
+     * для целого диапаона команд, к примеру управление курсором, оно
+     * активизируется как только пользователь скажет любое число.
+     *
+     * @param s результат распознавания
+     * @param list список слушателя
+     * @param a начало диапазона
+     * @param b конец диапазона
+     *
+     * @return истина если есть вопадение
+     */
+    public static Boolean search(String s,List list,int a,int b) {
         Boolean flag = false;
-       for (int i=a;i<b;i++)
-       {
-           if(s.equals(list.get(i)))
-           {
+       for (int i=a;i<b;i++) {
+           if(s.equals(list.get(i))) {
                flag=true;
                break;
            }
@@ -121,19 +162,16 @@ public abstract class AbstractController {
         return flag;
     }
 
-    public void oneButtonPress(int key)
-    {
+    public void oneButtonPress(int key) {
         robot.keyPress(key);
         robot.keyRelease(key);
     }
-    public void oneButtonPress(int key,int delay)
-    {
+    public void oneButtonPress(int key,int delay) {
         robot.keyPress(key);
         robot.delay(delay);
         robot.keyRelease(key);
     }
-    public void twoButtonPress(int key,int key_two)
-    {
+    public void twoButtonPress(int key,int key_two) {
         robot.keyPress(key);
         robot.keyPress(key_two);
         robot.keyRelease(key);
@@ -141,8 +179,7 @@ public abstract class AbstractController {
     }
 
 
-    public void runApplications(String str)
-    {
+    public void runApplications(String str) {
         try {
             Runtime.getRuntime().exec(str);;
         } catch (IOException e) {

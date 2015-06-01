@@ -24,8 +24,7 @@ public class InternetCtrl extends AbstractController {
 
     private static final InternetCtrl instance = new InternetCtrl();
     private List<String> Internet_Words = config.Internet_Words;
-    private static final String LANGUAGE_MODEL =
-            "resource:/gram_rus/lmbase.lm";
+
 
     private InternetCtrl()
     {}
@@ -59,17 +58,6 @@ public class InternetCtrl extends AbstractController {
          */
     }
 
-    private void setLanguageModel(Configuration config,LiveSpeechRecognizer jsgfRecognizer)
-    {
-
-        config.setUseGrammar(false);
-        config.setLanguageModelPath(LANGUAGE_MODEL);
-        jsgfRecognizer.stopRecognition();
-      //  jsgfRecognizer.setLang(config);
-        jsgfRecognizer.startRecognition(true);
-    }
-
-
     @Override
     public void exitController() {
         listener.setImage("internet");
@@ -88,56 +76,51 @@ public class InternetCtrl extends AbstractController {
             String utterance = jsgfRecognizer.getResult().getHypothesis();
             listener.wordRecognized(utterance);
 
-            if(find(utterance))
-            {
+            if(find(utterance)) {
                 exitController();
                 return utterance;
             }
 
             findAddLinks(utterance);
-            if (utterance.equals(list.get(1)))
-            {
+            if (utterance.equals(list.get(1))) {
                 openURL("google.com");
             }
-            else if (utterance.equals(list.get(2)))
-            {
+            else if (utterance.equals(list.get(2))) {
                 openURL(conf.get(1));
             }
-            else if (utterance.equals(list.get(3)))
-            {
+            else if (utterance.equals(list.get(3))) {
                 openURL(conf.get(2));
             }
-            else if (utterance.equals(list.get(4))) //VK
-            {
+            else if (utterance.equals(list.get(4))){ //VK
                 openURL("vk.com");
             }
-            else if (utterance.equals(list.get(5))) //FaceBook
-            {
+            else if (utterance.equals(list.get(5))){ //FaceBook
                 openURL("facebook.com");
             }
-            else if (utterance.equals(list.get(6))) //Odn.
-            {
+            else if (utterance.equals(list.get(6))){ //Odn.
                 openURL("odnoklassniki.ru");
             }
+            /*
             else if (utterance.equals(list.get(7)))
             {
-               /* setGrammar("full",config,jsgfRecognizer);
+                setGrammar("full",config,jsgfRecognizer);
                 while(true)
                 {
                     utterance = jsgfRecognizer.getResult().getHypothesis();
                     ctrlGui.setWords(utterance);
                 }
-              /*  setLanguageModel(config,jsgfRecognizer);
+                setLanguageModel(config,jsgfRecognizer);
                 while (true)
                 {
                     utterance = jsgfRecognizer.getResult().getHypothesis();
                     ctrlGui.setWords(utterance);
                 }
-              */
+
             }
 
             else if (utterance.equals(list.get(8))) //keyboard
             {
+
                 try {
                     Runtime.getRuntime().exec("cmd /c start " + "osk.exe");
                 } catch (IOException e) {
@@ -145,34 +128,37 @@ public class InternetCtrl extends AbstractController {
                 }
                 screenKeyBoard(jsgfRecognizer, configuration, list);
             }
-
-            else if (utterance.equals(list.get(9))) //Голосовой поиск
-            {
+*/
+            else if (utterance.equals(list.get(7))){ //Голосовой поиск
                 robot.keyPress(KeyEvent.VK_CONTROL);
                 robot.keyPress(KeyEvent.VK_SHIFT);
                 robot.keyPress(KeyEvent.VK_PERIOD);
-
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {e.printStackTrace();}
                 robot.keyRelease(KeyEvent.VK_CONTROL);
                 robot.keyRelease(KeyEvent.VK_SHIFT);
                 robot.keyRelease(KeyEvent.VK_PERIOD);
-            } else if (utterance.equals(list.get(10))) //обратно
-            {
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {e.printStackTrace();}
+            }
+            else if (utterance.equals(list.get(8))){ //обратно
                super.twoButtonPress(KeyEvent.VK_ALT, KeyEvent.VK_LEFT);
-            } else if (utterance.equals(list.get(11))) //вперед
-            {
+            }
+            else if (utterance.equals(list.get(9))) { //вперед
                 super.twoButtonPress(KeyEvent.VK_ALT, KeyEvent.VK_RIGHT);
-            } else if (utterance.equals(list.get(12))) //обновить
-            {
+            }
+            else if (utterance.equals(list.get(10))) {//обновить
                 super.oneButtonPress(KeyEvent.VK_F5);
-            } else if (utterance.equals(list.get(13))) //закрыть вкладку
-            {
+            }
+            else if (utterance.equals(list.get(11))) {//закрыть вкладку
                 super.twoButtonPress(KeyEvent.VK_CONTROL, KeyEvent.VK_W);
-            } else if (utterance.equals(list.get(14))) //online films
-            {
+            }
+            else if (utterance.equals(list.get(12))){ //online films
                 openURL(conf.get(3));
             }
-            else if (utterance.equals(list.get(15))) //torrent
-            {
+            else if (utterance.equals(list.get(13))){ //torrent
                 openURL(conf.get(4));
             }
 
@@ -193,7 +179,6 @@ public class InternetCtrl extends AbstractController {
                     if(!str.isEmpty()) {
                         String[] array = str.split("\\|");
                         if (utterance.equals(array[1])) {
-
                              Desktop.getDesktop().browse(new URI(array[0]));
                              break;
 
@@ -206,27 +191,6 @@ public class InternetCtrl extends AbstractController {
             e.printStackTrace();
         }
 
-    }
-
-
-    private void screenKeyBoard(LiveSpeechRecognizer jsgfRecognizer,Configuration config,List list)
-    {
-        while (true) {
-            String utterance = jsgfRecognizer.getResult().getHypothesis();
-            listener.wordRecognized(utterance);
-
-             if (utterance.equals(list.get(2)))
-            {
-               // super.mouseControl(jsgfRecognizer, config, 35);
-               // setGrammar("internet",config,jsgfRecognizer);
-               // listener.setImage("internet active");
-            }
-            else    if (utterance.equals(list.get(0)))
-             {
-                 break;
-             }
-
-        }
     }
 
     private void openURL(String url)

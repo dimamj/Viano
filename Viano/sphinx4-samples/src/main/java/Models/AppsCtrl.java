@@ -54,8 +54,7 @@ public class AppsCtrl extends AbstractController  {
             listener.wordRecognized(utterance);
 
 
-            if(find(utterance))
-            {
+            if(find(utterance)) {
                 exitController();
                 return utterance;
             }
@@ -134,48 +133,37 @@ public class AppsCtrl extends AbstractController  {
             String utterance = jsgfRecognizer.getResult().getHypothesis();
             listener.wordRecognized(utterance);
 
-            if (utterance.equals(list.get(0)))
-            {
+            if (utterance.equals(list.get(0))) {
                 break;
             }
-            else if (utterance.equals(list.get(4)))
-            {
+            else if (utterance.equals(list.get(4))) {
                 super.oneButtonPress(KeyEvent.VK_LEFT, 1000);
             }
-            else if (utterance.equals(list.get(5)))
-            {
+            else if (utterance.equals(list.get(5))) {
                 super.oneButtonPress(KeyEvent.VK_RIGHT, 1000);
             }
-            else if (utterance.equals(list.get(6)))
-            {
+            else if (utterance.equals(list.get(6))) {
                 super.twoButtonPress(KeyEvent.VK_WINDOWS, KeyEvent.VK_D);
             }
-            else if (utterance.equals(list.get(7)))
-            {
+            else if (utterance.equals(list.get(7))) {
                 super.twoButtonPress(KeyEvent.VK_ALT, KeyEvent.VK_F4);
             }
-            else if (utterance.equals(list.get(8)))
-            {
+            else if (utterance.equals(list.get(8))) {
                 super.oneButtonPress(KeyEvent.VK_ENTER, 1000);
             }
-            else if (utterance.equals(list.get(9)))
-            {
+            else if (utterance.equals(list.get(9))) {
                 super.oneButtonPress(KeyEvent.VK_ESCAPE, 1000);
             }
-            else if (utterance.equals(list.get(10)))
-            {
+            else if (utterance.equals(list.get(10))) {
                 super.oneButtonPress(KeyEvent.VK_BACK_SPACE, 1000);
             }
-            else if (utterance.equals(list.get(11)))
-            {
+            else if (utterance.equals(list.get(11))) {
                 super.oneButtonPress(KeyEvent.VK_UP, 1000);
             }
-            else if (utterance.equals(list.get(12)))
-            {
+            else if (utterance.equals(list.get(12))) {
                 super.oneButtonPress(KeyEvent.VK_DOWN, 1000);
             }
-            else if (search(utterance, list, 1, 3))
-            {
+            else if (search(utterance, list, 1, 3)) {
                 Thread thread = new Thread(new Stop(jsgfRecognizer, config,listener, list));
                 thread.start();
                 Stop.utterance = utterance;
@@ -221,9 +209,7 @@ public class AppsCtrl extends AbstractController  {
         }
     }
 
-    private static class Stop implements Runnable
-
-    {
+    private static class Stop implements Runnable {
             LiveSpeechRecognizer recognizer;
     Configuration configuration;
         RecognitionListener listener;
@@ -231,29 +217,25 @@ public class AppsCtrl extends AbstractController  {
     static String utterance = "" ;
     static String str = "";
 
-    public   Stop(LiveSpeechRecognizer recognizer,Configuration configuration,RecognitionListener listener,List list)
-    {
+    public   Stop(LiveSpeechRecognizer recognizer,Configuration configuration,RecognitionListener listener,List list) {
         this.recognizer = recognizer;
         this.configuration = configuration;
         this.listener = listener;
         this.list = list;
     }
 
-    public void run()
-    {
+    public void run() {
 
         while (true)
         {
             str = utterance;
             utterance = recognizer.getResult().getHypothesis();
             listener.wordRecognized(utterance);
-            if(utterance.equals("<unk>"))
-            {
+            if(utterance.equals("<unk>")) {
                 utterance=str;
             }
 
-            if (utterance.equals(list.get(0)))
-            {
+            if (utterance.equals(list.get(0))) {
                 break;
             }
 
@@ -262,8 +244,7 @@ public class AppsCtrl extends AbstractController  {
     }
 
 }
-    private void oneButton(int key,int delay)
-    {
+    private void oneButton(int key,int delay) {
         robot.keyPress(key);
         robot.delay(delay);
         robot.keyRelease(key);

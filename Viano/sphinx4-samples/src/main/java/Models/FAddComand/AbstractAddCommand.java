@@ -22,8 +22,21 @@ public abstract class AbstractAddCommand {
     private final List<String> vowelLetters = Arrays.asList("а","е","ё","и","о",
             "у","ы","э","ю","я");
 
+    /**
+     * В данном методе необходимо запустить все методы данного класса.
+     *
+     * @param array массив в который входит имя команды, имя файла или
+     *              ссылки, номер буквы на которую падает ударение
+     * @param lang  язык
+     */
     abstract public void start(String[] array, String lang);
 
+    /**
+     * Запись команды в грамматику.
+     *
+     * @param path путь к грамматике
+     * @param word название команлы
+     */
     protected void writeToGram(String path, String word) {
         Path filePath = Paths.get(path);
         Charset charset = Charset.forName("UTF-8");
@@ -62,6 +75,13 @@ public abstract class AbstractAddCommand {
 
     }
 
+    /**
+     * Запись команды и ее транскрипции в словарь.
+     *
+     * @param path путь к словарю
+     * @param word название команды
+     * @param accent номер буквы на которую падает ударение
+     */
     protected void writeToDict(String path, String word,int accent) {
         Path filePath = Paths.get(path);
         Charset charset = Charset.forName("UTF-8");
@@ -131,7 +151,18 @@ public abstract class AbstractAddCommand {
 
     }
 
-    private String[] conversionWord(String word,int accent){
+    /**
+     * Данный метод преобразует слово в транскрипцию по следующим правилам:
+     * - Транскрипция на которую падает ударение удваивается, если ее размер
+     *   составляет 1 символ
+     * - Если согласная буква стоит перед и,е,ю,я и не является буквой ц
+     *   и ее транскрипция не двойная, то она удваивается
+     * @param word название команды
+     * @param accent номер буквы на которую падает ударение
+     *
+     * @return [имя команды, ее транскрипция]
+     */
+    protected String[] conversionWord(String word,int accent){
 
         String result = "";
 

@@ -24,11 +24,11 @@ public class AddCommand extends JFrame implements ViewInterface {
     private JLabel label2;
     private JLabel label3;
     private Boolean flag = false;
-    private String language;
     String file ;
     String commandName;
     String accent ;
     String  flags ;
+    String errorMessage = "";
     RecognitionListener listener;
     @Override
     public void dispose() {
@@ -36,7 +36,7 @@ public class AddCommand extends JFrame implements ViewInterface {
         super.dispose();
     }
 
-    public AddCommand(final String lang, RecognitionListener listener) {
+    public AddCommand( RecognitionListener listener) {
         AddCommand.super.setTitle("Viano Add Command");
         Image icon = new ImageIcon(getClass().getResource("/images/trey.png")).getImage();
         AddCommand.super.setIconImage(icon);
@@ -46,8 +46,6 @@ public class AddCommand extends JFrame implements ViewInterface {
         AddCommand.super.setLocationRelativeTo(null);
         AddCommand.super.setResizable(false);
         AddCommand.super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-     //   initText(lang);
-        language = lang;
         init();
         setVisible(true);
 
@@ -55,9 +53,9 @@ public class AddCommand extends JFrame implements ViewInterface {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try{
-                   Integer.parseInt(accentTextField.getText());
+                    int acc =  Integer.parseInt(accentTextField.getText());
                     if(!textField1.getText().isEmpty()&&!textField2.getText().isEmpty()
-                            &&!accentTextField.getText().isEmpty()){
+                            &&!accentTextField.getText().isEmpty()&&acc>=0){
                         file = textField1.getText();
                         commandName = textField2.getText().toLowerCase();
                         accent = accentTextField.getText();
@@ -88,14 +86,11 @@ public class AddCommand extends JFrame implements ViewInterface {
         label1.setText(prop.getProperty("label1"));
         label2.setText(prop.getProperty("label2"));
         label3.setText(prop.getProperty("label3"));
+        errorMessage = prop.getProperty("error");
     }
 
     private void error(){
-        if(language.equals("russian")){
-            listener.errorMessage("Введите корректные данные!");
-        } else if(language.equals("english")){
-            listener.errorMessage("Enter the correct data!");
-        }
+            listener.errorMessage(errorMessage);
     }
 
 

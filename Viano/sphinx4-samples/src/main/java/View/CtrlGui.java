@@ -242,12 +242,6 @@ public class CtrlGui extends JFrame implements ViewInterface {
 
     }
 
-    public static void setErrorTM(String s)
-    {
-        trayIcon.displayMessage("Viano", s,
-                TrayIcon.MessageType.ERROR);
-
-    }
     private void setDefaultTextArea()
     {
        TextArea.setText(textEdit(listener.getConfig().Master_Words));

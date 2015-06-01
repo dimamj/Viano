@@ -9,9 +9,6 @@ import edu.cmu.sphinx.api.LiveSpeechRecognizer;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.file.*;
 import java.util.*;
 
 /**
@@ -19,26 +16,19 @@ import java.util.*;
  */
 public class Config {
 
-
     private  Properties prop = new Properties();
     private  Properties properties = new Properties();
     private  final String version = "1.0";
+    private FileOperations fop = FileOperations.getInstance();
 
-    private static final String ACOUSTIC_MODEL_ENG =
-            "resource:/edu/cmu/sphinx/models/en-us/en-us";
-    private static final String DICTIONARY_PATH_ENG =
-            "file:C:/Viano/data/dict/cmudict-en-us.dict";
-    private static final String GRAMMAR_PATH_ENG =
-            "file:C:/Viano/data/gram_eng/";
-    private static final String ACOUSTIC_MODEL_RUS =
-            "resource:/edu/cmu/sphinx/models/en-us/rus";
-    private static final String DICTIONARY_PATH_RUS =
-            "file:C:/Viano/data/dict/msu_ru_nsh.dic";
-    private static final String GRAMMAR_PATH_RUS =
-            "file:C:/Viano/data/gram_rus/";
+    private static final String ACOUSTIC_MODEL_ENG = "resource:/edu/cmu/sphinx/models/en-us/en-us";
+    private static final String DICTIONARY_PATH_ENG = "file:C:/Viano/data/dict/cmudict-en-us.dict";
+    private static final String GRAMMAR_PATH_ENG = "file:C:/Viano/data/gram_eng/";
+    private static final String ACOUSTIC_MODEL_RUS = "resource:/edu/cmu/sphinx/models/en-us/rus";
+    private static final String DICTIONARY_PATH_RUS = "file:C:/Viano/data/dict/msu_ru_nsh.dic";
+    private static final String GRAMMAR_PATH_RUS = "file:C:/Viano/data/gram_rus/";
     static Boolean flag = false;
-    private FileSystem fs;
-    private Boolean isJar = false;
+
     public     List<String> Master_Words = new ArrayList<String>();
     public    List<String> KeyBoard_Words = new ArrayList<String>();
     public    List<String> Mouse_Words = new ArrayList<String>();
@@ -52,9 +42,7 @@ public class Config {
 
     private     String WeatherURL;
 
-    public String getFilecontain() {
-        return filecontain;
-    }
+    public String getFilecontain() {return filecontain;}
 
     private  String NewsURL;
     private  String startupFlag;
@@ -80,109 +68,104 @@ public class Config {
 
     private  RecognitionListener listener;
 
-    public  Configuration getConfiguration() {
-        return configuration;
-    }
+    public  Configuration getConfiguration() {return configuration;}
 
     private  String mediaPath;
     private  String mediaLink;
     private  String paintNetPath ;
     private  String paintNetLink ;
 
+    ArrayList<String> ex = new ArrayList<String>();
 
-    public Properties getProp() {
-        return prop;
+    public void setEx(ArrayList<String> ex) {
+        this.ex = ex;
     }
 
-    private LiveSpeechRecognizer loadFirstModel(LiveSpeechRecognizer recognizer)
-    {
+    public Properties getProp() {return prop;}
+
+    /**
+     * Данный метод вызывается при первом запуске программы,
+     * он получает ответ от gui, о том какой язык выбран и
+     * после этого вызывает метод init() инициализирующий
+     * разного рода настройки, записывает информацию о языке
+     * в файл и передает управление следующему методу.
+     *
+     * @param recognizer null ссылка на обьект LiveSpeechRecognizer
+     *
+     * @return инициализированный обьект LiveSpeechRecognizer
+     */
+    private LiveSpeechRecognizer loadFirstModel(LiveSpeechRecognizer recognizer) {
         String flag[];
-        System.out.println("Enter 1 or 2:");
         while(true) {
             flag = listener.getText("start");
-            if (flag[0].equals("1"))
-            {   init();
-                wtite(path, "english");
+            if (flag[0].equals("1")) {
+                init();
+                fop.write(path, "english");
                 setJavaTool();
                 recognizer =  loadLanguageModel(recognizer, ACOUSTIC_MODEL_ENG, DICTIONARY_PATH_ENG, GRAMMAR_PATH_ENG);
                 break;
             }
-            else if(flag[0].equals("2"))
-            {   init();
-                wtite(path,"russian");
+            else if(flag[0].equals("2")) {
+                init();
+                fop.write(path, "russian");
                 setJavaTool();
                 recognizer = loadLanguageModel(recognizer,ACOUSTIC_MODEL_RUS,DICTIONARY_PATH_RUS,GRAMMAR_PATH_RUS);
                 break;
 
             }
-            else
-            {
-
-            }
+            else {}
         }
         return recognizer;
     }
 
-    private void init()
-    {
-        fileSystemInit();
+    private void init() {
+        fop.fileSystemInit();
         propertiesInit();
         listener.setProgressVisible("start");
         createFolders();
         loadLabels(mediaLink, mediaPath);
         loadLabels(paintNetLink,paintNetPath);
-        wtite(pathconfig,startupFlag+"\n"+WeatherURL+"\n"+NewsURL+"\n"+FilmsURL+"\n"+TorrentURL);
+        fop.write(pathconfig, startupFlag + "\n" + WeatherURL + "\n" + NewsURL
+                + "\n" + FilmsURL + "\n" + TorrentURL);
 
         String path = "C:/Viano/data/";
-        copyFiles("/others/Transcription.txt",path+"dict/Transcription.txt",true);
+        fop.copyFiles("/others/Transcription.txt", path + "dict/Transcription.txt", true);
 
         for(String s:dictList){
-            copyFiles("/edu/cmu/sphinx/models/en-us/"+s,path+"dict/"+s,true);
+            fop.copyFiles("/edu/cmu/sphinx/models/en-us/" + s, path + "dict/" + s, true);
         }
 
         for(String s:gramsList){
-            copyFiles("/gram_rus/"+s,path+"gram_rus/"+s,true);
+            fop.copyFiles("/gram_rus/" + s, path + "gram_rus/" + s, true);
         }
         for(String s:gramsListEng){
-            copyFiles("/gram_eng/"+s,path+"gram_eng/"+s,true);
+            fop.copyFiles("/gram_eng/" + s, path + "gram_eng/" + s, true);
         }
         for(String s:wordsList){
-            copyFiles("/words/"+s,path+"words/"+s,true);
+            fop.copyFiles("/words/" + s, path + "words/" + s, true);
         }
         for(String s:othersList){
-            copyFiles("/others/"+s,path+s,true);
+            fop.copyFiles("/others/" + s, path + s, true);
         }
 
     }
 
-    private void fileSystemInit(){
-        try {
-            final URI uri = getClass().getResource("/others").toURI();
-            final Map<String, String> env = new HashMap<>();
-            if(uri.toString().split("!").length>1) {
-                isJar=true;
-                final String[] array = uri.toString().split("!");
-                fs = FileSystems.newFileSystem(URI.create(array[0]), env);
-                // final Path path = fs.getPath(array[1]);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
+    /**
+     * Копирование properties файлов из Jar в папку
+     * и считывание из них информации и присвоение ее
+     * переменным
+     */
     private void propertiesInit(){
         String path = "C:/Viano/data/";
-        copyFiles("/config.properties",path+"config.properties",true);
-        copyFiles("/ru.properties",path+"ru.properties",true);
-        copyFiles("/eng.properties",path+"eng.properties",true);
+        fop.copyFiles("/config.properties", path + "config.properties", true);
+        fop.copyFiles("/ru.properties", path + "ru.properties", true);
+        fop.copyFiles("/eng.properties", path + "eng.properties", true);
 
         try {
             String pathF = "C:/Viano/data/config.properties";
             prop.load(new InputStreamReader(new FileInputStream(pathF),"UTF-8"));
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {e.printStackTrace();}
 
         WeatherURL = prop.getProperty("WeatherURL");
         NewsURL = prop.getProperty("NewsURL");
@@ -199,38 +182,46 @@ public class Config {
     public Boolean isJar(){
 
         URI uri = null;
-        try {
-            uri = getClass().getResource("/others").toURI();
-        } catch (URISyntaxException e) {
+        try {uri = getClass().getResource("/others").toURI();} catch (URISyntaxException e) {
             e.printStackTrace();
         }
 
        return  uri.toString().split("!").length>1 ? true : false;
     }
 
-    private void setJavaTool()
-    {
+    /**
+     * Из-за проблем с кодировкой прии русском языке
+     * была введенна установка системной перемены
+     * JAVA_TOOL_OPTIONS на кодировку UTF-8
+     */
+    private void setJavaTool() {
         if(isJar()) {
             try {
                 Runtime.getRuntime().exec("setx JAVA_TOOL_OPTIONS -Dfile.encoding=UTF8");
-              /*  String[] str = Config.class.getResource("").toString().split("!");
-                String path = str[0].substring(10);
-                System.out.println(path);
-                Runtime.getRuntime().exec("java -jar " + path);*/
                 System.exit(0);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            } catch (Exception e) {e.printStackTrace();}
         }
     }
 
-    public Properties getProperties() {
-        return properties;
-    }
+    public Properties getProperties() {return properties;}
 
+    /**
+     * Данный метод инициализирует обьект для распознования
+     * речи, для этого ему передаются опреленные параметры.
+     * Так же инициализируются списки с командами,настройками.
+     * В зависимости от языка загружается properties файл,
+     * содержащий тексты для интерфейса.
+     * Все параметры у своего языка свои.
+     *
+     * @param recognizer null ссылка на обьект LiveSpeechRecognizer
+     * @param acoustic путь к папке аккустической модели
+     * @param dict путь к словарю
+     * @param gram путь к папке с грамматикой
+     *
+     * @return инициализированный обьект LiveSpeechRecognizer
+     */
     private   LiveSpeechRecognizer loadLanguageModel(LiveSpeechRecognizer recognizer,String acoustic,String dict,
-                                                     String gram)
-    {
+                                                     String gram) {
         configuration = new edu.cmu.sphinx.api.Configuration();
         configuration.setAcousticModelPath(acoustic);
         configuration.setDictionaryPath(dict);
@@ -246,9 +237,9 @@ public class Config {
 
         listener.disposeGui("start");
 
-        filecontain = read(path,1);
+        filecontain = fop.read(path, 1);
         loadWords(filecontain);
-        confList  = readMas(pathconfig);
+        confList  = fop.readMas(pathconfig,confList);
         if(isJar())
             startup(confList);
 
@@ -259,9 +250,7 @@ public class Config {
                 properties.load(new InputStreamReader(in,"UTF-8"));
                 in.close();
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            } catch (Exception e) {e.printStackTrace();}
         }
         else if(filecontain.equals("russian")) {
             try {
@@ -270,17 +259,13 @@ public class Config {
                 properties.load(new InputStreamReader(in,"UTF-8"));
                 in.close();
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            } catch (Exception e) {e.printStackTrace();}
         }
         return recognizer;
 
     }
 
-    public List<String> getConfList() {
-        return confList;
-    }
+    public List<String> getConfList() {return confList;}
 
     private  void createFolders() {
 
@@ -301,44 +286,18 @@ public class Config {
 
         try {
             Thread.sleep(300);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        } catch (InterruptedException e) {e.printStackTrace();}
     }
 
-    private void copyFiles(String sourcePath,String targetPath,Boolean inJar){
-        Path source = null;
-        try {
-            if(isJar()&&inJar) {
-                source = fs.getPath(sourcePath);
-            }else if(isJar()&&!inJar) {
-                source = Paths.get(sourcePath);
-            }
-            else {
-                source = Paths.get(Master.class.getResource(sourcePath).toURI());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Path target = Paths.get(targetPath);
-        try {
-            System.out.println(source);
-            System.out.println(target);
-            Files.copy(source,target);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
-    private void deleteFiles(String sourcePath){
-        Path source = Paths.get(sourcePath);
-        try {
-            Files.delete(source);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
+    /**
+     * С помощью скрипта, создаются ярлыки программ и
+     * помещаются в папку C:/Viano/Applications
+     *
+     * @param fileName имя файла
+     * @param filePath путь к файлу
+     */
     private  void loadLabels(String fileName,String filePath) {
 
         String script = "Set sh = CreateObject(\"WScript.Shell\")"
@@ -353,21 +312,32 @@ public class Config {
             fo.close();
 
             Runtime.getRuntime().exec("wscript.exe " + file.getAbsolutePath());
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
+            try {Thread.sleep(1000);} catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException e) {e.printStackTrace();}
     }
 
-    protected    void parserWords(String resource)
-    {
+    /**
+     * Данный метод создан для чтения специально
+     * созданных файлов, содержащих списки команд.
+     * Вид файла такой:
+     *
+     * !# Internet
+     * мышь
+     * поиск
+     * прогноз погоды
+     * #
+     *
+     * Метод собирает все команды в один список
+     * и запминает имя после !#, по нему и осуществляется
+     * добавления списка в необходимый
+     *
+     * @param resource имя файла, с которо нужно читать
+     */
+    protected void parserWords(String resource) {
         String str = "";
         Boolean flag = false;
-        ArrayList<String> ex = new ArrayList<String>();
         String[] list = null;
 
         BufferedReader reader = null;
@@ -375,195 +345,105 @@ public class Config {
         catch (Exception e) {/*NOP*/}
 
         try {
-            while ((str=reader.readLine())!=null)
-            {
-                if (str.startsWith("!#"))
-                {
+            while ((str=reader.readLine())!=null) {
+                if (str.startsWith("!#")) {
                     flag = true;
                     list = str.split(" ");
                 }
-                else if(str.startsWith("#"))
-                {
+                else if(str.startsWith("#")) {
                     flag = false;
                     loadLists(list[1],ex);
                     ex.clear();
                 }
-                else if(flag && ex!=null)
-                {
+                else if(flag && ex!=null) {
                     ex.add(str);
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException e) {e.printStackTrace();}
     }
-    private  void loadWords(String filecontain)
-    {
-        if (filecontain.equals("english"))
-        {
+    private  void loadWords(String filecontain) {
+        if (filecontain.equals("english")) {
             parserWords("C:/Viano/data/words/words_eng.txt");
         }
 
-        else if (filecontain.equals("russian"))
-        {
+        else if (filecontain.equals("russian")) {
             parserWords("C:/Viano/data/words/words_rus.txt");
             parserWords("C:/Viano/data/words/apps_rus.txt");
             parserWords("C:/Viano/data/words/web_rus.txt");
         }
     }
 
-    private  void loadLists(String str,ArrayList<String> list)
-    {
-        if(str.equals("Master"))
-        {
+    protected  void loadLists(String str,List list) {
+        if(str.equals("Master")) {
             Master_Words.addAll(list);
         }
-        else if (str.equals("KeyBoard"))
-        {
+        else if (str.equals("KeyBoard")) {
             KeyBoard_Words.addAll(list);
         }
-        else if (str.equals("Mouse"))
-        {
+        else if (str.equals("Mouse")) {
             Mouse_Words.addAll(list);
         }
-        else if (str.equals("Computer"))
-        {
+        else if (str.equals("Computer")) {
             Computer_Words.addAll(list);
         }
-        else if (str.equals("Internet"))
-        {
+        else if (str.equals("Internet")) {
             if(!Internet_Words.isEmpty())
                 Internet_Words.clear();
 
             Internet_Words.addAll(list);
         }
-        else if (str.equals("Applications"))
-        {
+        else if (str.equals("Applications")) {
             if(!Applications_Words.isEmpty())
                 Applications_Words.clear();
 
             Applications_Words.addAll(list);
         }
-        else if (str.equals("Paint"))
-        {
+        else if (str.equals("Paint")) {
             Paint_Words.addAll(list);
         }
-        else if (str.equals("Racing"))
-        {
+        else if (str.equals("Racing")) {
             Racing_Words.addAll(list);
         }
-        else if (str.equals("Modules"))
-        {
+        else if (str.equals("Modules")) {
             Modules_Words.addAll(list);
         }
     }
 
-    private static void createFile(String path)
-    {
-        File f = new File(path);
-        f.getParentFile().mkdirs();
-        try {
-            f.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    public  String read(String path,int line)
-    {
-        String result = "";
-        BufferedReader reader;
-        int countLine = 0;
-        while (true) {
-            try {
-                reader = new BufferedReader(new FileReader(path));
-                String s;
-                while ((s=reader.readLine()) != null) {
-                    countLine++;
-                    if(line==countLine)
-                    result = s;
-                }
-                reader.close();
-                break;
-            }
-            catch (Exception e) {createFile(path);}
-        }
 
-        return result;
-    }
-    public  List<String> readMas(String path)
-    {
-        BufferedReader reader;
 
-        while (true) {
-            try {
-                reader = new BufferedReader(new FileReader(path));
-                String s;
-                int i = 0;
-                while ((s=reader.readLine()) != null) {
-                    confList.add(i,s);
-                    i++;
-                }
-                reader.close();
-                break;
-            }
-            catch (Exception e) {createFile(path);}
-        }
 
-        return confList;
-    }
-    public  void wtite(String path,String language)
-    {
-
-        try {
-            PrintWriter out = new PrintWriter(path);
-            out.print(language);
-            out.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-    }
-
+    /**
+     * Метод активизирующий или снимающий автозагрузку
+     * за счет специальных команд, выполняемых через консоль.
+     *
+     * @param list список настроек
+     */
     protected void startup(List<String> list){
-        String startupPath = "C:/Viano/";
-
-        //C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp
         String[] str = Config.class.getResource("").toString().split("!");
         String path = str[0].substring(10);
-        System.out.println(path);
         path = path.replaceAll("/","\\\\");
-        System.out.println("=====================================================================");
-        System.out.println(path);
         String start = "cmd /C REG ADD HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run /v " +
                 "Viano /d " + path + " /f";
         String delete = "cmd /C REG ADD HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run /v " +
                 "Viano /d null /f";
 
-        System.out.println(delete);
 
             if (list.get(0).equals("true")) {
-                try {
-                    Runtime.getRuntime().exec(start);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                try {Runtime.getRuntime().exec(start);} catch (IOException e) {e.printStackTrace();}
             } else {
-                try{
-                    Runtime.getRuntime().exec(delete);
-                }catch (Exception e)
-                {
-                    return;
-                }
-
+                try{Runtime.getRuntime().exec(delete);}catch (Exception e) {return;}
 
             }
         }
 
+    /**
+     * Метод перезапускает запущенный Jar файл. То есть
+     * берется путь к файлу и запускается через командную строку.
+     */
     private void restart(){
         if(isJar()) {
             String[] str = Config.class.getResource("").toString().split("!");
             String path = str[0].substring(10);
-            System.out.println(path);
             try {
                 Runtime.getRuntime().exec("java -jar " + path);
                 System.exit(0);
@@ -575,15 +455,18 @@ public class Config {
         }
     }
 
+    /**
+     * Чтение версии из properties файла,
+     * если версия пользователя не совпадает с версией
+     * в Jar файле, происходит обновление и перезапуск.
+     */
     private void version(){
         try {
             String pathF = "C:/Viano/data/config.properties";
             FileInputStream in = new FileInputStream(pathF);
             prop.load(new InputStreamReader(in,"UTF-8"));
             in.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) {e.printStackTrace();}
 
         if(!version.equals(prop.getProperty("version"))){
             update();
@@ -591,71 +474,81 @@ public class Config {
         }
     }
 
+    /**
+     * Обновление включает в себя удаление и копирование
+     * новых файлов, необходимых для работы. Так же заменяет
+     * версию на новую.
+     */
     private void update(){
         listener.setLabel("Viano Update","start");
-        fileSystemInit();
+        fop.fileSystemInit();
         String path = "C:/Viano/data/";
-        deleteFiles(path+"dict/Transcription.txt");
-        copyFiles("/others/Transcription.txt",path+"dict/Transcription.txt",true);
-
-        for(String s:dictList){
-            deleteFiles(path+"dict/"+s);
-            copyFiles("/edu/cmu/sphinx/models/en-us/"+s,path+"dict/"+s,true);
-        }
+        fop.deleteFiles(path + "dict/Transcription.txt");
+        fop.copyFiles("/others/Transcription.txt", path + "dict/Transcription.txt", true);
 
         for(String s:gramsList){
             if(!s.equals("apps.gram")) {
                 if(!s.equals("internet.gram")) {
-                    deleteFiles(path + "gram_rus/" + s);
-                    copyFiles("/gram_rus/" + s, path + "gram_rus/" + s, true);
+                    fop.deleteFiles(path + "gram_rus/" + s);
+                    fop.copyFiles("/gram_rus/" + s, path + "gram_rus/" + s, true);
                 }
             }
         }
         for(String s:gramsListEng){
             if(!s.equals("apps.gram")||!s.equals("internet.gram")) {
-                deleteFiles(path + "gram_eng/" + s);
-                copyFiles("/gram_eng/" + s, path + "gram_eng/" + s, true);
+                fop.deleteFiles(path + "gram_eng/" + s);
+                fop.copyFiles("/gram_eng/" + s, path + "gram_eng/" + s, true);
             }
         }
-
-            deleteFiles(path+"words/words_eng.txt");
-            copyFiles("/words/words_eng.txt",path+"words/words_eng.txt",true);
-            deleteFiles(path+"words/words_rus.txt");
-            copyFiles("/words/words_rus.txt",path+"words/words_rus.txt",true);
+        
+        fop.deleteFiles(path + "words/words_eng.txt");
+        fop.copyFiles("/words/words_eng.txt", path + "words/words_eng.txt", true);
+        fop.deleteFiles(path + "words/words_rus.txt");
+        fop.copyFiles("/words/words_rus.txt", path + "words/words_rus.txt", true);
 
         for(String s:othersList){
-            deleteFiles(path+s);
-            copyFiles("/others/"+s,path+s,true);
+            fop.deleteFiles(path + s);
+            fop.copyFiles("/others/" + s, path + s, true);
         }
 
-        deleteFiles(path + "config.properties");
-        copyFiles("/config.properties", path + "config.properties",true);
-        deleteFiles(path+"ru.properties");
-        copyFiles("/ru.properties",path+"ru.properties",true);
-        deleteFiles(path+"eng.properties");
-        copyFiles("/eng.properties",path+"eng.properties",true);
+        fop.deleteFiles(path + "config.properties");
+        fop.copyFiles("/config.properties", path + "config.properties", true);
+        fop.deleteFiles(path + "ru.properties");
+        fop.copyFiles("/ru.properties", path + "ru.properties", true);
+        fop.deleteFiles(path + "eng.properties");
+        fop.copyFiles("/eng.properties", path + "eng.properties", true);
 
 
     }
 
-    public  LiveSpeechRecognizer beginSettings(LiveSpeechRecognizer recognizer)
-    {
 
-        filecontain = read(path,1);
+    public FileOperations getFop() {
+        return fop;
+    }
 
-        if (filecontain.isEmpty())
-        {
+    /**
+     * Стартовый метод данного класса. В нем проверяется
+     * если файл пустой, то делаем первую загрузку, со всеми настройками,
+     * если нет, загружаем с параметрами соответствующими языку.
+     *
+     * @param recognizer null ссылка типа LiveSpeechRecognizer
+     *
+     * @return инициализированный и готовый к работе
+     * обьект LiveSpeechRecognizer
+     */
+    public  LiveSpeechRecognizer beginSettings(LiveSpeechRecognizer recognizer) {
+        filecontain = fop.read(path, 1);
+
+        if (filecontain.isEmpty()) {
             recognizer = loadFirstModel(recognizer);
         }
-        else if (filecontain.equals("english"))
-        {
+        else if (filecontain.equals("english")) {
             listener.disposeElements("start");
             version();
             listener.setProgressVisible("start");
             recognizer =  loadLanguageModel(recognizer, ACOUSTIC_MODEL_ENG, DICTIONARY_PATH_ENG, GRAMMAR_PATH_ENG);
         }
-        else if(filecontain.equals("russian"))
-        {
+        else if(filecontain.equals("russian")) {
             listener.disposeElements("start");
             version();
             listener.setProgressVisible("start");

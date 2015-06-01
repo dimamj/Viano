@@ -36,7 +36,7 @@ public class Settings extends JFrame implements ViewInterface {
         super.dispose();
     }
 
-    public Settings(String lang, final RecognitionListener listener) {
+    public Settings(final RecognitionListener listener) {
         Settings.super.setTitle("Viano Settings");
         Image icon = new ImageIcon(getClass().getResource("/images/trey.png")).getImage();
         Settings.super.setIconImage(icon);

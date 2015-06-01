@@ -1,16 +1,13 @@
 package Presenter;
 
 import Models.*;
-import Models.FAddComand.AbstractAddCommand;
 import Models.FAddComand.FactoryMethod;
 import Models.Test;
 import View.*;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.LiveSpeechRecognizer;
-import edu.cmu.sphinx.result.BoundedPriorityQueue;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Properties;
@@ -33,8 +30,7 @@ public class VPresenter {
     List<String> MWords;
     RecognitionListener listener;
 
-    public VPresenter()
-    {
+    public VPresenter() {
         init();
     }
 
@@ -59,7 +55,7 @@ public class VPresenter {
 
             @Override
             public void setLabel(String text,String view) {
-                getView(view,"").setLabel(text);
+                getView(view).setLabel(text);
             }
 
             @Override
@@ -74,17 +70,17 @@ public class VPresenter {
 
             @Override
             public void disposeGui(String view) {
-                getView(view,"").dispose();
+                getView(view).dispose();
             }
 
             @Override
             public void createGui(String view,String lang) {
-               getView(view,lang);
+               getView(view);
             }
 
             @Override
             public Boolean getEdit(String view) {
-                return getView(view,"").getEdit();
+                return getView(view).getEdit();
             }
 
             @Override
@@ -108,24 +104,24 @@ public class VPresenter {
             @Override
             public String[] getText(String view)
             {
-                return getView(view,"").getText();
+                return getView(view).getText();
             }
 
             @Override
             public void setText(String view, List<String> list) {
-                getView(view,"").setText(list);
+                getView(view).setText(list);
             }
 
             @Override
             public void setProgressVisible(String view)
             {
-                getView(view,"").setProgressVisible();
+                getView(view).setProgressVisible();
             }
 
             @Override
             public void disposeElements(String view)
             {
-                getView(view,"").disposeElements();
+                getView(view).disposeElements();
             }
 
             @Override
@@ -151,7 +147,7 @@ public class VPresenter {
             listener.errorMessage("Error: Code #3");
             error(e.getMessage());}
 
-        if(!config.read("C:/Viano/data/language.txt",2).equals("true")) {
+        if(!config.getFop().read("C:/Viano/data/language.txt",2).equals("true")) {
             test = new View.Test(listener);
             Test.getInstance().startVoiceControl(recognizer, configuration, true);
         }
@@ -168,8 +164,7 @@ public class VPresenter {
 
     }
 
-    private static void writeToFile(String path,String language)
-    {
+    private static void writeToFile(String path,String language) {
 
         try {
             PrintWriter out = new PrintWriter(path);
@@ -180,10 +175,9 @@ public class VPresenter {
         }
 
     }
-    private void error(String str)
-    {
+    private void error(String str) {
         gui.dispose();
-        gui.setErrorTreyMessage(str);
+        listener.errorMessage(str);
         try {
             Thread.sleep(8100);
         } catch (InterruptedException e) {
@@ -193,8 +187,13 @@ public class VPresenter {
         System.exit(0);
     }
 
-    private AbstractController getModel(String str)
-    {
+    /**
+     * Данный метод возвращает ссылку на указанный класс.
+     *
+     * @param str название слушателя
+     * @return ссылка на слушатель
+     */
+    private AbstractController getModel(String str) {
         return  str.equals(MWords.get(0)) ? master :
                 str.equals(MWords.get(1)) ? ComputerCtrl.getInstance() :
                 str.equals(MWords.get(2)) ? InternetCtrl.getInstance() :
@@ -204,24 +203,30 @@ public class VPresenter {
                 str.equals(MWords.get(6)) ? PaintCtrl.getInstance() : master;
     }
 
-    public ViewInterface getView(String str,String lang)
-    {
+    /**
+     * Возвращает ссылку или создает обьект и возвращает ссылку
+     * на view
+     *
+     * @param str имя представления
+     * @return ссылку на представление
+     */
+    public ViewInterface getView(String str) {
 
         if( str.equals("setting")&&settingsGui==null){
-            settingsGui = new Settings(lang,listener);
+            settingsGui = new Settings(listener);
             return settingsGui;
         } else if(str.equals("setting")&&!settingsGui.isDisplayable()){
-            settingsGui = new Settings(lang,listener);
+            settingsGui = new Settings(listener);
             return settingsGui;
         } else if(str.equals("setting")&&settingsGui.isDisplayable()){
             return settingsGui;
         }
 
         if( str.equals("addCommand")&&addCommandGui==null){
-            addCommandGui = new AddCommand(lang,listener);
+            addCommandGui = new AddCommand(listener);
             return addCommandGui;
         } else if(str.equals("addCommand")&&!addCommandGui.isDisplayable()){
-            addCommandGui = new AddCommand(lang,listener);
+            addCommandGui = new AddCommand(listener);
             return addCommandGui;
         } else if(str.equals("addCommand")&&addCommandGui.isDisplayable()){
             return addCommandGui;

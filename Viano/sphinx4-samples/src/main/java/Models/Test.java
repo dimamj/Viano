@@ -31,12 +31,10 @@ public class Test extends AbstractController{
 
         setGrammar("test", configuration, jsgfRecognizer);
 
-        for(int i=0;i<Test_Words.size();i++)
-        {
+        for(int i=0;i<Test_Words.size();i++) {
             listener.setLabel(Test_Words.get(i),"test");
 
-            while (true)
-            {
+            while (true) {
                 String utterance = jsgfRecognizer.getResult().getHypothesis();
                 if(utterance.equals(Test_Words.get(i))){
                     listener.setProgressVisible("test");
