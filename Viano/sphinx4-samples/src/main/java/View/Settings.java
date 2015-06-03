@@ -30,6 +30,7 @@ public class Settings extends JFrame implements ViewInterface {
     private   Boolean edit ;
     static String pathconfig = "C:/Viano/data/config.txt";
     RecognitionListener listener;
+    String errorMessage = "";
     @Override
     public void dispose() {
         edit=true;
@@ -48,29 +49,30 @@ public class Settings extends JFrame implements ViewInterface {
         Settings.super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         init();
         setVisible(true);
+
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 flag = checkBox1.isSelected()?"true":"false";
-                if(!urlWeather.getText().isEmpty()&&!urlNews.getText().isEmpty()&&!urlFilms.getText().isEmpty()
-                        &&!urlTorrent.getText().isEmpty())
-                {
-                    listener.write(pathconfig, flag + "\n" + urlWeather.getText() + "\n" + urlNews.getText() + "\n" + urlFilms.getText()
+                String[] array = new String[]{urlWeather.getText(),urlNews.getText(),urlFilms.getText(),
+                        urlTorrent.getText()};
+
+                if(listener.validation("settings",array)) {
+                    listener.write(pathconfig, flag + "\n" + urlWeather.getText() + "\n" + urlNews.getText() +
+                            "\n" + urlFilms.getText()
                             + "\n" + urlTorrent.getText());
                     edit = true;
                     dispose();
                 }
-                else
-                {
-                    listener.errorMessage("Error:URL is empty!");
+                else {
+                    listener.errorMessage(errorMessage);
                 }
 
             }
         });
     }
 
-    public void setText(java.util.List<String> list)
-    {
+    public void setText(java.util.List<String> list) {
         edit=false;
         checkBox1.setSelected(Boolean.parseBoolean(list.get(0)));
         urlWeather.setText(list.get(1));
@@ -88,6 +90,7 @@ public class Settings extends JFrame implements ViewInterface {
         textFilms.setText(prop.getProperty("textFilms"));
         textTorrent.setText(prop.getProperty("textTorrent"));
         saveButton.setText(prop.getProperty("textButton1"));
+        errorMessage = prop.getProperty("errorURL");
     }
 
     public Boolean getEdit()

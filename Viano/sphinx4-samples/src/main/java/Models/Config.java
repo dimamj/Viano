@@ -29,15 +29,15 @@ public class Config {
     private static final String GRAMMAR_PATH_RUS = "file:C:/Viano/data/gram_rus/";
     static Boolean flag = false;
 
-    public     List<String> Master_Words = new ArrayList<String>();
-    public    List<String> KeyBoard_Words = new ArrayList<String>();
-    public    List<String> Mouse_Words = new ArrayList<String>();
-    public    List<String> Computer_Words = new ArrayList<String>();
-    public    List<String> Internet_Words = new ArrayList<String>();
-    public    List<String> Applications_Words = new ArrayList<String>();
-    public    List<String> Paint_Words = new ArrayList<String>();
-    public    List<String> Racing_Words = new ArrayList<String>();
-    public    List<String> Modules_Words = new ArrayList<String>();
+    public  List<String> Master_Words = new ArrayList<String>();
+    public  List<String> KeyBoard_Words = new ArrayList<String>();
+    public  List<String> Mouse_Words = new ArrayList<String>();
+    public  List<String> Computer_Words = new ArrayList<String>();
+    public  List<String> Internet_Words = new ArrayList<String>();
+    public  List<String> Applications_Words = new ArrayList<String>();
+    public  List<String> Paint_Words = new ArrayList<String>();
+    public  List<String> Racing_Words = new ArrayList<String>();
+    public  List<String> Modules_Words = new ArrayList<String>();
     public  static   List<String> confList  = new ArrayList<String>();
 
     private     String WeatherURL;
@@ -289,8 +289,6 @@ public class Config {
         } catch (InterruptedException e) {e.printStackTrace();}
     }
 
-
-
     /**
      * С помощью скрипта, создаются ярлыки программ и
      * помещаются в папку C:/Viano/Applications
@@ -408,9 +406,6 @@ public class Config {
             Modules_Words.addAll(list);
         }
     }
-
-
-
 
     /**
      * Метод активизирующий или снимающий автозагрузку

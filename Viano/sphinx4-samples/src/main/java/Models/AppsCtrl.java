@@ -68,7 +68,7 @@ public class AppsCtrl extends AbstractController  {
 
             else if (utterance.equals(list.get(2))) {
 
-                racingCtrl(jsgfRecognizer, configuration, racing);
+               // racingCtrl(jsgfRecognizer, configuration, racing);
                 setGrammar("apps", configuration, jsgfRecognizer);
                 listener.setImage("games active");
             }
@@ -124,6 +124,7 @@ public class AppsCtrl extends AbstractController  {
                   11 ,"вверх"
                   12 ,"вниз"
      */
+    /*
     private void racingCtrl(LiveSpeechRecognizer jsgfRecognizer, Configuration config, List list) {
         setGrammar("racing", config, jsgfRecognizer);
         listener.setImage("racing");
@@ -208,6 +209,7 @@ public class AppsCtrl extends AbstractController  {
             }
         }
     }
+    */
 
     private static class Stop implements Runnable {
             LiveSpeechRecognizer recognizer;

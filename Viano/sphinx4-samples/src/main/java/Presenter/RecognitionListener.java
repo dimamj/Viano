@@ -44,4 +44,6 @@ public interface RecognitionListener {
 
     public Properties getProperties();
 
+    public Boolean validation(String mode,String[] array);
+
 }

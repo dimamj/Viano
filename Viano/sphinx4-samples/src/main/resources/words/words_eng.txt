@@ -1,3 +1,15 @@
+!# Master
+computer
+browser
+apps
+keyboard
+mouse
+shut down
+settings
+change language
+add command
+#
+
 !# Modules
 master
 computer

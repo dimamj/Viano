@@ -5,7 +5,7 @@ grammar master;
 
 
 
-<menu_command> =  hello              ;
+<menu_command> =  change language|russian|english;
 
 
 public <command> = <menu_command>;

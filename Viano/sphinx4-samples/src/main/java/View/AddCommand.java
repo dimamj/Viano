@@ -36,7 +36,7 @@ public class AddCommand extends JFrame implements ViewInterface {
         super.dispose();
     }
 
-    public AddCommand( RecognitionListener listener) {
+    public AddCommand( final RecognitionListener listener) {
         AddCommand.super.setTitle("Viano Add Command");
         Image icon = new ImageIcon(getClass().getResource("/images/trey.png")).getImage();
         AddCommand.super.setIconImage(icon);
@@ -53,15 +53,15 @@ public class AddCommand extends JFrame implements ViewInterface {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try{
-                    int acc =  Integer.parseInt(accentTextField.getText());
-                    if(!textField1.getText().isEmpty()&&!textField2.getText().isEmpty()
-                            &&!accentTextField.getText().isEmpty()&&acc>=0){
+                    String[] array = new String[]{accentTextField.getText(),textField1.getText(),
+                    textField2.getText(),String.valueOf(checkBox1.isSelected())};
+
+                    if(listener.validation("add",array)){
                         file = textField1.getText();
                         commandName = textField2.getText().toLowerCase();
                         accent = accentTextField.getText();
                         flags = String.valueOf(checkBox1.isSelected());
                         flag=true;
-
                     } else {
                         error();
                     }

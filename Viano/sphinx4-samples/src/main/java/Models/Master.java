@@ -112,33 +112,7 @@ public class Master extends AbstractController {
              */
             else if (utterance.equals(Master_Words.get(7))) {
 
-                listener.setImage(Master_Words.get(7));
-
-                while (true) {
-                    utterance = jsgfRecognizer.getResult().getHypothesis();
-                    listener.wordRecognized(utterance);
-
-                    if (utterance.equals("английский") || utterance.equals("english")) {
-                        listener.disposeGui("main");
-                        config.getFop().write(path, "english\ntrue");
-                        jsgfRecognizer.stopRecognition();
-                        restart();
-                        break;
-
-                    }
-                    else if (utterance.equals("русский")|| utterance.equals("russian")) {
-                        listener.disposeGui("main");
-                        config.getFop().write(path, "russian\ntrue");
-                        jsgfRecognizer.stopRecognition();
-                        restart();
-                        break;
-
-                    }
-                    else if (utterance.equals("назад") || utterance.equals("back")) {
-                        listener.setImage("masterActive");
-                        break;
-                    }
-                }
+             changeLang(utterance,jsgfRecognizer);
 
             }
             /*
@@ -165,6 +139,37 @@ public class Master extends AbstractController {
 
         return "";
 
+    }
+
+
+    private void changeLang(String utterance,LiveSpeechRecognizer jsgfRecognizer){
+        listener.setImage(Master_Words.get(7));
+
+        while (true) {
+            utterance = jsgfRecognizer.getResult().getHypothesis();
+            listener.wordRecognized(utterance);
+
+            if (utterance.equals("английский") || utterance.equals("english")) {
+                listener.disposeGui("main");
+                config.getFop().write(path, "english\ntrue");
+                jsgfRecognizer.stopRecognition();
+                restart();
+                break;
+
+            }
+            else if (utterance.equals("русский")|| utterance.equals("russian")) {
+                listener.disposeGui("main");
+                config.getFop().write(path, "russian\ntrue");
+                jsgfRecognizer.stopRecognition();
+                restart();
+                break;
+
+            }
+            else if (utterance.equals("назад") || utterance.equals("back")) {
+                listener.setImage("masterActive");
+                break;
+            }
+        }
     }
     /**
      * Метод перезапускает запущенный Jar файл. То есть
